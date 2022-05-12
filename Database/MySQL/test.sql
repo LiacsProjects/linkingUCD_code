@@ -238,17 +238,18 @@ CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Location` (
   `City` VARCHAR(50) NULL COMMENT 'Holds city of the location',
   `Country` VARCHAR(30) NULL COMMENT 'Holds country of the location',
   `Housnumber` INT NULL COMMENT 'Holds housenumber of the location',
-  PRIMARY KEY (`LocationID`),
-  CONSTRAINT `fk_Location_Person1`
-    FOREIGN KEY (`LocationID`)
-    REFERENCES `Test_via_eer`.`Person` (`Pob`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Location_Person2`
-    FOREIGN KEY (`LocationID`)
-    REFERENCES `Test_via_eer`.`Person` (`Pod`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+  PRIMARY KEY (`LocationID`)
+  -- CONSTRAINT `fk_Location_Person1`
+--     FOREIGN KEY (`LocationID`)
+--     REFERENCES `Test_via_eer`.`Person` (`Pod`)
+--     ON DELETE NO ACTION
+--     ON UPDATE NO ACTION,
+--   CONSTRAINT `fk_Location_Person2`
+--     FOREIGN KEY (`LocationID`)
+--     REFERENCES `Test_via_eer`.`Person` (`Pod`)
+--     ON DELETE NO ACTION
+--     ON UPDATE NO ACTION
+    )
 ENGINE = InnoDB;
 
 
