@@ -46,12 +46,12 @@ def insert(df, table_name):
 
     i_cursor = mydb.cursor()
     dates = []
-    if table_name is "person":
+    if table_name == "person":
         sql = """INSERT INTO %s (idPerson, Firstname, Lastname, `Call sign`, Pob, Pod, Gender, isEnrolled, Dob, Dod) VALUES (%%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s, %%s)"""
         df = pd.DataFrame(df, columns=["ID", "Voornamen", "Achternaam", None, "Geboorteplaats", "Sterfplaats",
                                        "Geslacht", None, "geboortedatum", "Sterfdatum"])
         dates.extend(["geboortedatum", "Sterfdatum"])
-    elif table_name is "professor":
+    elif table_name == "professor":
         # How to handle multiple disciplines? What are the IDs?
         sql = """INSERT INTO %s (ProfessorID, Nobelaward, Appointment, Discipline, Doa, Employee_EmployeeID, Employee_Person_idPerson) VALUES (%%s, %%s, %%s, %%s, %%s, %%s, %%s)"""
         df = pd.DataFrame(df, columns=["ID", "Nobelprijs", "Aanstelling I", "Vakgebied I", "Datum aanstelling I",
@@ -89,7 +89,7 @@ def fixDates(df, columns):
             if Dod is None:
                 continue
             # Dod = "".join(c for c in Dod if c.isdecimal() or c is '-')
-            if len(Dod) is 4 and Dod.isdigit():
+            if len(Dod) == 4 and Dod.isdigit():
                 df = df.replace(Dod, Dod + "-01-01")
                 continue
             try:
@@ -107,7 +107,7 @@ def preprocess():
 
 # main
 if __name__ == '__main__':
-    # Using openpyxl for .xlsx files
+    # Using openpyxl for .xlsx files (pip install openpyxl)
     excel_hoogleraren_df = pd.read_excel(r"data/Hoogleraren all.xlsx", engine='openpyxl')
 
     deleteTableAll("person")
