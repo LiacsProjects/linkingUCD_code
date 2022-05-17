@@ -49,13 +49,17 @@ def merge_years(df, subject):
     all_centuries = pd.DataFrame()
     for cent in df.century.unique():
         current_century = df[df.century == cent]
-        if subject != 'year':
-            current_century.drop('year', axis=1, inplace=True)
+        if subject != 'year' and subject == 'country':
+            trimmed_century = current_century[[subject, 'count', 'century', 'iso_alpha']]
+        elif subject != 'year':
+            trimmed_century = current_century[[subject, 'count', 'century']]
+        else:
+            trimmed_century = current_century
         if subject != 'country':
-            new_century = current_century.groupby(current_century[subject]).aggregate(
+            new_century = trimmed_century.groupby(trimmed_century[subject]).aggregate(
                 {subject: 'first', 'count': 'sum', 'century': 'first'})
         else:
-            new_century = current_century.groupby(current_century[subject]).aggregate(
+            new_century = trimmed_century.groupby(trimmed_century[subject]).aggregate(
                 {subject: 'first', 'count': 'sum', 'century': 'first', 'iso_alpha': 'first'})
         if subject != 'age':
             new_century = new_century.sort_values(by=['count'], ascending=False)
@@ -65,21 +69,29 @@ def merge_years(df, subject):
 
 
 # Yearly graph
-def create_year_cent_figure(subject, century, year, mode, hover):
+def create_year_cent_figure(subject, century, year, age, mode, hover):
     selected_df, subjectx, name = get_variables(subject)
     filtered_df = selected_df[selected_df['century'] <= century[1]]
     filtered_df = filtered_df[filtered_df['century'] >= century[0]]
     filtered_df = filtered_df[filtered_df['year'] <= year[1]]
     filtered_df = filtered_df[filtered_df['year'] >= year[0]]
+    if subjectx == 'age':
+        print(age)
+        filtered_df = filtered_df[filtered_df['age'] <= int(age[1])]
+        filtered_df = filtered_df[filtered_df['age'] >= int(age[0])]
+        filtered_df = filtered_df.sort_values(by=['year', subjectx, 'century'], ascending=True)
     if mode == 'Line graph':
         fig = px.line(filtered_df, x='year', y='count', color=subjectx, markers=True,
-                      labels={subjectx: name, 'year': 'Year', 'count': 'Number of enrollments'})
+                      labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'},
+                      hover_name=subjectx, hover_data=['year', 'century'])
     elif mode == 'Scatter graph':
         fig = px.scatter(filtered_df, x='year', y='count', size='count', color=subjectx, color_continuous_scale='blues',
-                         log_x=True, labels={subjectx: name, 'year': 'Year', 'count': 'Number of enrollments'})
+                         log_x=True, labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'},
+                         hover_name=subjectx, hover_data=['year', 'century'])
     elif mode == 'Bar graph':
         fig = px.bar(filtered_df, x='year', y='count', color=subjectx, color_continuous_scale='blues',
-                     hover_name=subjectx, labels={subjectx: name, 'year': 'Year', 'count': 'Number of enrollments'})
+                     labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'},
+                     hover_name=subjectx, hover_data=['year', 'century'])
     title_cent = ''
     if century[0] == century[1]:
         title_cent += (str(century[0]) + 'th')
@@ -89,7 +101,7 @@ def create_year_cent_figure(subject, century, year, mode, hover):
         fig.update_layout(paper_bgcolor='rgb(0,0,80)', font_color='rgb(255,255,255)', plot_bgcolor='rgb(0,0,80)',
                           title=name + ' per year in the ' + title_cent + ' century')
     else:
-        fig.update_traces(mode='markers+lines', hovertemplate=None)
+        fig.update_traces(mode='markers+lines')
         fig.update_layout(paper_bgcolor='rgb(0,0,80)', font_color='rgb(255,255,255)', plot_bgcolor='rgb(0,0,80)',
                           title=name + ' per year in the ' + title_cent + ' century', hovermode=hover)
     fig.update_xaxes(type='category')
@@ -107,7 +119,7 @@ def create_cent_figure(subject, century):
     else:
         filtered_df = filtered_df.sort_values(by=['count', 'century'], ascending=False)
     fig = px.bar(filtered_df, x=subjectx, y='count', color=subjectx, color_continuous_scale='blues',
-                 hover_name=subjectx, labels={subjectx: name, 'count': 'Number of enrollments'})
+                 hover_name=subjectx, hover_data=['century'], labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'})
     title_cent = ''
     if century[0] == century[1]:
         title_cent += (str(century[0]) + 'th')
@@ -123,6 +135,8 @@ def create_cent_figure(subject, century):
 def create_subject_info_graph(subject):
     selected_df, subjectx, name = get_variables(subject)
     merged_df = merge_years(selected_df, subjectx)
+    if subjectx == 'year' or subjectx == 'age':
+        merged_df = merged_df.sort_values(by=[subjectx, 'century'], ascending=True)
     fig = px.bar(merged_df, x='century', y='count', color=subjectx, color_continuous_scale='blues',
                  hover_name=subjectx, labels={'century': 'Century', 'count': 'Number of enrollments'})
     fig.update_layout(paper_bgcolor='rgb(0,0,80)', font_color='rgb(255,255,255)', plot_bgcolor='rgb(0,0,80)',
@@ -137,7 +151,7 @@ def create_subject_info_graph(subject):
 
 
 # Country heat map
-countrymapfig = px.choropleth(data.country_df, locations='iso_alpha', color='count', hover_name='country',
+countrymapfig = px.choropleth(data.countrymap_df, locations='iso_alpha', color='count', hover_name='country',
                               color_continuous_scale='plasma', labels={'count': 'Number of enrollments'})
 countrymapfig.update_layout(paper_bgcolor='rgb(0,0,80)', font_color='rgb(255,255,255)', plot_bgcolor='rgb(0,0,80)',
                             title='Enrollments per country')

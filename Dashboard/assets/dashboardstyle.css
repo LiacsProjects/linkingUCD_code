@@ -1,5 +1,5 @@
 body {
-    background-color: darkblue !important;
+    background-color: darkblue;
 }
 
 #page_title {
@@ -21,7 +21,7 @@ p {
     color: white;
     width: 98%;
     margin: 0 auto;
-    background-color: rgb(0,0,110) !important;
+    background-color: rgb(0,0,110);
     border: 1px solid black;
 }
 
@@ -30,8 +30,8 @@ p {
     margin: 0 auto;
     margin-top: 1%;
     margin-bottom: 1%;
-    background-color: rgb(0,0,110) !important;
-    border: 1px solid black;
+    background-color: rgb(0,0,110);
+    border: 1px solid black !important;
 }
 
 .child_tab {
@@ -40,7 +40,7 @@ p {
     border: none !important;
 }
 .child_tab_selected {
-    border-top: 0px solid transparent !important;
+    border-top: 0px solid transparent;
     color: white;
     background-color: white !important;
 }
@@ -54,76 +54,29 @@ p {
 
 }
 
-.info {
+.container {
     width: 98%;
-    margin: 0 auto;
     margin-top: 1%;
-    margin-bottom: 1%;
     margin-left: 1%;
-    background-color: rgb(0,0,80) !important;
+    background-color: rgb(0,0,80);
     border: 1px solid black;
     display: inline-block;
 }
 
-.timeline {
-    width: 49%;
-    margin: 0 auto;
-    margin-bottom: 1%;
-    margin-left: 1%;
-    background-color: rgb(0,0,80) !important;
-    border: 1px solid black;
+.left_container {
+    width: 69%;
     display: inline-block;
 }
 
-.var_graph {
-    width: 48%;
-    margin: 0 auto;
-    margin-bottom: 1%;
-    margin-left: 1%;
-    background-color: rgb(0,0,80) !important;
-    border: 1px solid black;
+.right_container {
+    width: 29%;
     display: inline-block;
-}
-
-.subject {
-    margin: 0 auto;
-    margin-bottom: 1%;
-    margin-left: 1%;
-    margin-right: 1%;
-    background-color: rgb(0,0,80) !important;
-    border: 1px solid black;
-}
-
-.country_map {
-    margin: 0 auto;
-    margin-bottom: 1%;
-    margin-left: 1%;
-    margin-right: 1%;
-    background-color: rgb(0,0,80) !important;
-    border: 1px solid black;
+    vertical-align: top;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
 }
 
 #country_figure {
     margin: 1%, 1%, 1%, 1%;
     size: 50%;
-}
-
-.individual {
-    width: 59%;
-    margin: 0 auto;
-    margin-bottom: 1%;
-    margin-left: 1%;
-    background-color: rgb(0,0,80) !important;
-    border: 1px solid black;
-    display: inline-block;
-}
-
-.ind_info {
-    width: 38%;
-    margin: 0 auto;
-    margin-bottom: 1%;
-    margin-left: 1%;
-    background-color: rgb(0,0,80) !important;
-    border: 1px solid black;
-    display: inline-block;
 }

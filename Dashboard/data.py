@@ -176,8 +176,6 @@ def create_value_counts(df, name, subject):
         total_df = total_df.rename(columns={subject: 'count'})
     else:
         total_df = total_df.rename(columns={'index': name, subject: 'count'})
-    #if total_df[name].dtypes == 'int64' or total_df[name].dtypes == 'float64':
-        #total_df = total_df.sort_values(by =['century', 'year', name])
     total_df.reset_index(inplace=True, drop=True)
     return total_df
 
@@ -185,6 +183,8 @@ def create_value_counts(df, name, subject):
 # Fix wrong input
 find_nl = students_df.loc[students_df['LAND'] == 'nl']
 students_df.at[find_nl.index[0], 'LAND'] = 'NL'
+students_df = students_df[students_df.LAND != '-']
+students_df = students_df[students_df.LAND != '?']
 # Split dataframe
 students2_df = split_years(students_df)
 
@@ -196,10 +196,9 @@ year_df = create_value_counts(students2_df, 'year', 'DATUMJAAR_as')
 
 # Country
 country_df = create_value_counts(students2_df, 'country', 'LAND')
-country_df = country_df[country_df.country != '-']
-country_df = country_df[country_df.country != '?']
+country_df = country_df.replace(['Z-NL'], 'België')
 country_df.loc[country_df.country == 'NL', 'iso_alpha'] = 'NLD'
-country_df.loc[country_df.country == 'Z-NL', 'iso_alpha'] = 'BEL'
+country_df.loc[country_df.country == 'België', 'iso_alpha'] = 'BEL'
 country_df.loc[country_df.country == 'Duitsland', 'iso_alpha'] = 'DEU'
 country_df.loc[country_df.country == 'Britse eilanden', 'iso_alpha'] = 'GBR'
 country_df.loc[country_df.country == 'Frankrijk', 'iso_alpha'] = 'FRA'
@@ -215,9 +214,37 @@ country_df.loc[country_df.country == 'Portugal', 'iso_alpha'] = 'PRT'
 country_df.loc[country_df.country == 'Finland', 'iso_alpha'] = 'FIN'
 country_df.loc[country_df.country == 'Spanje', 'iso_alpha'] = 'ESP'
 country_df.loc[country_df.country == 'Afrika', 'iso_alpha'] = 'MAR'
-country_df.loc[country_df.country == 'Ijsland', 'iso_alpha'] = 'ISL'
+country_df.loc[country_df.country == 'IJsland', 'iso_alpha'] = 'ISL'
 country_df.loc[country_df.country == 'Arabie', 'iso_alpha'] = 'IRN'
 country_df.loc[country_df.country == 'Maltha', 'iso_alpha'] = 'MLT'
+country_df.loc[country_df.country == 'Osmaanse rijk', 'iso_alpha'] = 'TUR'
+
+countrymap_df = students_df['LAND'].value_counts()
+countrymap_df = countrymap_df.reset_index()
+countrymap_df = countrymap_df.rename(columns={'index': 'country', 'LAND': 'count'})
+countrymap_df = countrymap_df.replace(['Z-NL'], 'België')
+countrymap_df.loc[countrymap_df.country == 'NL', 'iso_alpha'] = 'NLD'
+countrymap_df.loc[countrymap_df.country == 'België', 'iso_alpha'] = 'BEL'
+countrymap_df.loc[countrymap_df.country == 'Duitsland', 'iso_alpha'] = 'DEU'
+countrymap_df.loc[countrymap_df.country == 'Britse eilanden', 'iso_alpha'] = 'GBR'
+countrymap_df.loc[countrymap_df.country == 'Frankrijk', 'iso_alpha'] = 'FRA'
+countrymap_df.loc[countrymap_df.country == 'Denemarken', 'iso_alpha'] = 'DNK'
+countrymap_df.loc[countrymap_df.country == 'Polen', 'iso_alpha'] = 'POL'
+countrymap_df.loc[countrymap_df.country == 'Zwitserland', 'iso_alpha'] = 'CHE'
+countrymap_df.loc[countrymap_df.country == 'Italie', 'iso_alpha'] = 'ITA'
+countrymap_df.loc[countrymap_df.country == 'Zweden', 'iso_alpha'] = 'SWE'
+countrymap_df.loc[countrymap_df.country == 'Hongarije', 'iso_alpha'] = 'HUN'
+countrymap_df.loc[countrymap_df.country == 'Noorwegen', 'iso_alpha'] = 'NOR'
+countrymap_df.loc[countrymap_df.country == 'Rusland', 'iso_alpha'] = 'RUS'
+countrymap_df.loc[countrymap_df.country == 'Portugal', 'iso_alpha'] = 'PRT'
+countrymap_df.loc[countrymap_df.country == 'Finland', 'iso_alpha'] = 'FIN'
+countrymap_df.loc[countrymap_df.country == 'Spanje', 'iso_alpha'] = 'ESP'
+countrymap_df.loc[countrymap_df.country == 'Afrika', 'iso_alpha'] = 'MAR'
+countrymap_df.loc[countrymap_df.country == 'IJsland', 'iso_alpha'] = 'ISL'
+countrymap_df.loc[countrymap_df.country == 'Arabie', 'iso_alpha'] = 'IRN'
+countrymap_df.loc[countrymap_df.country == 'Maltha', 'iso_alpha'] = 'MLT'
+countrymap_df.loc[countrymap_df.country == 'Osmaanse rijk', 'iso_alpha'] = 'TUR'
+
 
 # City
 city_df = create_value_counts(students2_df, 'city', 'VERT_PLAATS')
@@ -227,6 +254,7 @@ region_df = create_value_counts(students2_df, 'region', 'REGIO2_WERELDDEEL')
 
 # Age
 age_df = create_value_counts(students2_df, 'age', 'LEEFTIJD_as')
+age_df = age_df[age_df.age <= 90]
 
 # Faculty
 fac_df = create_value_counts(students2_df, 'faculty', 'VERT_FAC')
