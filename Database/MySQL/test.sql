@@ -151,12 +151,21 @@ CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Professor` (
   `ProfessorID` INT NOT NULL,
   `Nobelaward` VARCHAR(255) NULL COMMENT 'Holds the name of the nobelaward',
   `Appointment1` VARCHAR(255) NULL COMMENT 'Holds first appointment of professor',
-  `Discipline` VARCHAR(100) NULL COMMENT 'Holds discipline of the professor',
-  `Doa` DATE NULL COMMENT 'Holds date of appointment',
   `Appointment2` VARCHAR(255) NULL COMMENT 'Holds second appointment of professor',
   `Appointment3` VARCHAR(255) NULL COMMENT 'Holds third appointment of professor',
   `Appointment4` VARCHAR(255) NULL COMMENT 'Holds fourth appointment of professor',
-  `Appointment5` VARCHAR(255) NULL COMMENT 'Holds fifth appointment of professor',
+  `Doa1` DATE NULL COMMENT 'Holds first date of appointment',
+  `Doa2` DATE NULL COMMENT 'Holds second date of appointment',
+  `Doa3` DATE NULL COMMENT 'Holds third date of appointment',
+  `Doa4` DATE NULL COMMENT 'Holds fourth date of appointment',
+  `Discipline1` VARCHAR(100) NULL COMMENT 'Holds first discipline of the professor',
+  `Discipline2` VARCHAR(100) NULL COMMENT 'Holds second discipline of the professor',
+  `Discipline3` VARCHAR(100) NULL COMMENT 'Holds third discipline of the professor',
+  `Discipline4` VARCHAR(100) NULL COMMENT 'Holds fourth discipline of the professor',
+  `Eoa1` DATE NULL COMMENT 'Holds end of first appointment',
+  `Eoa2` DATE NULL COMMENT 'Holds end of second appointment',
+  `Eoa3` DATE NULL COMMENT 'Holds end of third appointment',
+  `Eoa4` DATE NULL COMMENT 'Holds end of fourth appointment',
   `Employee_EmployeeID` INT NOT NULL,
   `Employee_Person_idPerson` INT NOT NULL,
   PRIMARY KEY (`ProfessorID`, `Employee_EmployeeID`, `Employee_Person_idPerson`),
@@ -223,7 +232,7 @@ CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Institute` (
   `Doc` VARCHAR(45) NULL COMMENT 'Holds date of creation of the institute',
   `Faculty_FacultyID` INT NOT NULL,
   `Faculty_University_UniversityID` INT NOT NULL,
-  PRIMARY KEY (`InstituteID`),
+  PRIMARY KEY (`InstituteID`, `Faculty_FacultyID`, `Faculty_University_UniversityID`),
   INDEX `fk_Institute_Faculty1_idx` (`Faculty_FacultyID` ASC, `Faculty_University_UniversityID` ASC) VISIBLE,
   CONSTRAINT `fk_Institute_Faculty1`
     FOREIGN KEY (`Faculty_FacultyID` , `Faculty_University_UniversityID`)
@@ -268,9 +277,9 @@ CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Building` (
   `BuildingID` INT NOT NULL,
   `BuildingName` VARCHAR(45) NULL COMMENT 'Holds the name of the building',
   `Location_LocationID` INT NOT NULL,
-  PRIMARY KEY (`BuildingID`),
-  INDEX `fk_Building_Location_idx` (`Location_LocationID` ASC) VISIBLE,
-  CONSTRAINT `fk_Building_Location`
+  PRIMARY KEY (`BuildingID`, `Location_LocationID`),
+  INDEX `fk_Building_Location1_idx` (`Location_LocationID` ASC) VISIBLE,
+  CONSTRAINT `fk_Building_Location1`
     FOREIGN KEY (`Location_LocationID`)
     REFERENCES `Test_via_eer`.`Location` (`LocationID`)
     ON DELETE NO ACTION
@@ -505,10 +514,24 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Relation` (
   `RelationID` INT NOT NULL,
-  `Relationtype` VARCHAR(255) NULL COMMENT 'Holds the Relationtype, possible options are:\nGetrouwd\nGewezen echtgenoot',
+  `Relationtype` VARCHAR(255) NULL COMMENT 'Holds the relationtype, possible options are:\nGetrouwd\nGewezen echtgenoot\nGemeenschap van goederen',
   `Sor` DATE NULL COMMENT 'Holds the startdate of relationship',
   `Eor` DATE NULL COMMENT 'Holds the enddate of relationship',
-  PRIMARY KEY (`RelationID`))
+  `Mother_WomanID` INT NOT NULL,
+  `Father_ManID` INT NOT NULL,
+  PRIMARY KEY (`RelationID`, `Mother_WomanID`, `Father_ManID`),
+  INDEX `fk_Relation_Mother1_idx` (`Mother_WomanID` ASC) VISIBLE,
+  INDEX `fk_Relation_Father1_idx` (`Father_ManID` ASC) VISIBLE,
+  CONSTRAINT `fk_Relation_Mother1`
+    FOREIGN KEY (`Mother_WomanID`)
+    REFERENCES `Test_via_eer`.`Mother` (`WomanID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Relation_Father1`
+    FOREIGN KEY (`Father_ManID`)
+    REFERENCES `Test_via_eer`.`Father` (`ManID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
