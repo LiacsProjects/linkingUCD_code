@@ -194,6 +194,11 @@ century_df = create_value_counts(students2_df, 'century', 'EEUW')
 # Year
 year_df = create_value_counts(students2_df, 'year', 'DATUMJAAR_as')
 
+years5 = []
+for y in year_df['year'][0::5]:
+    years5.append(y)
+    years5.append(year_df['year'].max())
+
 # Country
 country_df = create_value_counts(students2_df, 'country', 'LAND')
 country_df = country_df.replace(['Z-NL'], 'België')
@@ -218,33 +223,6 @@ country_df.loc[country_df.country == 'IJsland', 'iso_alpha'] = 'ISL'
 country_df.loc[country_df.country == 'Arabie', 'iso_alpha'] = 'IRN'
 country_df.loc[country_df.country == 'Maltha', 'iso_alpha'] = 'MLT'
 country_df.loc[country_df.country == 'Osmaanse rijk', 'iso_alpha'] = 'TUR'
-
-countrymap_df = students_df['LAND'].value_counts()
-countrymap_df = countrymap_df.reset_index()
-countrymap_df = countrymap_df.rename(columns={'index': 'country', 'LAND': 'count'})
-countrymap_df = countrymap_df.replace(['Z-NL'], 'België')
-countrymap_df.loc[countrymap_df.country == 'NL', 'iso_alpha'] = 'NLD'
-countrymap_df.loc[countrymap_df.country == 'België', 'iso_alpha'] = 'BEL'
-countrymap_df.loc[countrymap_df.country == 'Duitsland', 'iso_alpha'] = 'DEU'
-countrymap_df.loc[countrymap_df.country == 'Britse eilanden', 'iso_alpha'] = 'GBR'
-countrymap_df.loc[countrymap_df.country == 'Frankrijk', 'iso_alpha'] = 'FRA'
-countrymap_df.loc[countrymap_df.country == 'Denemarken', 'iso_alpha'] = 'DNK'
-countrymap_df.loc[countrymap_df.country == 'Polen', 'iso_alpha'] = 'POL'
-countrymap_df.loc[countrymap_df.country == 'Zwitserland', 'iso_alpha'] = 'CHE'
-countrymap_df.loc[countrymap_df.country == 'Italie', 'iso_alpha'] = 'ITA'
-countrymap_df.loc[countrymap_df.country == 'Zweden', 'iso_alpha'] = 'SWE'
-countrymap_df.loc[countrymap_df.country == 'Hongarije', 'iso_alpha'] = 'HUN'
-countrymap_df.loc[countrymap_df.country == 'Noorwegen', 'iso_alpha'] = 'NOR'
-countrymap_df.loc[countrymap_df.country == 'Rusland', 'iso_alpha'] = 'RUS'
-countrymap_df.loc[countrymap_df.country == 'Portugal', 'iso_alpha'] = 'PRT'
-countrymap_df.loc[countrymap_df.country == 'Finland', 'iso_alpha'] = 'FIN'
-countrymap_df.loc[countrymap_df.country == 'Spanje', 'iso_alpha'] = 'ESP'
-countrymap_df.loc[countrymap_df.country == 'Afrika', 'iso_alpha'] = 'MAR'
-countrymap_df.loc[countrymap_df.country == 'IJsland', 'iso_alpha'] = 'ISL'
-countrymap_df.loc[countrymap_df.country == 'Arabie', 'iso_alpha'] = 'IRN'
-countrymap_df.loc[countrymap_df.country == 'Maltha', 'iso_alpha'] = 'MLT'
-countrymap_df.loc[countrymap_df.country == 'Osmaanse rijk', 'iso_alpha'] = 'TUR'
-
 
 # City
 city_df = create_value_counts(students2_df, 'city', 'VERT_PLAATS')
@@ -280,6 +258,23 @@ rel_df = create_value_counts(students2_df, 'religion', 'RELIGIE_INGESCHREVENE')
 # Previous Enrollments
 previous_df = create_value_counts(students2_df, 'previous', 'INS_KEER')
 
+# Individual information
+individual_df = students_df[['VOORNAAM_as', 'ACHTERNAAM_as', 'DATUMINDAG_as', 'DATUMINMND_as', 'DATUMJAAR_as', 'EEUW',
+                             'VERT_PLAATS', 'LAND', 'REGIO2_WERELDDEEL', 'LEEFTIJD_as', 'GEB_JAAR', 'VERT_FAC',
+                             'VERT_AANVULLING', 'Bijzonder', 'GRATIS_as', 'STATUS_INGESCHREVENE', 'BEROEP_INGESCHREVENE'
+                             , 'RELIGIE_INGESCHREVENE', 'INS_KEER', 'INS_EERDER', 'INS_FAC_EERDER', 'INS_FAC_ORIGINEEL']
+                            ]
+individual_df = individual_df.rename(columns={'VOORNAAM_as': 'First name', 'ACHTERNAAM_as': 'Last name',
+                                              'DATUMINDAG_as': 'Enrollment day', 'DATUMINMND_as': 'Enrollment month',
+                                              'DATUMJAAR_as': 'Enrollment year', 'EEUW': 'Century',
+                                              'VERT_PLAATS': 'City', 'LAND': 'Country', 'REGIO2_WERELDDEEL': 'Region',
+                                              'LEEFTIJD_as': 'Enrollment age', 'GEB_JAAR': 'Birth year',
+                                              'VERT_FAC': 'Faculty', 'VERT_AANVULLING': 'Extra', 'Bijzonder': 'Remark',
+                                              'GRATIS_as': 'Honor', 'STATUS_INGESCHREVENE': 'Royal title',
+                                              'BEROEP_INGESCHREVENE': 'Job', 'RELIGIE_INGESCHREVENE': 'Religion',
+                                              'INS_KEER': 'Enrollments', 'INS_EERDER': 'Previous_enrollment',
+                                              'INS_FAC_EERDER': 'Previous faculty',
+                                              'INS_FAC_ORIGINEEL': 'Original faculty'})
 #######################################################################################################################
 
 # Rectores Magnifici data handling
