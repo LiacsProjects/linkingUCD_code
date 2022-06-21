@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `LUCD_schema`.`Location` (
   `City` VARCHAR(50) NULL DEFAULT NULL COMMENT 'Holds city of the location',
   `Country` VARCHAR(30) NULL DEFAULT NULL COMMENT 'Holds country of the location',
   `Housenumber` INT NULL DEFAULT NULL COMMENT 'Holds housenumber of the location',
+  `Location date` DATE NULL COMMENT 'Holds the date of when a location is changed',
   PRIMARY KEY (`LocationID`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
@@ -200,6 +201,7 @@ DEFAULT CHARACTER SET = utf8mb3;
 CREATE TABLE IF NOT EXISTS `LUCD_schema`.`Experiment` (
   `ExperimentID` INT NOT NULL,
   `ExperimentName` VARCHAR(255) NULL DEFAULT NULL COMMENT 'Holds name of the experiment',
+  `Date` DATE NULL COMMENT 'Holds the date of the experiment',
   `Publication_PublicationID` INT NOT NULL,
   PRIMARY KEY (`ExperimentID`, `Publication_PublicationID`),
   INDEX `fk_Experiment_Publication1_idx` (`Publication_PublicationID` ASC) VISIBLE,
@@ -218,6 +220,7 @@ DEFAULT CHARACTER SET = utf8mb3;
 CREATE TABLE IF NOT EXISTS `LUCD_schema`.`University` (
   `UniversityID` INT NOT NULL,
   `UniversityName` VARCHAR(100) NULL DEFAULT NULL COMMENT 'Holds name of the university',
+  `Doc` VARCHAR(45) NULL COMMENT 'Holds the creation date of the university.',
   PRIMARY KEY (`UniversityID`))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb3;
@@ -245,8 +248,8 @@ DEFAULT CHARACTER SET = utf8mb3;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `LUCD_schema`.`Institute` (
   `InstituteID` INT NOT NULL,
-  `Doc` VARCHAR(45) NULL DEFAULT NULL COMMENT 'Holds date of creation of the institute',
   `InstituteName` VARCHAR(45) NULL,
+  `Doc` VARCHAR(45) NULL DEFAULT NULL COMMENT 'Holds date of creation of the institute',
   `Faculty_FacultyID` INT NOT NULL,
   `Faculty_University_UniversityID` INT NOT NULL,
   PRIMARY KEY (`InstituteID`, `Faculty_FacultyID`, `Faculty_University_UniversityID`),
@@ -498,22 +501,49 @@ DEFAULT CHARACTER SET = utf8mb3;
 
 
 -- -----------------------------------------------------
--- Table `LUCD_schema`.`Publication_has_Person`
+-- Table `LUCD_schema`.`Professor_has_Publication`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `LUCD_schema`.`Publication_has_Person` (
+CREATE TABLE IF NOT EXISTS `LUCD_schema`.`Professor_has_Publication` (
+  `Professor_ProfessorID` INT NOT NULL,
+  `Professor_Employee_EmployeeID` INT NOT NULL,
+  `Professor_Employee_Person_idPerson` INT NOT NULL,
   `Publication_PublicationID` INT NOT NULL,
-  `Person_idPerson` INT NOT NULL,
-  PRIMARY KEY (`Publication_PublicationID`, `Person_idPerson`),
-  INDEX `fk_Publication_has_Person_Person1_idx` (`Person_idPerson` ASC) VISIBLE,
-  INDEX `fk_Publication_has_Person_Publication1_idx` (`Publication_PublicationID` ASC) VISIBLE,
-  CONSTRAINT `fk_Publication_has_Person_Publication1`
+  PRIMARY KEY (`Professor_ProfessorID`, `Professor_Employee_EmployeeID`, `Professor_Employee_Person_idPerson`, `Publication_PublicationID`),
+  INDEX `fk_Professor_has_Publication_Publication1_idx` (`Publication_PublicationID` ASC) VISIBLE,
+  INDEX `fk_Professor_has_Publication_Professor1_idx` (`Professor_ProfessorID` ASC, `Professor_Employee_EmployeeID` ASC, `Professor_Employee_Person_idPerson` ASC) VISIBLE,
+  CONSTRAINT `fk_Professor_has_Publication_Professor1`
+    FOREIGN KEY (`Professor_ProfessorID` , `Professor_Employee_EmployeeID` , `Professor_Employee_Person_idPerson`)
+    REFERENCES `LUCD_schema`.`Professor` (`ProfessorID` , `Employee_EmployeeID` , `Employee_Person_idPerson`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Professor_has_Publication_Publication1`
     FOREIGN KEY (`Publication_PublicationID`)
     REFERENCES `LUCD_schema`.`Publication` (`PublicationID`)
     ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `LUCD_schema`.`Faculty_has_Building`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `LUCD_schema`.`Faculty_has_Building` (
+  `Faculty_FacultyID` INT NOT NULL,
+  `Faculty_University_UniversityID` INT NOT NULL,
+  `Building_BuildingID` INT NOT NULL,
+  `Building_Location_LocationID` INT NOT NULL,
+  PRIMARY KEY (`Faculty_FacultyID`, `Faculty_University_UniversityID`, `Building_BuildingID`, `Building_Location_LocationID`),
+  INDEX `fk_Faculty_has_Building_Building1_idx` (`Building_BuildingID` ASC, `Building_Location_LocationID` ASC) VISIBLE,
+  INDEX `fk_Faculty_has_Building_Faculty1_idx` (`Faculty_FacultyID` ASC, `Faculty_University_UniversityID` ASC) VISIBLE,
+  CONSTRAINT `fk_Faculty_has_Building_Faculty1`
+    FOREIGN KEY (`Faculty_FacultyID` , `Faculty_University_UniversityID`)
+    REFERENCES `LUCD_schema`.`Faculty` (`FacultyID` , `University_UniversityID`)
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Publication_has_Person_Person1`
-    FOREIGN KEY (`Person_idPerson`)
-    REFERENCES `LUCD_schema`.`Person` (`idPerson`)
+  CONSTRAINT `fk_Faculty_has_Building_Building1`
+    FOREIGN KEY (`Building_BuildingID` , `Building_Location_LocationID`)
+    REFERENCES `LUCD_schema`.`Building` (`BuildingID` , `Location_LocationID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
