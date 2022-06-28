@@ -203,26 +203,68 @@ for y in year_df['year'][0::5]:
 country_df = create_value_counts(students2_df, 'country', 'LAND')
 country_df = country_df.replace(['Z-NL'], 'België')
 country_df.loc[country_df.country == 'NL', 'iso_alpha'] = 'NLD'
+country_df.loc[country_df.country == 'NL', 'lat'] = '52.132633'
+country_df.loc[country_df.country == 'NL', 'lon'] = '5.291266'
 country_df.loc[country_df.country == 'België', 'iso_alpha'] = 'BEL'
+country_df.loc[country_df.country == 'België', 'lat'] = '50.503887'
+country_df.loc[country_df.country == 'België', 'lon'] = '4.469936'
 country_df.loc[country_df.country == 'Duitsland', 'iso_alpha'] = 'DEU'
+country_df.loc[country_df.country == 'Duitsland', 'lat'] = '51.165691'
+country_df.loc[country_df.country == 'Duitsland', 'lon'] = '10.451526'
 country_df.loc[country_df.country == 'Britse eilanden', 'iso_alpha'] = 'GBR'
+country_df.loc[country_df.country == 'Britse eilanden', 'lat'] = '55.378051'
+country_df.loc[country_df.country == 'Britse eilanden', 'lon'] = '-3.435973'
 country_df.loc[country_df.country == 'Frankrijk', 'iso_alpha'] = 'FRA'
+country_df.loc[country_df.country == 'Frankrijk', 'lat'] = '46.227638'
+country_df.loc[country_df.country == 'Frankrijk', 'lon'] = '2.213749'
 country_df.loc[country_df.country == 'Denemarken', 'iso_alpha'] = 'DNK'
+country_df.loc[country_df.country == 'Denemarken', 'lat'] = '56.26392'
+country_df.loc[country_df.country == 'Denemarken', 'lon'] = '9.501785'
 country_df.loc[country_df.country == 'Polen', 'iso_alpha'] = 'POL'
+country_df.loc[country_df.country == 'Polen', 'lat'] = '51.919438'
+country_df.loc[country_df.country == 'Polen', 'lon'] = '19.145136'
 country_df.loc[country_df.country == 'Zwitserland', 'iso_alpha'] = 'CHE'
+country_df.loc[country_df.country == 'Zwitserland', 'lat'] = '49.817492'
+country_df.loc[country_df.country == 'Zwitserland', 'lon'] = '15.472962'
 country_df.loc[country_df.country == 'Italie', 'iso_alpha'] = 'ITA'
+country_df.loc[country_df.country == 'Italie', 'lat'] = '41.87194'
+country_df.loc[country_df.country == 'Italie', 'lon'] = '12.56738'
 country_df.loc[country_df.country == 'Zweden', 'iso_alpha'] = 'SWE'
+country_df.loc[country_df.country == 'Zweden', 'lat'] = '60.128161'
+country_df.loc[country_df.country == 'Zweden', 'lon'] = '18.643501'
 country_df.loc[country_df.country == 'Hongarije', 'iso_alpha'] = 'HUN'
+country_df.loc[country_df.country == 'Hongarije', 'lat'] = '47.162494'
+country_df.loc[country_df.country == 'Hongarije', 'lon'] = '19.503304'
 country_df.loc[country_df.country == 'Noorwegen', 'iso_alpha'] = 'NOR'
+country_df.loc[country_df.country == 'Noorwegen', 'lat'] = '60.472024'
+country_df.loc[country_df.country == 'Noorwegen', 'lon'] = '8.468946'
 country_df.loc[country_df.country == 'Rusland', 'iso_alpha'] = 'RUS'
+country_df.loc[country_df.country == 'Rusland', 'lat'] = '61.52401'
+country_df.loc[country_df.country == 'Rusland', 'lon'] = '105.318756'
 country_df.loc[country_df.country == 'Portugal', 'iso_alpha'] = 'PRT'
+country_df.loc[country_df.country == 'Portugal', 'lat'] = '39.399872'
+country_df.loc[country_df.country == 'Portugal', 'lon'] = '-8.224454'
 country_df.loc[country_df.country == 'Finland', 'iso_alpha'] = 'FIN'
+country_df.loc[country_df.country == 'Finland', 'lat'] = '61.92411'
+country_df.loc[country_df.country == 'Finland', 'lon'] = '25.748151'
 country_df.loc[country_df.country == 'Spanje', 'iso_alpha'] = 'ESP'
+country_df.loc[country_df.country == 'Spanje', 'lat'] = '40.463667'
+country_df.loc[country_df.country == 'Spanje', 'lon'] = '-3.74922'
 country_df.loc[country_df.country == 'Afrika', 'iso_alpha'] = 'MAR'
+country_df.loc[country_df.country == 'Afrika', 'lat'] = '31.791702'
+country_df.loc[country_df.country == 'Afrika', 'lon'] = '-7.09262'
 country_df.loc[country_df.country == 'IJsland', 'iso_alpha'] = 'ISL'
+country_df.loc[country_df.country == 'IJsland', 'lat'] = '64.963051'
+country_df.loc[country_df.country == 'IJsland', 'lon'] = '-19.020835'
 country_df.loc[country_df.country == 'Arabie', 'iso_alpha'] = 'IRN'
+country_df.loc[country_df.country == 'Arabie', 'lat'] = '32.427908'
+country_df.loc[country_df.country == 'Arabie', 'lon'] = '53.688046'
 country_df.loc[country_df.country == 'Maltha', 'iso_alpha'] = 'MLT'
+country_df.loc[country_df.country == 'Maltha', 'lat'] = '35.937496'
+country_df.loc[country_df.country == 'Maltha', 'lon'] = '14.375416'
 country_df.loc[country_df.country == 'Osmaanse rijk', 'iso_alpha'] = 'TUR'
+country_df.loc[country_df.country == 'Osmaanse rijk', 'lat'] = '38.963745'
+country_df.loc[country_df.country == 'Osmaanse rijk', 'lon'] = '35.243322'
 
 # City
 city_df = create_value_counts(students2_df, 'city', 'VERT_PLAATS')
@@ -272,11 +314,10 @@ individual_df = individual_df.rename(columns={'VOORNAAM_as': 'First name', 'ACHT
                                               'VERT_FAC': 'Faculty', 'VERT_AANVULLING': 'Extra', 'Bijzonder': 'Remark',
                                               'GRATIS_as': 'Honor', 'STATUS_INGESCHREVENE': 'Royal title',
                                               'BEROEP_INGESCHREVENE': 'Job', 'RELIGIE_INGESCHREVENE': 'Religion',
-                                              'INS_KEER': 'Enrollments', 'INS_EERDER': 'Previous_enrollment',
+                                              'INS_KEER': 'Enrollments', 'INS_EERDER': 'Previous enrollment',
                                               'INS_FAC_EERDER': 'Previous faculty',
                                               'INS_FAC_ORIGINEEL': 'Original faculty'})
 #######################################################################################################################
-
 # Rectores Magnifici data handling
 #######################################################################################################################
 

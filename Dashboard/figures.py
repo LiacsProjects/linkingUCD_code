@@ -1,7 +1,8 @@
 # Creating dataframe
 import plotly.express as px
+import plotly.graph_objects as go
 import pandas as pd
-from dash import html
+import numpy as np
 import data
 
 
@@ -75,7 +76,7 @@ def merge_years(df, subject):
 
 
 # Yearly graph
-def create_year_cent_figure(subject, century, year, age, mode, hover):
+def create_year_cent_figure(subject, century, year, age, mode):
     selected_df, subjectx, name = get_variables(subject)
     filtered_df = selected_df[selected_df['century'] <= century[1]]
     filtered_df = filtered_df[filtered_df['century'] >= century[0]]
@@ -97,18 +98,21 @@ def create_year_cent_figure(subject, century, year, age, mode, hover):
         fig = px.bar(filtered_df, x='year', y='count', color=subjectx, color_continuous_scale='blues',
                      labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'},
                      hover_name=subjectx, hover_data=['year', 'century'])
-    title_cent = ''
-    if century[0] == century[1]:
-        title_cent += (str(century[0]) + 'th')
+    if subjectx == 'year':
+        title_cent = name + ' per year in the '
     else:
-        title_cent += (str(century[0]) + 'th' + '-' + str(century[1]) + 'th')
+        title_cent = 'Number of enrollments per ' + name + ' per year in the '
+    if century[0] == century[1]:
+        title_cent += (str(century[0]) + 'th century ')
+    else:
+        title_cent += (str(century[0]) + 'th' + '-' + str(century[1]) + 'th century')
     if mode == 'Bar graph':
-        fig.update_layout(paper_bgcolor='rgb(0,0,80)', font_color='rgb(255,255,255)', plot_bgcolor='rgb(0,0,80)',
-                          title=name + ' per year in the ' + title_cent + ' century')
+        fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
+                          title=title_cent)
     else:
         fig.update_traces(mode='markers+lines')
-        fig.update_layout(paper_bgcolor='rgb(0,0,80)', font_color='rgb(255,255,255)', plot_bgcolor='rgb(0,0,80)',
-                          title=name + ' per year in the ' + title_cent + ' century', hovermode=hover)
+        fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
+                          title=title_cent)
     fig.update_xaxes(type='category')
     return fig
 
@@ -125,13 +129,16 @@ def create_cent_figure(subject, century):
         filtered_df = filtered_df.sort_values(by=['count', 'century'], ascending=False)
     fig = px.bar(filtered_df, x=subjectx, y='count', color=subjectx, color_continuous_scale='blues',
                  hover_name=subjectx, hover_data=['century'], labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'})
-    title_cent = ''
-    if century[0] == century[1]:
-        title_cent += (str(century[0]) + 'th')
+    if subjectx == 'year':
+        title_cent = name + ' in the '
     else:
-        title_cent += (str(century[0]) + 'th' + '-' + str(century[1]) + 'th')
-    fig.update_layout(paper_bgcolor='rgb(0,0,80)', font_color='rgb(255,255,255)', plot_bgcolor='rgb(0,0,80)',
-                      title=name + ' in the ' + title_cent + ' century')
+        title_cent = 'Number of enrollments per ' + name + ' in the '
+    if century[0] == century[1]:
+        title_cent += (str(century[0]) + 'th century')
+    else:
+        title_cent += (str(century[0]) + 'th' + '-' + str(century[1]) + 'th century')
+    fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
+                      title=title_cent)
     fig.update_xaxes(type='category')
     return fig
 
@@ -144,53 +151,91 @@ def create_subject_info_graph(subject):
         merged_df = merged_df.sort_values(by=[subjectx, 'century'], ascending=True)
     fig = px.bar(merged_df, x='century', y='count', color=subjectx, color_continuous_scale='blues',
                  hover_name=subjectx, labels={'century': 'Century', 'count': 'Number of enrollments'})
-    fig.update_layout(paper_bgcolor='rgb(0,0,80)', font_color='rgb(255,255,255)', plot_bgcolor='rgb(0,0,80)',
+    fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
                       title=name + ' per century')
     fig.update_xaxes(type='category')
     return fig
 
 
-def individual_graph(subject, year):
-    selected_df = data.individual_df
-    filtered_df = selected_df[selected_df[subject] == 'NL']
-    filtered_df = filtered_df[filtered_df['year'] <= year[1]]
-    filtered_df = filtered_df[filtered_df['year'] >= year[0]]
-    fig = px.scatter(filtered_df, x='day', y='month')
-    return fig
+# subject information table
+def create_century_table(df, name):
+    table_df = pd.DataFrame(columns=['Statistic', 'Enrollments'])
+    for cent in df['century'].unique():
+        table_df.loc[len(table_df)] = ['Century', cent]
+        table_df.loc[len(table_df)] = ['Total enrollments', df.loc[df['century'] == cent, 'count'].sum().round(0)]
+        table_df.loc[len(table_df)] = ['Average enrollments', df.loc[df['century'] == cent, 'count'].mean().round(0)]
+        table_df.loc[len(table_df)] = ['Most enrollments',
+                                       df.loc[df['century'] == cent].sort_values(by='count', ascending=False).iloc[0][0]]
+        table_df.loc[len(table_df)] = ['Least enrollments',
+                                       df.loc[df['century'] == cent].sort_values(by='count', ascending=False).iloc[0][0]]
+    return table_df
 
 
 # Country heat map
 def create_country_map(min_year, max_year):
     merged_df = data.country_df[data.country_df['year'] <= max_year]
     merged_df = merged_df[merged_df['year'] >= min_year]
-    merged_df = merged_df[['country', 'count', 'iso_alpha']]
+    merged_df = merged_df[['country', 'count', 'iso_alpha', 'lat', 'lon']]
     filtered_df = merged_df.groupby(merged_df['country']).aggregate({'count': 'sum', 'iso_alpha': 'first'})
     filtered_df = filtered_df.reset_index()
     filtered_df = filtered_df.sort_values(by=['count', 'country'], ascending=False)
     fig = px.choropleth(filtered_df, locations='iso_alpha', color='count', hover_name='country',
                                   color_continuous_scale='plasma', labels={'count': 'Number of enrollments'})
-    fig.update_layout(paper_bgcolor='rgb(0,0,80)', font_color='rgb(255,255,255)', plot_bgcolor='rgb(0,0,80)',
-                                title='Enrollments per country')
+    fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
+                                title='Student enrollments per country')
     return fig, filtered_df
 
 
-# subject information table
-def create_century_table(df, name):
-    table_df = pd.DataFrame(columns=['Statistic', 'Enrollments', 'Century'])
-    for cent in df['century'].unique():
-        table_df.loc[len(table_df)] = ['Total enrollments', df.loc[df['century'] == cent, 'count'].sum().round(0), cent]
-        table_df.loc[len(table_df)] = ['Average enrollments', df.loc[df['century'] == cent, 'count'].mean().round(0), cent]
-        table_df.loc[len(table_df)] = [str(name) + ' with the most enrollments',
-                                       df.loc[df['century'] == cent].sort_values(by='count', ascending=False).iloc[0][
-                                           0].round(0), cent]
-        table_df.loc[len(table_df)] = [str(name) + ' with the least enrollments',
-                                       df.loc[df['century'] == cent].sort_values(by='count', ascending=False).iloc[0][
-                                           0].round(0), cent]
-    return table_df
+# Country line map
+def create_country_line_map(min_year, max_year):
+    merged_df = data.country_df[data.country_df['year'] <= max_year]
+    merged_df = merged_df[merged_df['year'] >= min_year]
+    merged_df = merged_df[['country', 'count', 'iso_alpha', 'lat', 'lon']]
+    filtered_df = merged_df.groupby(merged_df['country']).aggregate({'count': 'sum', 'iso_alpha': 'first', 'lat': 'first', 'lon': 'first'})
+    filtered_df = filtered_df.reset_index()
+    filtered_df = filtered_df.sort_values(by=['count', 'country'], ascending=False)
+    fig = px.scatter_geo(filtered_df, locations='iso_alpha', color='country', size='count')
+    fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
+                      title='Student enrollments per country')
+    fig.update_geos(
+        visible=True, resolution=110,
+        showcountries=True, countrycolor="black"
+    )
+    lats = np.empty(3 * len(filtered_df))
+    lats[::3] = filtered_df['lat']
+    lats[1::3] = 52.160114
+    lats[2::3] = None
+    lons = np.empty(3 * len(filtered_df))
+    lons[::3] = filtered_df['lon']
+    lons[1::3] = 4.497010
+    lons[2::3] = None
+    fig.add_trace(
+        go.Scattergeo(
+            lat=lats,
+            lon=lons,
+            mode='lines',
+            line=dict(width=1, color='blue'),
+            name='Birth Country to Leiden'
+        )
+    )
+    return fig, filtered_df
 
 
-def create_subject_table(df, name, subject, chosen):
-    return 0
+# individual map
+def create_map(city, country, birthyear, age):
+    print(city)
+    print(country)
+    print(birthyear)
+    print(age)
+    df = data.country_df
+    place = df.loc[df['country'] == country]
+    print(place)
+    info = pd.DataFrame(place.iloc[0]).T
+    print(info)
+    fig = px.choropleth(info, locations='iso_alpha', color='country', color_continuous_scale='plasma')
+    return fig
+
+
 
 # Individual chart information
 def get_unique_values(subject):
@@ -198,6 +243,7 @@ def get_unique_values(subject):
     unique_values = unique_values.tolist()
     unique_values.remove('?')
     return unique_values
+
 
 def remove_nan(subject):
     unique_values = data.individual_df[subject].unique()
