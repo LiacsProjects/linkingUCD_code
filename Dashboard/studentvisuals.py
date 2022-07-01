@@ -117,20 +117,8 @@ individual_information = html.Div(id='s_individual', className='container', chil
         html.H3('Student information:'),
         html.Div(id='individual-table-container'),
         html.Div(id='individual-detailed-information', children=[
-            html.Div(className='block', children=[
-                html.Div(id='individual-dropdown'),
-                html.Div(id='chosen-individual-information', className='inline'),
-            ]),
-            html.Div(className='block', children=[
-                html.Div(id='individual-map'),
-            ]),
-            html.Div(className='block', children=[
-                html.Div(id='compare-dropdown'),
-                html.Div(id='compare-individual-information', className='inline'),
-            ]),
-            html.Div(className='block', children=[
-                html.Div(id='compare-map'),
-            ]),
+            html.Div(id='chosen-individual-information', children=[]),
+            html.Div(id='chosen-individual-information-output'),
         ]),
         html.Div(id='individual-output'),
     ]),

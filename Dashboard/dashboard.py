@@ -1,4 +1,5 @@
-from dash import Dash, dcc, html, Input, Output, ctx, dash_table
+import dash
+from dash import Dash, dcc, html, Input, Output, ctx, dash_table, State, MATCH, ALL
 import pandas as pd
 import data
 import figures
@@ -54,7 +55,7 @@ students_content = html.Div(id='s_content', className='parent_content', children
         html.H2('Information'),
         html.P('This pages shows the information about student enrollments from the period 1575 to 1812. Choose one of '
                'the following options to see details about the enrollments of students at the university of Leiden.'),
-        dcc.Tabs(id='s_tab_bar', value='s_tab-1', className='header_tab_bar', children=[
+        dcc.Tabs(id='s_tab_bar', value='s_tab-4', className='header_tab_bar', children=[
             dcc.Tab(label='Timeline', value='s_tab-1', className='child_tab', selected_className='child_tab_selected'),
             dcc.Tab(label='Subject information', value='s_tab-2', className='child_tab',
                     selected_className='child_tab_selected'),
@@ -550,6 +551,8 @@ def create_map(min_year, max_year, map_choice):
         figure, geo_data = figures.create_country_map(min_year, max_year)
     elif map_choice == 'Line map':
         figure, geo_data = figures.create_country_line_map(min_year, max_year)
+    else:
+        figure, geo_data = figures.create_country_map(min_year, max_year)
     geo_data = geo_data[['country', 'count']]
     geo_table = dash_table.DataTable(
         data=geo_data.to_dict('records'),
@@ -577,8 +580,6 @@ def create_map(min_year, max_year, map_choice):
 # Individual table
 @app.callback(
     Output('individual-table-container', 'children'),
-    Output('individual-dropdown', 'children'),
-    Output('compare-dropdown', 'children'),
     Input('search-name', 'value'),
     Input('search-option', 'value'),
     Input('enrollment-min-input', 'value'),
@@ -597,8 +598,9 @@ def create_map(min_year, max_year, map_choice):
 def update_student_table(selected_name, search_option, min_enrol, max_enrol, min_birth, max_birth,
                          selected_age, selected_city, selected_country, selected_region, selected_faculty,
                          selected_royal, selected_job, selected_religion):
-    df = data.individual_df[['First name', 'Last name', 'Enrollment year', 'City', 'Country', 'Region', 'Enrollment age'
-        , 'Birth year', 'Faculty', 'Royal title', 'Job', 'Religion', 'Enrollments']]
+    df = data.individual_df[['First name', 'Last name', 'Enrollment year', 'City', 'Country', 'Region',
+                             'Enrollment age', 'Birth year', 'Faculty', 'Royal title', 'Job', 'Religion',
+                             'Enrollments']]
     filtered_df = df
     if selected_name is not None and selected_name != '':
         words = selected_name.split(' ')
@@ -633,61 +635,59 @@ def update_student_table(selected_name, search_option, min_enrol, max_enrol, min
     if selected_age is not None:
         filtered_df = filtered_df.loc[filtered_df['Enrollment age'] <= int(selected_age[1])]
         filtered_df = filtered_df[filtered_df['Enrollment age'] >= int(selected_age[0])]
-    if selected_city is not None:
+    if selected_city is not None and selected_city != []:
         temp_total_df = pd.DataFrame()
         for c in selected_city:
             temp_df = df.loc[df['City'] == c]
             temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
         filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-    if selected_country is not None:
+    if selected_country is not None and selected_country != []:
         temp_total_df = pd.DataFrame()
         for c in selected_country:
             temp_df = df.loc[df['Country'] == c]
             temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
         filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-    if selected_region is not None:
+    if selected_region is not None and selected_region != []:
         temp_total_df = pd.DataFrame()
         for c in selected_region:
             temp_df = df.loc[df['Region'] == c]
             temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
         filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-    if selected_faculty is not None:
+    if selected_faculty is not None and selected_faculty != []:
         temp_total_df = pd.DataFrame()
         for c in selected_faculty:
             temp_df = df.loc[df['Faculty'] == c]
             temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
         filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-    if selected_royal is not None:
+    if selected_royal is not None and selected_royal != []:
         temp_total_df = pd.DataFrame()
         for c in selected_royal:
             temp_df = df.loc[df['Royal title'] == c]
             temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
         filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-    if selected_job is not None:
+    if selected_job is not None and selected_job != []:
         temp_total_df = pd.DataFrame()
         for c in selected_job:
             temp_df = df.loc[df['Job'] == c]
             temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
         filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-    if selected_religion is not None:
+    if selected_religion is not None and selected_religion != []:
         temp_total_df = pd.DataFrame()
         for c in selected_religion:
             temp_df = df.loc[df['Religion'] == c]
             temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
         filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
     filtered_df = filtered_df.rename(columns={'Enrollment year': 'Year', 'Enrollment age': 'Age'})
-    chosen_names = []
-    first_names = filtered_df['First name'].tolist()
-    last_names = filtered_df['Last name'].tolist()
-    for f_name, l_name in zip(first_names, last_names):
-        chosen_names.append(f_name + ';' + l_name)
-    print('hier')
     return dash_table.DataTable(
         data=filtered_df.to_dict('records'),
         columns=[{'id': i, 'name': i} for i in filtered_df.columns],
         filter_action="native",
         sort_action="native",
         sort_mode="multi",
+        column_selectable='single',
+        row_selectable='multi',
+        selected_columns=[],
+        selected_rows=[],
         page_size=100,
         fixed_rows={'headers': True},
         style_cell={
@@ -727,242 +727,135 @@ def update_student_table(selected_name, search_option, min_enrol, max_enrol, min
         style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
         virtualization=True,
         id='individual-table'
-    ), dcc.Dropdown(chosen_names, placeholder='Choose a person', clearable=False,
-                    style={'background-color': 'rgba(223,223,218,0.7)', 'color': 'black', 'margin': '1% 1% 1% 1%'},
-                    id='choose-individual-dropdown', className='dropdown'), \
-           dcc.Dropdown(chosen_names, placeholder='Choose a person', clearable=False,
-                        style={'background-color': 'rgba(223,223,218,0.7)', 'color': 'black', 'margin': '1% 1% 1% 1%'},
-                        id='compare-individual-dropdown', className='dropdown')
+    )
+
+
+@app.callback(
+    Output('individual-table', 'style_data_conditional'),
+    Input('individual-table', 'selected_columns'),
+)
+def update_style(selected_columns):
+    return [{
+        'if': {'column_id': i},
+        'background_color': '#D2F3FF'
+    } for i in selected_columns]
 
 
 # Chosen person information
 @app.callback(
     Output('chosen-individual-information', 'children'),
-    Output('individual-map', 'figure'),
-    Input('choose-individual-dropdown', 'value'),
+    Input('individual-table', "derived_virtual_data"),
+    Input('individual-table', "derived_virtual_selected_rows"),
+    Input({'type': 'person-table', 'index': ALL}, 'id'),
+    State('chosen-individual-information', 'children'),
 )
-def create_individual_information(name):
-    if name is not None:
-        df = data.individual_df
-        name_parts = str(name).split(';')
-        temp_df = df.loc[df['First name'] == name_parts[0]]
-        person = temp_df.loc[temp_df['Last name'] == name_parts[1]]
-        attributes = ['First name', 'Last name', 'Birth year', 'City', 'Country', 'Region', 'Honor', 'Royal title',
-                      'Enrollment day', 'Enrollment month', 'Enrollment year', 'Enrollment age', 'Faculty', 'Job',
-                      'Religion', 'Extra', 'Remark', 'Previous enrollment', 'Previous faculty', 'Original faculty']
-        attribute_dict = {}
-        for attribute in attributes:
-            temp = person[attribute].tolist()
-            for t in temp:
-                if t in attribute_dict:
-                    if attribute_dict[attribute] != t:
-                        old = attribute_dict[attribute]
-                        print(old)
-                        new = old + ', ' + t
-                        print(new)
-                        attribute_dict.update({attribute: new})
-                else:
-                    attribute_dict[attribute] = t
-        return html.Table(id='chosen-individual-table', children=[
-            html.Tr(children=[
-                html.Td('First name'),
-                html.Td(attribute_dict.get('First name')),
-            ]),
-            html.Tr(children=[
-                html.Td('Last name'),
-                html.Td(attribute_dict.get('Last name')),
-            ]),
-            html.Tr(children=[
-                html.Td('Birth year'),
-                html.Td(attribute_dict.get('Birth year')),
-            ]),
-            html.Tr(children=[
-                html.Td('City'),
-                html.Td(attribute_dict.get('City')),
-            ]),
-            html.Tr(children=[
-                html.Td('Country'),
-                html.Td(attribute_dict.get('Country')),
-            ]),
-            html.Tr(children=[
-                html.Td('Region'),
-                html.Td(attribute_dict.get('Region')),
-            ]),
-            html.Tr(children=[
-                html.Td('Honorary title'),
-                html.Td(attribute_dict.get('Honor')),
-            ]),
-            html.Tr(children=[
-                html.Td('Royal title'),
-                html.Td(attribute_dict.get('Royal title')),
-            ]),
-            html.Tr(children=[
-                html.Td('Enrollment day'),
-                html.Td(attribute_dict.get('Enrollment day')),
-            ]),
-            html.Tr(children=[
-                html.Td('Enrollment month'),
-                html.Td(attribute_dict.get('Enrollment month')),
-            ]),
-            html.Tr(children=[
-                html.Td('Enrollment year'),
-                html.Td(attribute_dict.get('Enrollment year')),
-            ]),
-            html.Tr(children=[
-                html.Td('Enrollment age'),
-                html.Td(attribute_dict.get('Enrollment age')),
-            ]),
-            html.Tr(children=[
-                html.Td('Faculty'),
-                html.Td(attribute_dict.get('Faculty')),
-            ]),
-            html.Tr(children=[
-                html.Td('Job'),
-                html.Td(attribute_dict.get('Job')),
-            ]),
-            html.Tr(children=[
-                html.Td('Religion'),
-                html.Td(attribute_dict.get('Religion')),
-            ]),
-            html.Tr(children=[
-                html.Td('Extra'),
-                html.Td(attribute_dict.get('Extra')),
-            ]),
-            html.Tr(children=[
-                html.Td('Remark'),
-                html.Td(attribute_dict.get('Remark')),
-            ]),
-            html.Tr(children=[
-                html.Td('Previous enrollment'),
-                html.Td(attribute_dict.get('Previous enrollment')),
-            ]),
-            html.Tr(children=[
-                html.Td('Previous faculty'),
-                html.Td(attribute_dict.get('Previous faculty')),
-            ]),
-            html.Tr(children=[
-                html.Td('Original faculty'),
-                html.Td(attribute_dict.get('Original faculty')),
-            ]),
-        ]), dcc.Graph(figure=figures.create_map(attribute_dict.get('City'), attribute_dict.get('Country'),
-                               attribute_dict.get('Birth year'), attribute_dict.get('Enrollment age')), id='ind-map')
+def create_individual_information(rows, selected_rows, value, children):
+    if rows is None:
+        persons = 'No person selected'
     else:
-        return None, None
-
-
-# Compare person information
-@app.callback(
-    Output('compare-individual-information', 'children'),
-    Output('compare-map', 'figure'),
-    Input('compare-individual-dropdown', 'value'),
-)
-def create_individual_information(name):
-    if name is not None:
-        df = data.individual_df
-        name_parts = str(name).split(';')
-        temp_df = df.loc[df['First name'] == name_parts[0]]
-        person = temp_df.loc[temp_df['Last name'] == name_parts[1]]
-        attributes = ['First name', 'Last name', 'Birth year', 'City', 'Country', 'Region', 'Honor', 'Royal title',
-                      'Enrollment day', 'Enrollment month', 'Enrollment year', 'Enrollment age', 'Faculty', 'Job',
-                      'Religion', 'Extra', 'Remark', 'Previous enrollment', 'Previous faculty', 'Original faculty']
-        attribute_dict = {}
-        for attribute in attributes:
-            temp = person[attribute].tolist()
-            for t in temp:
-                if t in attribute_dict:
-                    if attribute_dict[attribute] != t:
-                        old = attribute_dict[attribute]
-                        print(old)
-                        new = old + ', ' + t
-                        print(new)
-                        attribute_dict.update({attribute: new})
-                else:
-                    attribute_dict[attribute] = t
-        return html.Table(id='compare-individual-table', children=[
-            html.Tr(children=[
-                html.Td('First name'),
-                html.Td(attribute_dict.get('First name')),
-            ]),
-            html.Tr(children=[
-                html.Td('Last name'),
-                html.Td(attribute_dict.get('Last name')),
-            ]),
-            html.Tr(children=[
-                html.Td('Birth year'),
-                html.Td(attribute_dict.get('Birth year')),
-            ]),
-            html.Tr(children=[
-                html.Td('City'),
-                html.Td(attribute_dict.get('City')),
-            ]),
-            html.Tr(children=[
-                html.Td('Country'),
-                html.Td(attribute_dict.get('Country')),
-            ]),
-            html.Tr(children=[
-                html.Td('Region'),
-                html.Td(attribute_dict.get('Region')),
-            ]),
-            html.Tr(children=[
-                html.Td('Honorary title'),
-                html.Td(attribute_dict.get('Honor')),
-            ]),
-            html.Tr(children=[
-                html.Td('Royal title'),
-                html.Td(attribute_dict.get('Royal title')),
-            ]),
-            html.Tr(children=[
-                html.Td('Enrollment day'),
-                html.Td(attribute_dict.get('Enrollment day')),
-            ]),
-            html.Tr(children=[
-                html.Td('Enrollment month'),
-                html.Td(attribute_dict.get('Enrollment month')),
-            ]),
-            html.Tr(children=[
-                html.Td('Enrollment year'),
-                html.Td(attribute_dict.get('Enrollment year')),
-            ]),
-            html.Tr(children=[
-                html.Td('Enrollment age'),
-                html.Td(attribute_dict.get('Enrollment age')),
-            ]),
-            html.Tr(children=[
-                html.Td('Faculty'),
-                html.Td(attribute_dict.get('Faculty')),
-            ]),
-            html.Tr(children=[
-                html.Td('Job'),
-                html.Td(attribute_dict.get('Job')),
-            ]),
-            html.Tr(children=[
-                html.Td('Religion'),
-                html.Td(attribute_dict.get('Religion')),
-            ]),
-            html.Tr(children=[
-                html.Td('Extra'),
-                html.Td(attribute_dict.get('Extra')),
-            ]),
-            html.Tr(children=[
-                html.Td('Remark'),
-                html.Td(attribute_dict.get('Remark')),
-            ]),
-            html.Tr(children=[
-                html.Td('Previous enrollment'),
-                html.Td(attribute_dict.get('Previous enrollment')),
-            ]),
-            html.Tr(children=[
-                html.Td('Previous faculty'),
-                html.Td(attribute_dict.get('Previous faculty')),
-            ]),
-            html.Tr(children=[
-                html.Td('Original faculty'),
-                html.Td(attribute_dict.get('Original faculty')),
-            ]),
-        ]), dcc.Graph(figure=figures.create_map(attribute_dict.get('City'), attribute_dict.get('Country'),
-                               attribute_dict.get('Birth year'), attribute_dict.get('Enrollment age')), id='com-map')
-    else:
-        return None, None
+        persons = pd.DataFrame(rows)
+    in_list = []
+    for v in value:
+        if v['index'] not in selected_rows:
+            counter = 0
+            for child in children:
+                if v['index'] == child['props']['id']['index']:
+                    children.remove(child)
+                counter += 1
+        else:
+            in_list.append(v['index'])
+    for number in selected_rows:
+        if number not in in_list:
+            person = persons.iloc[number].to_frame().T
+            new_person = html.Div(id={'type': 'person-table', 'index': number}, className='bigblock',
+                                  children=[
+                                      html.Table(className='block', style={'border': '1px solid black', 'border-collapse': 'collapse'}, children=[
+                                          html.Tr(children=[
+                                              html.Td('First name:'),
+                                              html.Td(person.get('First name')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Last name:'),
+                                              html.Td(person.get('Last name')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Birth year:'),
+                                              html.Td(person.get('Birth year')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Honorary title:'),
+                                              html.Td(person.get('Honor')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Royal title:'),
+                                              html.Td(person.get('Royal title')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Enrollment day:'),
+                                              html.Td(person.get('Enrollment day')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Enrollment month:'),
+                                              html.Td(person.get('Enrollment month')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Enrollment year:'),
+                                              html.Td(person.get('Enrollment year')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Enrollment age:'),
+                                              html.Td(person.get('Enrollment age')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Faculty:'),
+                                              html.Td(person.get('Faculty')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Job:'),
+                                              html.Td(person.get('Job')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Religion:'),
+                                              html.Td(person.get('Religion')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Extra:'),
+                                              html.Td(person.get('Extra')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Remark:'),
+                                              html.Td(person.get('Remark')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Previous enrollment:'),
+                                              html.Td(person.get('Previous enrollment')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Previous faculty:'),
+                                              html.Td(person.get('Previous faculty')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Original faculty:'),
+                                              html.Td(person.get('Original faculty')),
+                                          ]),
+                                      ]),
+                                      html.Table(className='block', children=[
+                                          html.Tr(children=[
+                                              html.Td('City:'),
+                                              html.Td(person.get('City')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Country:'),
+                                              html.Td(person.get('Country')),
+                                          ]),
+                                          html.Tr(children=[
+                                              html.Td('Region:'),
+                                              html.Td(person.get('Region')),
+                                          ]),
+                                      ]),
+                                  ])
+            children.append(new_person)
+    return children
 
 
 # Enrollment input sync
