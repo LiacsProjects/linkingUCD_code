@@ -2,3 +2,4 @@
 *.mwb*
 data/
 Database/csvs/
+__pycache__/
