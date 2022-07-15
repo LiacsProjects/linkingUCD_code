@@ -60,7 +60,7 @@ def baseSelector(register_number):
             return
 
 
-# TODO add "from" statement to retrieve only newly added records
+# TODO: add "from" statement to retrieve only newly added/updated records
 # Harvest data per set
 def sickleHarvest(register_number):
     if register_number < 0 or register_number > 13:
@@ -101,4 +101,5 @@ def sickleHarvest(register_number):
 # Main
 if __name__ == '__main__':
     # Fill in number of register
-    sickleHarvest(13)
+    for r in range(14):
+        sickleHarvest(r)
