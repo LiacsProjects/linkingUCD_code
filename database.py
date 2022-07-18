@@ -17,7 +17,7 @@ class Connection:
 
         self.engagement = "INSERT INTO engagement (EngagementID, TypeOfPosition, TypeOfExpertise, StartDate, EndDate, TypeOfFaculty, TypeOfEngagement, PersonID_engagement) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
         self.location = "INSERT INTO location (LocationID, TypeOfLocation, Country, City, Region, StartDate, EndDate, PersonID_location) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        self.person = "INSERT INTO person (PersonID, FirstName, LastName, Affix, Nickname, Gender, Nationality, TypeOfPerson_fk) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        self.person = "INSERT INTO person (PersonID, FirstName, LastName, Affix, Nickname, Gender, Nationality, Religie, Status, Job, TypeOfPerson_fk) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         self.person_to_person = "INSERT INTO person_to_person (PersonToPersonID, FromPersonID, ToPersonID, TypeOfRelation) VALUES (%s, %s, %s, %s)"
         self.type_of_engagement = "INSERT INTO type_of_engagement (EngagementID, EngagementType) VALUES (%s, %s)"
         self.type_of_expertise = "INSERT INTO  type_of_expertise (ExpertiseID, ExpertiseType) VALUES (%s, %s)"
@@ -66,18 +66,33 @@ class Connection:
         try:
             cursor.executemany(self.sql_insert_dict[table_name], list(df.itertuples(index=False, name=None)))
         except mysql.connector.Error as error:
-            # self.mydb.rollback()
+            self.mydb.rollback()
             print("Something went wrong! {}".format(error), table_name)
         cursor.close()
 
     def selectTypeTable(self, table_name):
         match table_name:
-            case "type_of_faculty":
-                return pd.read_sql_query("SELECT FacultyID, FacultyType FROM type_of_faculty", self.mydb).replace({np.nan: None})
+            case "type_of_engagement":
+                return pd.read_sql_query("SELECT EngagementID, EngagementType FROM type_of_engagement",
+                                         self.mydb).replace({np.nan: None})
             case "type_of_expertise":
-                return pd.read_sql_query("SELECT ExpertiseID, ExpertiseType FROM type_of_expertise", self.mydb).replace({np.nan: None})
+                return pd.read_sql_query("SELECT ExpertiseID, ExpertiseType FROM type_of_expertise", self.mydb).replace(
+                    {np.nan: None})
+            case "type_of_faculty":
+                return pd.read_sql_query("SELECT FacultyID, FacultyType FROM type_of_faculty", self.mydb).replace(
+                    {np.nan: None})
+            case "type_of_location":
+                return pd.read_sql_query("SELECT LocationID, LocationType FROM type_of_location", self.mydb).replace(
+                    {np.nan: None})
+            case "type_of_person":
+                return pd.read_sql_query("SELECT PersonID, PersonType FROM type_of_person", self.mydb).replace(
+                    {np.nan: None})
             case "type_of_position":
-                return pd.read_sql_query("SELECT PositionID, PositionType FROM type_of_position", self.mydb).replace({np.nan: None})
+                return pd.read_sql_query("SELECT PositionID, PositionType FROM type_of_position", self.mydb).replace(
+                    {np.nan: None})
+            case "type_of_relation":
+                return pd.read_sql_query("SELECT RelationID, RelationType FROM type_of_relation", self.mydb).replace(
+                    {np.nan: None})
             case _:
                 print("Invalid type table!")
                 return None
