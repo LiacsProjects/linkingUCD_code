@@ -4,7 +4,6 @@ Dashboard/__pycache__/*
 Dashboard/assets/credentials.txt
 Dashboard/excelfiles/accentcities.xlsx
 Dashboard/excelfiles/worldcitiespop.csv
-Dashboard/familytrees/*
 Dashboard/figures/__pycache__/*
 Dashboard/pages/__pycache__/*
 Dashboard/scraper/pictures
@@ -12,12 +11,7 @@ Dashboard/scraper/recmag.csv
 Dashboard/scraper/recmag_v1.csv
 Dashboard/scraper/recmag_v2.csv
 Dashboard/scraper/recmag_v3.csv
-Dashboard/callbacks.py
 Dashboard/dashboard_data.ipynb
-Dashboard/data_cleaning
-Dashboard/extrazaken
-Dashboard/familytree_graphviz.py
-Dashboard/familytree_igraph.py
 
 
 
