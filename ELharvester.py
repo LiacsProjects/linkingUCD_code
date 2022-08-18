@@ -100,6 +100,6 @@ def sickleHarvest(register_number):
 
 # Main
 if __name__ == '__main__':
-    # Fill in number of register
+    # Harvest data per register
     for r in range(14):
         sickleHarvest(r)
