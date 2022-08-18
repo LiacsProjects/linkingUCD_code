@@ -13,12 +13,13 @@ class Connection:
             database="lucd_reduced",
             port="3306"
         )
-        print("Connection opened")
+        # print("Connection opened")
 
-        self.engagement = "INSERT INTO engagement (EngagementID, TypeOfPosition, TypeOfExpertise, StartDate, EndDate, TypeOfFaculty, TypeOfEngagement, PersonID_engagement) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        self.location = "INSERT INTO location (LocationID, TypeOfLocation, Country, City, Region, StartDate, EndDate, PersonID_location) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        self.person = "INSERT INTO person (PersonID, FirstName, LastName, Affix, Nickname, Gender, Nationality, Religie, Status, Job, TypeOfPerson_fk) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        self.person_to_person = "INSERT INTO person_to_person (PersonToPersonID, FromPersonID, ToPersonID, TypeOfRelation) VALUES (%s, %s, %s, %s)"
+        self.cursorPrepared = self.mydb.cursor(prepared=True)
+        self.engagement = "INSERT INTO engagement (EngagementID, TypeOfEngagement, TypeOfPosition, TypeOfExpertise, TypeOfFaculty, StartDate, EndDate, SourceName, SourceRating, PersonID_engagement) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        self.location = "INSERT INTO location (LocationID, TypeOfLocation, Country, City, Street, HouseNumber, Region, StartDate, EndDate, SourceName, SourceRating, PersonID_location) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        self.person = "INSERT INTO person (PersonID, TypeOfPerson, FirstName, LastName, FamilyName, Affix, Nickname, Gender, Nationality, Religion, `Status`, Job, SourceName, SourceRating) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        self.person_to_person = "INSERT INTO relation (RelationID, TypeOfRelation, FromPersonID, ToPersonID, `Event`, SourceName, SourceWebLink, SourceRating, LinkClass, Remark) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
         self.type_of_engagement = "INSERT INTO type_of_engagement (EngagementID, EngagementType) VALUES (%s, %s)"
         self.type_of_expertise = "INSERT INTO  type_of_expertise (ExpertiseID, ExpertiseType) VALUES (%s, %s)"
         self.type_of_faculty = "INSERT INTO type_of_faculty (FacultyID, FacultyType) VALUES (%s, %s)"
@@ -41,34 +42,33 @@ class Connection:
 
     # Destructor terminates connection with database
     def __del__(self):
+        self.cursorPrepared.close()
         self.mydb.commit()
         self.mydb.close()
-        print("Connection closed")
+        # print("Connection closed")
 
     def insertOneByOne(self, table_name, df):
-        # TODO: Test speed difference with/out prepared=True
-        cursor = self.mydb.cursor(prepared=True)
-        # self.df = pd.DataFrame(self.df, columns=columns)
+        if not isinstance(df, pd.DataFrame):
+            return
 
         for entry in list(df.itertuples(index=False, name=None)):
             try:
-                cursor.execute(self.sql_insert_dict[table_name], entry)
+                self.cursorPrepared.execute(self.sql_insert_dict[table_name], entry)
             except mysql.connector.Error as error:
-                # Exclude selfmade trigger errors
-                if error.sqlstate != "45000":
-                    print("Something went wrong! {}".format(error), table_name)
-                    print(entry)
-        cursor.close()
+                print("Something went wrong! {}".format(error), table_name)
+                print(entry)
 
     # TODO: accept multiple tables and dfs in one call
     def insertMany(self, table_name, df):
-        cursor = self.mydb.cursor(prepared=True)
+        if not isinstance(df, pd.DataFrame):
+            return
+
         try:
-            cursor.executemany(self.sql_insert_dict[table_name], list(df.itertuples(index=False, name=None)))
+            self.cursorPrepared.executemany(self.sql_insert_dict[table_name],
+                                            list(df.itertuples(index=False, name=None)))
         except mysql.connector.Error as error:
             self.mydb.rollback()
             print("Something went wrong! {}".format(error), table_name)
-        cursor.close()
 
     def selectTypeTable(self, table_name):
         match table_name:
@@ -101,6 +101,31 @@ class Connection:
         cursor = self.mydb.cursor()
         cursor.execute("SELECT max(PersonID) FROM person")
         result = cursor.fetchone()[0]
+        cursor.close()
+        return result
+
+    # def getRelationMaxID(self):
+    #     return
+
+    def getProfessors(self):
+        cursor = self.mydb.cursor()
+        cursor.execute("SELECT * FROM person WHERE TypeOfPerson = 1")
+        result = cursor.fetchall()
+        cursor.close()
+        return result
+
+    def getProfIDs(self):
+        cursor = self.mydb.cursor()
+        cursor.execute("SELECT PersonID FROM person WHERE TypeOfPerson = 1")
+        result = cursor.fetchall()
+        cursor.close()
+        return result
+
+    def getProfInfo(self, prof_id):
+        cursor = self.mydb.cursor()
+        query = """SELECT FirstName, Affix, LastName, Gender, Nationality, Job, Country, City, Street, StartDate, TypeOfLocation FROM person inner join location on PersonID = PersonID_location WHERE PersonID = %s"""
+        cursor.execute(query % prof_id)
+        result = cursor.fetchall()
         cursor.close()
         return result
 
