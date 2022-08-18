@@ -51,6 +51,9 @@ def is_date(date_string):
     if date_string is None:
         return None
 
+    if date_string is np.nan:
+        return np.nan
+
     # Check if date is according to yyyy-mm-dd format
     try:
         datetime.strptime(date_string, "%Y-%m-%d")

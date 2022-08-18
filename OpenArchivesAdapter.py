@@ -57,7 +57,7 @@ def classifyRecordLink(prof_records, persons, event):
     
     Constraint based, if "checklist" fails, classification is non-, or potential link
     """
-    
+
     return
 
 

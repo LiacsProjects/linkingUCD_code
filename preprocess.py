@@ -1,6 +1,9 @@
+import numpy as np
 import pandas as pd
 import pyreadr
 import time
+import excelAdapter as exad
+from datetime import datetime
 
 
 # Remove empty columns of standardized names
@@ -23,7 +26,12 @@ def RDStoExcel():
 
 def hoogleraren():
     file_location = r"data/Hoogleraren all.xlsx"
-    df = pd.read_excel(file_location, engine='openpyxl')  # .replace({np.nan: None})
+    df = pd.read_excel(file_location, engine='openpyxl')  #.replace({np.nan: None})
+    # for qq in df['Roepnaam'].head(10):
+    #     print(qq, type(qq))
+    #     if qq is not np.nan:
+    #         print("Hello")
+    # return
 
     start1 = time.time()
     # Standardize countries
@@ -50,9 +58,15 @@ def hoogleraren():
     # Remove '?' and values between parentheses "()" from places
     df['Geboorteplaats'] = df['Geboorteplaats'].str.replace(r"\([^()]*\)", "", regex=True).str.strip('? ')
     df['Sterfplaats'] = df['Sterfplaats'].str.replace(r"\([^()]*\)", "", regex=True).str.strip('? ')
-    # t = []
-    # for col in t:
-    #     df[col] = df[col].str.title()
+
+    # Check age, if invalid (i.e. > 113 year) remove date of death
+    df['geboortedatum'] = df['geboortedatum'].apply(exad.is_date)
+    df['Sterfdatum'] = df['Sterfdatum'].apply(exad.is_date)
+    max_age = 401778
+    for ind in df.index:
+        if df.loc[ind, "geboortedatum"] is not np.nan and df.loc[ind, "Sterfdatum"] is not np.nan and df.loc[ind, "geboortedatum"] is not None and df.loc[ind, "Sterfdatum"] is not None:
+            if (datetime.strptime(df.loc[ind, "Sterfdatum"], "%Y-%m-%d") - datetime.strptime(df.loc[ind, "geboortedatum"], "%Y-%m-%d")).days > max_age:
+                df.loc[ind, "Sterfdatum"] = np.nan
     print(f"Hoogleraren data cleaned in {time.time() - start1} seconds")
 
     # start2 = time.time()
@@ -62,8 +76,20 @@ def hoogleraren():
 
 # For testing only, can be removed if needed
 def test():
+    dateColumns = ["geboortedatum", "Sterfdatum", "Datum aanstelling I", "Datum aanstelling II",
+                   "Datum aanstelling III", "Datum aanstelling IV", "Einde dienstverband I", "Einde dienstverband II",
+                   "Einde dienstverband III", "Einde dienstverband IV"]
     file_location = r"data/Hoogleraren all.xlsx"
-    df = pd.read_excel(file_location, engine='openpyxl')
+    df = pd.read_excel(file_location, parse_dates=dateColumns, engine='openpyxl')
+    # Check age if possible
+    # df['geboortedatum'] = df['geboortedatum'].apply(exad.is_date)
+    # df['Sterfdatum'] = df['Sterfdatum'].apply(exad.is_date)
+    # max_age = 401778
+    # for ind in df.index:
+    #     if df.loc[ind, "geboortedatum"] is not np.nan and df.loc[ind, "Sterfdatum"] is not np.nan and df.loc[ind, "geboortedatum"] is not None and df.loc[ind, "Sterfdatum"] is not None:
+    #         if (datetime.strptime(df.loc[ind, "Sterfdatum"], "%Y-%m-%d") - datetime.strptime(df.loc[ind, "geboortedatum"], "%Y-%m-%d")).days > max_age:
+    #             print(datetime.strptime(df.loc[ind, "Sterfdatum"], "%Y-%m-%d"))
+    #             df.loc[ind, "Sterfdatum"] = np.nan
 
 
 # Main
