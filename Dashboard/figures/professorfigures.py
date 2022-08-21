@@ -13,10 +13,70 @@ mapbox_token = config['mapbox']['token']
 
 # Create figures
 def get_variables(subject):
-    if subject == 'Rectors':
-        selected_df = data.rector_per_year
-        subjectx = 'year'
-        name = 'Number of rectores'
+    if subject == 'Gender':
+        selected_df = data.gender_df
+        subjectx = 'gender'
+        name = 'Gender'
+    if subject == 'Title':
+        selected_df = data.title_df
+        subjectx = 'title'
+        name = 'Title'
+    if subject == 'Birth':
+        selected_df = data.birth_df
+        subjectx = 'birth'
+        name = 'Birth'
+    if subject == 'Birth place':
+        selected_df = data.birthplace_df
+        subjectx = 'birth place'
+        name = 'Birth place'
+    if subject == 'Birth country':
+        selected_df = data.birthcountry_df
+        subjectx = 'country'
+        name = 'Birth country'
+    if subject == 'Death':
+        selected_df = data.death_df
+        subjectx = 'death'
+        name = 'Death'
+    if subject == 'Death place':
+        selected_df = data.deathplace_df
+        subjectx = 'death place'
+        name = 'Death place'
+    if subject == 'Death country':
+        selected_df = data.deathcountry_df
+        subjectx = 'country'
+        name = 'Death country'
+    if subject == 'Promotion':
+        selected_df = data.promotion_df
+        subjectx = 'promotion'
+        name = 'Promotion'
+    if subject == 'Promotion type':
+        selected_df = data.promotiontype_df
+        subjectx = 'promotion type'
+        name = 'Promotion type'
+    if subject == 'Promotion place':
+        selected_df = data.promotion_place_df
+        subjectx = 'promotion place'
+        name = 'Promotion place'
+    if subject == 'Appointment':
+        selected_df = data.appointment_df
+        subjectx = 'appointment'
+        name = 'Appointment'
+    if subject == 'Job':
+        selected_df = data.job_df
+        subjectx = 'job'
+        name = 'Job'
+    if subject == 'Subject area':
+        selected_df = data.subject_df
+        subjectx = 'subject area'
+        name = 'Subject area'
+    if subject == 'Faculty':
+        selected_df = data.faculty_df
+        subjectx = 'faculty'
+        name = 'Faculty'
+    if subject == 'End of employment':
+        selected_df = data.end_df
+        subjectx = 'end of employment'
+        name = 'End of employment'
     return selected_df, subjectx, name
 
 
@@ -41,21 +101,21 @@ def create_year_cent_figure(subject, century, year, mode):
     filtered_df = filtered_df[filtered_df['year'] >= year[0]]
     if mode == 'Line graph':
         fig = px.line(filtered_df, x='year', y='count', color=subjectx, markers=True,
-                      labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'},
+                      labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year', 'century': 'Century'},
                       hover_name=subjectx, hover_data=['year', 'century'])
     elif mode == 'Scatter graph':
         fig = px.scatter(filtered_df, x='year', y='count', size='count', color=subjectx, color_continuous_scale='blues',
-                         log_x=True, labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year',
+                         log_x=True, labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year',
                                              'century': 'Century'},
                          hover_name=subjectx, hover_data=['year', 'century'])
     elif mode == 'Bar graph':
         fig = px.bar(filtered_df, x='year', y='count', color=subjectx, color_continuous_scale='blues',
-                     labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'},
+                     labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year', 'century': 'Century'},
                      hover_name=subjectx, hover_data=['year', 'century'])
     if subjectx == 'year':
         title_cent = name + ' per year in the '
     else:
-        title_cent = 'Number of enrollments per ' + name + ' per year in the '
+        title_cent = 'Number of appointments per ' + name + ' per year in the '
     if century[0] == century[1]:
         title_cent += (str(century[0]) + 'th century ')
     else:
@@ -85,11 +145,11 @@ def create_cent_figure(subject, century):
         filtered_df = filtered_df.sort_values(by=['count', 'century'], ascending=False)
     fig = px.bar(filtered_df, x=subjectx, y='count', color=subjectx, color_continuous_scale='blues',
                  hover_name=subjectx, hover_data=['century'],
-                 labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'})
+                 labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year', 'century': 'Century'})
     if subjectx == 'year':
         title_cent = name + ' in the '
     else:
-        title_cent = 'Number of enrollments per ' + name + ' in the '
+        title_cent = 'Number of appointments per ' + name + ' in the '
     if century[0] == century[1]:
         title_cent += (str(century[0]) + 'th century')
     else:
@@ -107,7 +167,7 @@ def create_subject_info_graph(subject):
     if subjectx == 'year' or subjectx == 'age':
         merged_df = merged_df.sort_values(by=[subjectx, 'century'], ascending=True)
     fig = px.bar(merged_df, x='century', y='count', color=subjectx, color_continuous_scale='blues',
-                 hover_name=subjectx, labels={'century': 'Century', 'count': 'Number of enrollments'})
+                 hover_name=subjectx, labels={'century': 'Century', 'count': 'Number of appointments'})
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
                       title=name + ' per century')
     fig.update_xaxes(type='category')
@@ -116,15 +176,15 @@ def create_subject_info_graph(subject):
 
 # subject information table
 def create_century_table(df, name):
-    table_df = pd.DataFrame(columns=['Statistic', 'Enrollments'])
+    table_df = pd.DataFrame(columns=['Statistic', 'appointments'])
     for cent in df['century'].unique():
         table_df.loc[len(table_df)] = ['Century', cent]
-        table_df.loc[len(table_df)] = ['Total enrollments', df.loc[df['century'] == cent, 'count'].sum().round(0)]
-        table_df.loc[len(table_df)] = ['Average enrollments', df.loc[df['century'] == cent, 'count'].mean().round(0)]
-        table_df.loc[len(table_df)] = ['Most enrollments',
+        table_df.loc[len(table_df)] = ['Total appointments', df.loc[df['century'] == cent, 'count'].sum().round(0)]
+        table_df.loc[len(table_df)] = ['Average appointments', df.loc[df['century'] == cent, 'count'].mean().round(0)]
+        table_df.loc[len(table_df)] = ['Most appointments',
                                        df.loc[df['century'] == cent].sort_values(by='count', ascending=False).iloc[0][
                                            0]]
-        table_df.loc[len(table_df)] = ['Least enrollments',
+        table_df.loc[len(table_df)] = ['Least appointments',
                                        df.loc[df['century'] == cent].sort_values(by='count', ascending=False).iloc[0][
                                            0]]
     return table_df
@@ -132,14 +192,14 @@ def create_century_table(df, name):
 
 # Country heat map
 def create_country_map(min_year, max_year):
-    merged_df = data.country_df[data.country_df['year'] <= max_year]
+    merged_df = data.birthcountry_df[data.birthcountry_df['year'] <= max_year]
     merged_df = merged_df[merged_df['year'] >= min_year]
     merged_df = merged_df[['country', 'count', 'iso_alpha', 'lat', 'lon']]
     filtered_df = merged_df.groupby(merged_df['country']).aggregate({'count': 'sum', 'iso_alpha': 'first'})
     filtered_df = filtered_df.reset_index()
     filtered_df = filtered_df.sort_values(by=['count', 'country'], ascending=False)
     fig = px.choropleth(filtered_df, locations='iso_alpha', color='count', hover_name='country',
-                        color_continuous_scale='plasma', labels={'count': 'Number of enrollments'})
+                        color_continuous_scale='plasma', labels={'count': 'Number of appointments'})
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
                       margin=dict(l=0, r=0, t=0, b=0))
     fig.update_geos(
@@ -151,7 +211,7 @@ def create_country_map(min_year, max_year):
 
 # Country line map
 def create_country_line_map(min_year, max_year):
-    merged_df = data.country_df[data.country_df['year'] <= max_year]
+    merged_df = data.birthcountry_df[data.birthcountry_df['year'] <= max_year]
     merged_df = merged_df[merged_df['year'] >= min_year]
     merged_df = merged_df[['country', 'count', 'iso_alpha', 'lat', 'lon']]
     filtered_df = merged_df.groupby(merged_df['country']).aggregate(
@@ -187,10 +247,10 @@ def create_country_line_map(min_year, max_year):
 
 # Country animated heat map
 def create_animated_country_map(min_year, max_year):
-    merged_df = data.country_df[data.country_df['year'] <= max_year]
+    merged_df = data.birthcountry_df[data.birthcountry_df['year'] <= max_year]
     merged_df = merged_df[merged_df['year'] >= min_year]
     fig = px.choropleth(merged_df, locations='iso_alpha', color='count', hover_name='country', animation_frame='year',
-                        color_continuous_scale='plasma', labels={'count': 'Number of enrollments'})
+                        color_continuous_scale='plasma', labels={'count': 'Number of appointments'})
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
                       margin=dict(l=0, r=0, t=0, b=0))
     return fig, merged_df
@@ -202,7 +262,7 @@ def create_mapbox_heat_map(min_year, max_year):
     import json
     with open('../assets/countries.geojson') as response:
         countries = json.load(response)
-    merged_df = data.country_df[data.country_df['year'] <= max_year]
+    merged_df = data.birthcountry_df[data.birthcountry_df['year'] <= max_year]
     merged_df = merged_df[merged_df['year'] >= min_year]
     max_value = merged_df['count'].max()
     fig = px.choropleth_mapbox(
@@ -217,7 +277,7 @@ def create_mapbox_heat_map(min_year, max_year):
         center={"lat": 52, "lon": -5},
         zoom=1,
         animation_frame='year',
-        labels={'count': 'Number of enrollments'}
+        labels={'count': 'Number of appointments'}
     )
 
     fig.update_layout(
@@ -232,7 +292,7 @@ def create_mapbox_heat_map(min_year, max_year):
 
 # Country mapbox scatter map
 def create_mapbox_scatter_map(min_year, max_year):
-    merged_df = data.country_df[data.country_df['year'] <= max_year]
+    merged_df = data.birthcountry_df[data.birthcountry_df['year'] <= max_year]
     merged_df = merged_df[merged_df['year'] >= min_year]
     merged_df['color'] = merged_df['count'].fillna(0).replace(np.inf, 0)
     years = merged_df['year'].unique()
@@ -248,7 +308,7 @@ def create_mapbox_scatter_map(min_year, max_year):
                 color=merged_df.loc[merged_df['year'] == year, 'count'] /
                       merged_df.loc[merged_df['year'] == year, 'count'].max() * 100,
                 showscale=True,
-                colorbar={'title': 'Enrollments', 'titleside': 'top', 'thickness': 20, 'ticksuffix': ' %'},
+                colorbar={'title': 'Appointments', 'titleside': 'top', 'thickness': 20, 'ticksuffix': ' %'},
             ),
             'customdata': np.stack((merged_df.loc[merged_df['year'] == year, 'country'],
                                     merged_df.loc[merged_df['year'] == year, 'count'],
@@ -318,7 +378,7 @@ def create_mapbox_scatter_map(min_year, max_year):
 # individual map
 def create_map(city, country, birthyear):
     # TODO: add coordination to cities
-    origin_country = data.country_df.loc[data.country_df['country'] == country, ['country', 'iso_alpha', 'lat', 'lon']].iloc[0]
+    origin_country = data.birthcountry_df.loc[data.birthcountry_df['country'] == country, ['country', 'iso_alpha', 'lat', 'lon']].iloc[0]
     origin = pd.DataFrame(origin_country)
     countries = origin.T
     countries = countries.append({'country': 'Nederland', 'iso_alpha':'NLD', 'lat':'52.21158', 'lon':'5.600489'}, ignore_index=True)
@@ -358,12 +418,12 @@ def create_map(city, country, birthyear):
 
 # Individual chart information
 def get_unique_values(subject):
-    unique_values = data.individual_df[subject].unique()
+    unique_values = data.individual_profs_df[subject].unique()
     unique_values = unique_values.tolist()
     return unique_values
 
 
 def remove_nan(subject):
-    unique_values = data.individual_df[subject].unique()
+    unique_values = data.individual_profs_df[subject].unique()
     unique_values = unique_values[1:]
     return unique_values

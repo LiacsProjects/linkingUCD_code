@@ -11,8 +11,8 @@ def create_value_counts_professor(df, name, subject, chosen_year, century):
     total_df = pd.DataFrame()
     for year in df:
         temp_df = pd.DataFrame(year)
-        current_year = temp_df[chosen_year]
-        current_century = temp_df[century]
+        current_year = temp_df[chosen_year].iloc[0]
+        current_century = temp_df[century].iloc[0]
         tempvc_df = temp_df[subject].value_counts()
         tempvc_df = tempvc_df.reset_index()
         tempvc_df['year'] = current_year
@@ -47,8 +47,76 @@ def create_value_counts_students(df, name, subject):
     return total_df
 
 
+def add_country_info(df):
+    df.loc[df.country == 'Nederland', 'iso_alpha'] = 'NLD'
+    df.loc[df.country == 'Nederland', 'lat'] = '52.132633'
+    df.loc[df.country == 'Nederland', 'lon'] = '5.291266'
+    df.loc[df.country == 'Belgie', 'iso_alpha'] = 'BEL'
+    df.loc[df.country == 'Belgie', 'lat'] = '50.503887'
+    df.loc[df.country == 'Belgie', 'lon'] = '4.469936'
+    df.loc[df.country == 'Duitsland', 'iso_alpha'] = 'DEU'
+    df.loc[df.country == 'Duitsland', 'lat'] = '51.165691'
+    df.loc[df.country == 'Duitsland', 'lon'] = '10.451526'
+    df.loc[df.country == 'Britse eilanden', 'iso_alpha'] = 'GBR'
+    df.loc[df.country == 'Britse eilanden', 'lat'] = '55.378051'
+    df.loc[df.country == 'Britse eilanden', 'lon'] = '-3.435973'
+    df.loc[df.country == 'Frankrijk', 'iso_alpha'] = 'FRA'
+    df.loc[df.country == 'Frankrijk', 'lat'] = '46.227638'
+    df.loc[df.country == 'Frankrijk', 'lon'] = '2.213749'
+    df.loc[df.country == 'Denemarken', 'iso_alpha'] = 'DNK'
+    df.loc[df.country == 'Denemarken', 'lat'] = '56.26392'
+    df.loc[df.country == 'Denemarken', 'lon'] = '9.501785'
+    df.loc[df.country == 'Polen', 'iso_alpha'] = 'POL'
+    df.loc[df.country == 'Polen', 'lat'] = '51.919438'
+    df.loc[df.country == 'Polen', 'lon'] = '19.145136'
+    df.loc[df.country == 'Zwitserland', 'iso_alpha'] = 'CHE'
+    df.loc[df.country == 'Zwitserland', 'lat'] = '49.817492'
+    df.loc[df.country == 'Zwitserland', 'lon'] = '15.472962'
+    df.loc[df.country == 'Italie', 'iso_alpha'] = 'ITA'
+    df.loc[df.country == 'Italie', 'lat'] = '41.87194'
+    df.loc[df.country == 'Italie', 'lon'] = '12.56738'
+    df.loc[df.country == 'Zweden', 'iso_alpha'] = 'SWE'
+    df.loc[df.country == 'Zweden', 'lat'] = '60.128161'
+    df.loc[df.country == 'Zweden', 'lon'] = '18.643501'
+    df.loc[df.country == 'Hongarije', 'iso_alpha'] = 'HUN'
+    df.loc[df.country == 'Hongarije', 'lat'] = '47.162494'
+    df.loc[df.country == 'Hongarije', 'lon'] = '19.503304'
+    df.loc[df.country == 'Noorwegen', 'iso_alpha'] = 'NOR'
+    df.loc[df.country == 'Noorwegen', 'lat'] = '60.472024'
+    df.loc[df.country == 'Noorwegen', 'lon'] = '8.468946'
+    df.loc[df.country == 'Rusland', 'iso_alpha'] = 'RUS'
+    df.loc[df.country == 'Rusland', 'lat'] = '61.52401'
+    df.loc[df.country == 'Rusland', 'lon'] = '105.318756'
+    df.loc[df.country == 'Portugal', 'iso_alpha'] = 'PRT'
+    df.loc[df.country == 'Portugal', 'lat'] = '39.399872'
+    df.loc[df.country == 'Portugal', 'lon'] = '-8.224454'
+    df.loc[df.country == 'Finland', 'iso_alpha'] = 'FIN'
+    df.loc[df.country == 'Finland', 'lat'] = '61.92411'
+    df.loc[df.country == 'Finland', 'lon'] = '25.748151'
+    df.loc[df.country == 'Spanje', 'iso_alpha'] = 'ESP'
+    df.loc[df.country == 'Spanje', 'lat'] = '40.463667'
+    df.loc[df.country == 'Spanje', 'lon'] = '-3.74922'
+    df.loc[df.country == 'Afrika', 'iso_alpha'] = 'MAR'
+    df.loc[df.country == 'Afrika', 'lat'] = '31.791702'
+    df.loc[df.country == 'Afrika', 'lon'] = '-7.09262'
+    df.loc[df.country == 'IJsland', 'iso_alpha'] = 'ISL'
+    df.loc[df.country == 'IJsland', 'lat'] = '64.963051'
+    df.loc[df.country == 'IJsland', 'lon'] = '-19.020835'
+    df.loc[df.country == 'Arabie', 'iso_alpha'] = 'IRN'
+    df.loc[df.country == 'Arabie', 'lat'] = '32.427908'
+    df.loc[df.country == 'Arabie', 'lon'] = '53.688046'
+    df.loc[df.country == 'Maltha', 'iso_alpha'] = 'MLT'
+    df.loc[df.country == 'Maltha', 'lat'] = '35.937496'
+    df.loc[df.country == 'Maltha', 'lon'] = '14.375416'
+    df.loc[df.country == 'Osmaanse rijk', 'iso_alpha'] = 'TUR'
+    df.loc[df.country == 'Osmaanse rijk', 'lat'] = '38.963745'
+    df.loc[df.country == 'Osmaanse rijk', 'lon'] = '35.243322'
+    return df
+
+
 def clean_professor_data():
     profs_df = pd.read_excel('excelfiles/Hoogleraren.xlsx')
+    # Split dates
     profs_df[['birth_day', 'birth_month', 'birth_year']] = profs_df['Geboortedatum'].str.split('-', expand=True)
     profs_df[['death_day', 'death_month', 'death_year']] = profs_df['Sterfdatum'].str.split('-', expand=True)
     profs_df[['promotion_day', 'promotion_month', 'promotion_year']] = profs_df['Datum'].str.split('-', expand=True)
@@ -69,6 +137,7 @@ def clean_professor_data():
     profs_df[['or4d', 'or4m', 'or4y']] = profs_df['Datum oratie IV'].str.split('-', expand=True)
     profs_df[['ed4d', 'ed4m', 'ed4y']] = profs_df['Einde dienstverband IV'].str.split('-', expand=True)
 
+    # Fix years
     for idx, row in profs_df.iterrows():
         value = len(str(row['birth_day']))
         if value > 2:
@@ -147,6 +216,50 @@ def clean_professor_data():
             profs_df.loc[idx, 'ed4y'] = row['ed4d']
             profs_df.loc[idx, 'ed4d'] = None
 
+    job_1 = profs_df[['Aanstelling I', 'Vakgebied I', 'Leeropdracht I', 'Oratie/openbare les', 'Faculteit I', 'Reden I',
+                      'Bijzonderheden I', 'aan1y', 'or1y', 'ed1y']]
+    job_1 = job_1.rename(
+        columns={'Aanstelling I': 'appointment_type', 'Vakgebied I': 'subject_area', 'Leeropdracht I': 'teaching',
+                 'Oratie/openbare les': 'oration', 'Faculteit I': 'faculty', 'Reden I': 'reason',
+                 'Bijzonderheden I': 'details', 'aan1y': 'appointment_year', 'or1y': 'oration_year',
+                 'ed1y': 'end_year'})
+    job_2 = profs_df[
+        ['Aanstelling II', 'Vakgebied II', 'Leeropdracht II (Onderwijs of Vakgebied)',
+         'Oratie/Openbare les II', 'Faculteit II', 'Reden II',
+         'Bijzonderheden II', 'aan2y', 'or2y', 'ed2y']]
+    job_2 = job_2.rename(
+        columns={'Aanstelling II': 'appointment_type', 'Vakgebied II': 'subject_area',
+                 'Leeropdracht II (Onderwijs of Vakgebied)': 'teaching',
+                 'Oratie/Openbare les II': 'oration', 'Faculteit II': 'faculty', 'Reden II': 'reason',
+                 'Bijzonderheden II': 'details', 'aan2y': 'appointment_year', 'or2y': 'oration_year',
+                 'ed2y': 'end_year'})
+    job_3 = profs_df[
+        ['Aanstelling III', 'Vakgebied III', 'Leeropdracht III (Onderwijs of Vakgebied)',
+         'Oratie/openbare les III', 'Faculteit III', 'Reden III',
+         'Bijzonderheden III', 'aan3y', 'or3y', 'ed3y']]
+    job_3 = job_3.rename(
+        columns={'Aanstelling III': 'appointment_type', 'Vakgebied III': 'subject_area',
+                 'Leeropdracht III (Onderwijs of Vakgebied)': 'teaching',
+                 'Oratie/openbare les III': 'oration', 'Faculteit III': 'faculty', 'Reden III': 'reason',
+                 'Bijzonderheden III': 'details', 'aan3y': 'appointment_year', 'or3y': 'oration_year',
+                 'ed3y': 'end_year'})
+    job_4 = profs_df[
+        ['Aanstelling IV', 'Vakgebied IV', 'Leeropdracht IV (Onderwijs of Vakgebied)',
+         'Oratie/openbare les IV', 'Faculteit IV', 'Reden IV',
+         'Bijzonderheden IV', 'aan4y', 'or4y', 'ed4y']]
+    job_4 = job_4.rename(
+        columns={'Aanstelling IV': 'appointment_type', 'Vakgebied IV': 'subject_area',
+                 'Leeropdracht IV (Onderwijs of Vakgebied)': 'teaching',
+                 'Oratie/openbare les IV': 'oration', 'Faculteit IV': 'faculty', 'Reden IV': 'reason',
+                 'Bijzonderheden IV': 'details', 'aan4y': 'appointment_year', 'or4y': 'oration_year',
+                 'ed4y': 'end_year'})
+
+    all_jobs = pd.concat([job_1, job_2], axis=0)
+    all_jobs = pd.concat([all_jobs, job_3], axis=0)
+    all_jobs = pd.concat([all_jobs, job_4], axis=0)
+    all_jobs = all_jobs.dropna(how='all')
+
+    # Create centuries
     profs_df['birth_century'] = profs_df['birth_year'].astype(str).str[:2]
     profs_df['birth_century'] = profs_df['birth_century'].replace(['na', 'No'], '0')
     profs_df['birth_century'] = profs_df['birth_century'].astype(int) + 1
@@ -159,19 +272,36 @@ def clean_professor_data():
     profs_df['promotion_century'] = profs_df['promotion_century'].replace(['na', 'No'], '0')
     profs_df['promotion_century'] = profs_df['promotion_century'].astype(int) + 1
     profs_df['promotion_century'] = profs_df['promotion_century'].apply(lambda x: np.nan if x == 1 else x)
-    profs_df['aanstelling_century'] = profs_df['aan1y'].astype(str).str[:2]
-    profs_df['aanstelling_century'] = profs_df['aanstelling_century'].replace(['na', 'No'], '0')
-    profs_df['aanstelling_century'] = profs_df['aanstelling_century'].astype(int) + 1
-    profs_df['aanstelling_century'] = profs_df['aanstelling_century'].apply(lambda x: np.nan if x == 1 else x)
-    profs_df['einde_century'] = profs_df['ed1y'].astype(str).str[:2]
-    profs_df['einde_century'] = profs_df['einde_century'].replace(['na', 'No'], '0')
-    profs_df['einde_century'] = profs_df['einde_century'].astype(int) + 1
-    profs_df['einde_century'] = profs_df['einde_century'].apply(lambda x: np.nan if x == 1 else x)
-    profsbirth_df = split_years(profs_df, 'birth_year')
-    profsdeath_df = split_years(profs_df, 'death_year')
-    profspromotion_df = split_years(profs_df, 'promotion_year')
-    profsaanstelling_df = split_years(profs_df, 'aan1y')
-    profseinde_df = split_years(profs_df, 'ed1y')
+    profs_df['appointment_century'] = profs_df['aan1y'].astype(str).str[:2]
+    profs_df['appointment_century'] = profs_df['appointment_century'].replace(['na', 'No'], '0')
+    profs_df['appointment_century'] = profs_df['appointment_century'].astype(int) + 1
+    profs_df['appointment_century'] = profs_df['appointment_century'].apply(lambda x: np.nan if x == 1 else x)
+    profs_df['end_century'] = profs_df['ed1y'].astype(str).str[:2]
+    profs_df['end_century'] = profs_df['end_century'].replace(['na', 'No'], '0')
+    profs_df['end_century'] = profs_df['end_century'].astype(int) + 1
+    profs_df['end_century'] = profs_df['end_century'].apply(lambda x: np.nan if x == 1 else x)
+    all_jobs['appointment_century'] = all_jobs['appointment_year'].astype(str).str[:2]
+    all_jobs['appointment_century'] = all_jobs['appointment_century'].replace(['na', 'No'], '0')
+    all_jobs['appointment_century'] = all_jobs['appointment_century'].astype(int) + 1
+    all_jobs['appointment_century'] = all_jobs['appointment_century'].apply(lambda x: np.nan if x == 1 else x)
+    all_jobs['end_century'] = all_jobs['end_year'].astype(str).str[:2]
+    all_jobs['end_century'] = all_jobs['end_century'].replace(['na', 'No'], '0')
+    all_jobs['end_century'] = all_jobs['end_century'].astype(int) + 1
+    all_jobs['end_century'] = all_jobs['end_century'].apply(lambda x: np.nan if x == 1 else x)
+
+    temp_birth = profs_df.dropna(subset=['birth_year'])
+    profsbirth_df = split_years(temp_birth.sort_values(by='birth_year'), 'birth_year')
+    temp_death = profs_df.dropna(subset=['death_year'])
+    profsdeath_df = split_years(temp_death.sort_values(by='death_year'), 'death_year')
+    temp_promotion = profs_df.dropna(subset=['promotion_year'])
+    profspromotion_df = split_years(temp_promotion.sort_values(by='promotion_year'), 'promotion_year')
+    temp_aanstelling = all_jobs.dropna(subset=['appointment_year'])
+    profsaanstelling_df = split_years(temp_aanstelling.sort_values(by='appointment_year'), 'appointment_year')
+    temp_einde = all_jobs.dropna(subset=['end_year'])
+    profseinde_df = split_years(temp_einde.sort_values(by='end_year'), 'end_year')
+
+    all_jobs.to_excel('excelfiles/professors_all_jobs.xlsx', index=False)
+    profs_df.to_excel('excelfiles/professors_data.xlsx', index=False)
 
     # Gender
     gender_df = create_value_counts_professor(profsbirth_df, 'gender', 'Geslacht', 'birth_year', 'birth_century')
@@ -182,82 +312,114 @@ def clean_professor_data():
     title_df.to_excel('excelfiles/professors_title.xlsx', index=False)
 
     # Birth
-    birth_df = create_value_counts_professor(profsbirth_df, 'year', 'birth_year', 'birth_year', 'birth_century')
+    birth_df = create_value_counts_professor(profsbirth_df, 'birth', 'birth_year', 'birth_year', 'birth_century')
     birth_df.to_excel('excelfiles/professors_birth.xlsx', index=False)
 
     # Birthplace
-    birthplace_df = create_value_counts_professor(profsbirth_df, 'birth place', 'Geboorteplaats', 'birth_year', 'birth_century')
+    birthplace_df = create_value_counts_professor(profsbirth_df, 'birth place', 'Geboorteplaats', 'birth_year',
+                                                  'birth_century')
     birthplace_df.to_excel('excelfiles/professors_birth_place.xlsx', index=False)
 
     # Birthcountry
-    birthcountry_df = create_value_counts_professor(profsbirth_df, 'birth country', 'Geboorteland', 'birth_year', 'birth_century')
+    birthcountry_df = create_value_counts_professor(profsbirth_df, 'country', 'Geboorteland', 'birth_year',
+                                                    'birth_century')
+    birthcountry_df = add_country_info(birthcountry_df)
     birthcountry_df.to_excel('excelfiles/professors_birth_country.xlsx', index=False)
 
     # Death
-    death_df = create_value_counts_professor(profsdeath_df, 'year', 'death_year', 'death_year', 'death_century')
+    death_df = create_value_counts_professor(profsdeath_df, 'death', 'death_year', 'death_year', 'death_century')
     death_df.to_excel('excelfiles/professors_death.xlsx', index=False)
 
     # Deathplace
-    deathplace_df = create_value_counts_professor(profsdeath_df, 'death place', 'Sterfplaats', 'death_year', 'death_century')
+    deathplace_df = create_value_counts_professor(profsdeath_df, 'death place', 'Sterfplaats', 'death_year',
+                                                  'death_century')
     deathplace_df.to_excel('excelfiles/professors_death_place.xlsx', index=False)
 
     # Deathcountry
-    deathcountry_df = create_value_counts_professor(profsdeath_df, 'death country', 'Land van overlijden', 'death_year', 'death_century')
+    deathcountry_df = create_value_counts_professor(profsdeath_df, 'country', 'Land van overlijden', 'death_year',
+                                                    'death_century')
+    deathcountry_df = add_country_info(deathcountry_df)
     deathcountry_df.to_excel('excelfiles/professors_death_country.xlsx', index=False)
 
     # promotion
-    promotion_df = create_value_counts_professor(profspromotion_df, 'promotion', 'Datum', 'promotion_year', 'promotion_century')
+    promotion_df = create_value_counts_professor(profspromotion_df, 'promotion', 'Datum', 'promotion_year',
+                                                 'promotion_century')
     promotion_df.to_excel('excelfiles/professors_promotion.xlsx', index=False)
 
     # Promotion type
-    promotiontype_df = create_value_counts_professor(profspromotion_df, 'promotion type', 'Examentype', 'promotion_year', 'promotion_century')
+    promotiontype_df = create_value_counts_professor(profspromotion_df, 'promotion type', 'Examentype',
+                                                     'promotion_year', 'promotion_century')
     promotiontype_df.to_excel('excelfiles/professors_promotion_type.xlsx', index=False)
 
     # Promotionplace
-    promotionplace_df = create_value_counts_professor(profspromotion_df, 'promotion place', 'Instelling', 'promotion_year', 'promotion_century')
+    promotionplace_df = create_value_counts_professor(profspromotion_df, 'promotion place', 'Instelling',
+                                                      'promotion_year', 'promotion_century')
     promotionplace_df.to_excel('excelfiles/professors_promotion_place.xlsx', index=False)
 
     # Appointment
-    appointment_df = create_value_counts_professor(profsaanstelling_df, 'appointment', 'Datum aanstelling I', 'aan1y', 'aanstelling_century')
+    appointment_df = create_value_counts_professor(profsaanstelling_df, 'appointment', 'appointment_year',
+                                                   'appointment_year', 'appointment_century')
     appointment_df.to_excel('excelfiles/professors_appointment.xlsx', index=False)
 
     # Job
-    job_df = create_value_counts_professor(profsaanstelling_df, 'job', 'Aanstelling I', 'aan1y', 'aanstelling_century')
+    job_df = create_value_counts_professor(profsaanstelling_df, 'job', 'appointment_type', 'appointment_year',
+                                           'appointment_century')
     job_df.to_excel('excelfiles/professors_job.xlsx', index=False)
 
     # Subject area
-    subject_df = create_value_counts_professor(profsaanstelling_df, 'subject area', 'Vakgebied I', 'aan1y', 'aanstelling_century')
+    subject_df = create_value_counts_professor(profsaanstelling_df, 'subject area', 'subject_area', 'appointment_year',
+                                               'appointment_century')
     subject_df.to_excel('excelfiles/professors_subject.xlsx', index=False)
 
     # Faculty
-    faculty_df = create_value_counts_professor(profsaanstelling_df, 'faculty', 'Faculteit I', 'aan1y', 'aanstelling_century')
+    faculty_df = create_value_counts_professor(profsaanstelling_df, 'faculty', 'faculty', 'appointment_year',
+                                               'appointment_century')
     faculty_df.to_excel('excelfiles/professors_faculty.xlsx', index=False)
 
     # End
-    end_df = create_value_counts_professor(profseinde_df, 'end of employment', 'Einde dienstverband I', 'ed1y', 'einde_century')
+    end_df = create_value_counts_professor(profseinde_df, 'end of employment', 'end_year', 'end_year',
+                                           'end_century')
     end_df.to_excel('excelfiles/professors_end.xlsx', index=False)
 
     # Profs information
     individual_profs_df = profs_df[['Voornamen', 'Achternaam', 'Geslacht', 'Titulatuur 1', 'Geboortedatum',
-                                    'Geboorteplaats', 'Geboorteland', 'Sterfdatum', 'Sterfplaats', 'Land van overlijden'
-                                    , 'Examentype', 'Instelling', 'Datum', 'Proefschrift', 'Aanstelling I',
-                                    'Vakgebied I', 'Datum aanstelling I', 'Ambtsaanvaarding I', 'Leeropdracht I',
-                                    'Datum oratie I', 'Oratie/openbare les', 'Faculteit I', 'Einde dienstverband I',
-                                    'Reden I', 'Bijzonderheden I']]
+                                    'birth_year', 'Geboorteplaats', 'Geboorteland', 'Sterfdatum', 'death_year',
+                                    'Sterfplaats', 'Land van overlijden', 'Examentype', 'Instelling', 'Datum',
+                                    'promotion_year', 'Proefschrift', 'Aanstelling I', 'aan1y', 'Vakgebied I',
+                                    'Datum aanstelling I', 'Ambtsaanvaarding I', 'Leeropdracht I', 'Datum oratie I',
+                                    'Oratie/openbare les', 'Faculteit I', 'Einde dienstverband I', 'ed1y', 'Reden I',
+                                    'Bijzonderheden I']]
     individual_profs_df = individual_profs_df.rename(columns={'Voornamen': 'First name', 'Achternaam': 'Last name',
                                                               'Geslacht': 'Gender', 'Titulatuur 1': 'Title',
-                                                              'Geboortedatum': 'Birth date', 'Geboorteplaats': 'Birth place',
-                                                              'Geboorteland': 'Birth country', 'Sterfdatum': 'Death date',
-                                                              'Sterfplaats': 'Death place', 'Land van overlijden': 'Death country'
-                                    , 'Examentype': 'Promotion', 'Instelling': 'Promotion place', 'Datum': 'Promotion date',
+                                                              'Geboortedatum': 'Birth date',
+                                                              'birth_year': 'Birth year',
+                                                              'Geboorteplaats': 'Birth place',
+                                                              'Geboorteland': 'Birth country',
+                                                              'Sterfdatum': 'Death date',
+                                                              'death_year': 'Death year',
+                                                              'Sterfplaats': 'Death place',
+                                                              'Land van overlijden': 'Death country',
+                                                              'Examentype': 'Promotion',
+                                                              'Instelling': 'Promotion place',
+                                                              'Datum': 'Promotion date',
+                                                              'promotion_year': 'Promotion year',
                                                               'Proefschrift': 'Thesis', 'Aanstelling I': 'Job',
-                                                              'Vakgebied I': 'Subject area', 'Datum aanstelling I': 'Appointment date',
-                                                              'Leeropdracht I': 'Teaching', 'Datum oratie I': 'Oration date',
-                                                              'Oratie/openbare les': 'Oration', 'Faculteit I': 'Faculty',
-                                                              'Einde dienstverband I': 'End of service', 'Reden I': 'Reason',
+                                                              'Vakgebied I': 'Subject area',
+                                                              'Datum aanstelling I': 'Appointment date',
+                                                              'aan1y': 'Appointment year',
+                                                              'Leeropdracht I': 'Teaching',
+                                                              'Datum oratie I': 'Oration date',
+                                                              'Oratie/openbare les': 'Oration',
+                                                              'Faculteit I': 'Faculty',
+                                                              'Einde dienstverband I': 'End of employment',
+                                                              'ed1y': 'End of employmnet year',
+                                                              'Reden I': 'Reason',
                                                               'Bijzonderheden I': 'Details'})
+    individual_profs_df['Rating'] = 3
+    individual_profs_df['Rating'] = individual_profs_df['Rating'].apply(lambda x: '⭐⭐⭐' if x >= 3 else ('⭐⭐' if x >= 2
+                                                                                                        else (
+        '⭐' if x >= 1 else '')))
     individual_profs_df.to_excel('excelfiles/professors_individual.xlsx', index=False)
-    profs_df.to_excel('excelfiles/professors_data.xlsx', index=False)
     return print("Professor data cleaned")
 
 
@@ -462,6 +624,6 @@ def check_missing_values():
 
 
 clean_professor_data()
-# clean_student_data()
-# clean_recmag_data()
-# check_missing_values()
+clean_student_data()
+clean_recmag_data()
+check_missing_values()
