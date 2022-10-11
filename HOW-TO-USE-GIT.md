@@ -45,6 +45,11 @@ $ git pull origin "branchname"
 $ git merge main  
 $ git push origin "branchname"
 
+## Remote and fetch branch changes
+$ git remote
+$ git remote -v
+$ git fetch
+
 ## Delete branch 
 $ git branch -d "branchname"
 
