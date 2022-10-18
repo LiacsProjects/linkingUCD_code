@@ -1,7 +1,7 @@
 ######################################################################################################## LOCAL
 # added for local server
 # extra regel om environmental variable te bepalen
-#import Add_environment_variable
+import Add_environment_variable
 
 ######################################################################################################## IMPORT
 # import modules
@@ -14,17 +14,21 @@ from figures import professorfigures, studentfigures, rectorfigures
 
 ########################################################################################################## DASH
 # Configurate dash application voor DASH
-app = Dash(__name__, suppress_callback_exceptions=True,
-           routes_pathname_prefix='/',
-           requests_pathname_prefix='/dashboard/')
+#app = Dash(__name__, suppress_callback_exceptions=True,
+#           routes_pathname_prefix='/',
+#           requests_pathname_prefix='/dashboard/')
            
 ########################################################################################################## SERVER
 # Configurate dash application voor server
-server = app.server
+#server = app.server
+
+# Parameters and constants
+YEAR_STEP = 5
+MARK_SPACING = 10
 
 ########################################################################################################## JUPYTER
 # Configurate dash application for JupyterDash
-#app = Dash(__name__)
+app = Dash(__name__)
 #app.config.suppress_callback_exceptions = True
 
 ########################################################################################################### START
@@ -220,7 +224,7 @@ def render_content(tab):
 # Year slider
 @app.callback(
     Output('p-year-slider-container', 'children'),
-    Input('p-year-century-slider', 'value'),
+    [Input('p-year-century-slider', 'value')]
 )
 def update_year_slider(century):
     current_century = data.all_dates_df[(data.all_dates_df['century'] <= century[-1])]
@@ -228,14 +232,17 @@ def update_year_slider(century):
     for y in current_century['year'][0::5]:
         years.append(y)
         years.append(current_century['year'].max())
-    return (dcc.RangeSlider(
-        current_century['year'].min(),
-        current_century['year'].max(),
-        10,
-        value=[current_century['year'].min(), current_century['year'].max()],
-        marks={str(year): str(year) for year in years},
-        id='p-year-slider'
-    ))
+    slider = dcc.RangeSlider(
+                 current_century['year'].min(),
+                 current_century['year'].max(),
+                 YEAR_STEP,
+                 value=[current_century['year'].min(), current_century['year'].max()],
+                 marks={str(year): str(year) for year in 
+                                   range(current_century['year'].min(), current_century['year'].max() ,
+                                   int((current_century['year'].max() - current_century['year'].min()) / MARK_SPACING )) },
+                 id='p-year-slider',
+                )
+    return slider
 
 
 # year-century graph
@@ -1076,15 +1083,17 @@ def update_year_slider(century):
     for y in current_century['year'][0::5]:
         years.append(y)
         years.append(current_century['year'].max())
-    return (dcc.RangeSlider(
-        current_century['year'].min(),
-        current_century['year'].max(),
-        10,
-        value=[current_century['year'].min(), current_century['year'].max()],
-        marks={str(year): str(year) for year in years},
-        id='year-slider'
-    ))
-
+    slider = dcc.RangeSlider(
+                 current_century['year'].min(),
+                 current_century['year'].max(),
+                 YEAR_STEP,
+                 value=[current_century['year'].min(), current_century['year'].max()],
+                 marks={str(year): str(year) for year in 
+                                   range(current_century['year'].min(), current_century['year'].max() ,
+                                   int((current_century['year'].max() - current_century['year'].min()) / MARK_SPACING )) },
+                 id='year-slider',
+                )
+    return slider
 
 # year-century graph
 @app.callback(
@@ -1907,15 +1916,17 @@ def r_update_year_slider(century):
     for y in current_century['year'][0::5]:
         years.append(y)
         years.append(current_century['year'].max())
-    return (dcc.RangeSlider(
-        current_century['year'].min(),
-        current_century['year'].max(),
-        10,
-        value=[current_century['year'].min(), current_century['year'].max()],
-        marks={str(year): str(year) for year in years},
-        id='r-year-slider'
-    ))
-
+    slider = dcc.RangeSlider(
+                 current_century['year'].min(),
+                 current_century['year'].max(),
+                 YEAR_STEP,
+                 value=[current_century['year'].min(), current_century['year'].max()],
+                 marks={str(year): str(year) for year in 
+                                   range(current_century['year'].min(), current_century['year'].max() ,
+                                   int((current_century['year'].max() - current_century['year'].min()) / MARK_SPACING )) },
+                 id='r-year-slider',
+                )
+    return slider
 
 # year-century graph
 @app.callback(
@@ -2331,12 +2342,13 @@ def synchronise_dates(min_year, max_year):
             max_year += 1
     return min_year, max_year
 
+
 ################################################################################################ LOCAL JUPYTER AND DASH
-#if __name__ == '__main__':
-#    app.run_server(port=8050, debug=False)
+if __name__ == '__main__':
+    app.run_server(port=8050, debug=False)
 #
 ################################################################################################ SERVER
-if __name__ == '__main__':
-    app.run_server(debug=True)
+#if __name__ == '__main__':
+#   app.run_server(debug=True)
 #
 ################################################################################################# END
