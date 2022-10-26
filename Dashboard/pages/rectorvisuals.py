@@ -1,8 +1,26 @@
 # Creating dataframe
+# Import modules
 from dash import dcc, html
 import data
-from figures import rectorfigures
 
+# Parameters and constants
+CENTURY_STEP     = 1
+YEAR_STEP        = 5
+MARK_SPACING     = 10
+START_CENTURY    = 16
+SUBJECT_DROPDOWN = ['Rectors']                 
+GRAPH_DROPDOWN   = ['Line graph', 'Scatter graph', 'Bar graph']
+
+# Data year calculaionss
+from figures import rectorfigures
+from figures import professorfigures
+current_century = data.all_dates_df[(data.all_dates_df['century'] <= START_CENTURY)]
+years = []
+for y in current_century['year'][0::YEAR_STEP]:
+        years.append(y)
+years.append(current_century['year'].max() )
+
+# layout page 
 timeline = html.Div(id='r_timeline', className='container', children=[
     html.Div(id='r_timeline_header', className='page_header', children=[
         html.H1('Timeline')
@@ -12,7 +30,7 @@ timeline = html.Div(id='r_timeline', className='container', children=[
         html.H3('Graph settings:'),
         html.P('Select Subject:'),
         dcc.Dropdown(
-            ['Rectors'], 'Rectors', placeholder='Choose a subject', clearable=False,
+            SUBJECT_DROPDOWN, 'Rectors', placeholder='Choose a subject', clearable=False,
             id='r-year-century-subject-dropdown', className='dropdown'
         ),
 
@@ -20,19 +38,23 @@ timeline = html.Div(id='r_timeline', className='container', children=[
         dcc.RangeSlider(
             data.rector_years['century'].min(),
             data.rector_years['century'].max(),
-            1,
+            CENTURY_STEP,
             value=[data.rector_years['century'].min(), data.rector_years['century'].min()],
             marks={str(cent): str(cent) for cent in data.rector_years['century']},
             id='r-year-century-slider'
         ),
         html.P('Select year range:'),
-
-        html.Div(id='r-year-slider'),
+        dcc.RangeSlider(
+                        current_century['year'].min(),
+                        current_century['year'].max(),
+                        YEAR_STEP,
+                        id='r-year-slider',
+                        ),
         html.Div(id='r-year-slider-container'),
 
         html.P('Select graph type:'),
         dcc.Dropdown(
-            ['Line graph', 'Scatter graph', 'Bar graph'], 'Scatter graph', placeholder='Choose a graph style',
+            GRAPH_DROPDOWN, 'Scatter graph', placeholder='Choose a graph style',
             clearable=False, id='r-year-century-dropdown', className='dropdown'
         ),
         html.Div(id='r-year-century-graph'),
