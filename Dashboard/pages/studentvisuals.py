@@ -10,12 +10,15 @@ YEAR_STEP        = 5
 AGE_STEP         = 10
 MARK_SPACING     = 10
 START_CENTURY    = 16
+DEFAULT_SUBJECT = 'Number of enrollments'
 SUBJECT_DROPDOWN = ['Number of enrollments', 'Origin countries', 'Origin cities', 'Enrollment ages',
                    'Enrollment faculties', 'Royal status', 'Student jobs', 'Student religion']
+DEFAULT_GRAPH_SUBJECT = 'Number of enrollments'
 GRAPH_SUBJECT_DROPDOWN = ['Number of enrollments', 'Origin cities', 'Enrollment ages', 'Enrollment faculties', 
                           'Royal status', 'Student jobs', 'Student religion']
-GEOMAPS_OPTIONS  = ['Heat map', 'Line map', 'MP Heat map', 'MP Scatter map', 'Animated map']                  
-GRAPH_DROPDOWN   = ['Line graph', 'Scatter graph', 'Bar graph']
+GEOMAPS_OPTIONS  = ['Heat map', 'Line map', 'MP Heat map', 'MP Scatter map', 'Animated map']
+DEFAULT_GRAPH = 'Bar graph'
+GRAPH_DROPDOWN   = ['Line graph', 'Bar graph']
 
 # Data year calculaionss
 from figures import studentfigures
@@ -36,7 +39,7 @@ timeline = html.Div(id='s_timeline', className='container', children=[
         html.P('Select Subject:'),
         dcc.Dropdown(
             SUBJECT_DROPDOWN,
-            'Number of enrollments', placeholder='Choose a subject', clearable=False,
+            DEFAULT_SUBJECT, placeholder='Choose a subject', clearable=False,
             id='year-century-subject-dropdown', className='dropdown'
         ),
 
@@ -60,7 +63,7 @@ timeline = html.Div(id='s_timeline', className='container', children=[
 
         html.P('Select graph type:'),
         dcc.Dropdown(
-            GRAPH_DROPDOWN, 'Scatter graph', placeholder='Choose a graph style',
+            GRAPH_DROPDOWN, DEFAULT_GRAPH, placeholder='Choose a graph style',
             clearable=False, id='year-century-dropdown', className='dropdown'
         ),
         html.Div(id='year-century-graph'),
@@ -94,7 +97,7 @@ subject_information = html.Div(id='s_subject_info', className='container', child
         html.H3('Subject information'),
         dcc.Dropdown(
             SUBJECT_DROPDOWN,
-            'Number of enrollments', placeholder='Choose a subject', clearable=False,
+            DEFAULT_SUBJECT, placeholder='Choose a subject', clearable=False,
             style={'background-color': 'rgba(223,223,218,0.7)', 'color': 'black', 'margin': '1% 1% 1% 1%'},
             id='subject-dropdown', className='dropdown'
         ),
@@ -227,7 +230,7 @@ individual_information = html.Div(id='s_individual', className='container', chil
         dcc.RadioItems(
             inline=True,
             options=['Yes', 'No'],
-            value='No',
+            value='Yes',
             id='include-missing-dates',
             className='inline',
         ),

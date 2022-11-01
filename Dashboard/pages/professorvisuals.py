@@ -9,15 +9,18 @@ CENTURY_STEP     = 1
 YEAR_STEP        = 5
 MARK_SPACING     = 10
 START_CENTURY    = 16
+DEFAULT_SUBJECT = 'Appointment'
 SUBJECT_DROPDOWN = ['Gender', 'Birth', 'Birth place', 'Birth country', 'Death', 'Death place', 
                     'Death country', 'Promotion', 'Promotion type', 'Promotion place', 'Appointment',
                     'Job', 'Subject area', 'Faculty', 'End of employment']
+DEFAULT_GRAPH_SUBJECT = 'Appointment'
 GRAPH_SUBJECT_DROPDOWN = ['Gender', 'Birth', 'Death', 'Promotion', 'Promotion type', 'Appointment',
-                          'Job', 'Subject area', 'Faculty', 'End of employment'],
+                          'Job', 'Subject area', 'Faculty', 'End of employment']
 GEOMAPS_OPTIONS  = ['Heat map', 'Line map', 'MP Heat map', 'MP Scatter map', 'Animated map']                  
-GRAPH_DROPDOWN   = ['Line graph', 'Scatter graph', 'Bar graph']
+DEFAULT_GRAPH = 'Bar graph'
+GRAPH_DROPDOWN   = ['Line graph', 'Bar graph']
 
-# Data year calculaionss
+# Data year calculations
 from figures import professorfigures
 current_century = data.all_dates_df[(data.all_dates_df['century'] <= START_CENTURY)]
 years = []
@@ -35,7 +38,7 @@ timeline = html.Div(id='p_timeline', className='container',
                                   children=[
                                       html.H3('Graph settings:'),
                                       html.P('Select Subject:'),
-                                      dcc.Dropdown(SUBJECT_DROPDOWN, 'Appointment',
+                                      dcc.Dropdown(SUBJECT_DROPDOWN, DEFAULT_SUBJECT,
                                                    placeholder='Choose a subject:', clearable=False,
                                                    id='p-year-century-subject-dropdown', className='dropdown'
                                                    ),
@@ -59,7 +62,7 @@ timeline = html.Div(id='p_timeline', className='container',
                                       html.Div(id='p-year-slider-container'),
                                       html.P('Select graph type:'),
                                       dcc.Dropdown(
-                                          GRAPH_DROPDOWN, 'Scatter graph', placeholder='Choose a graph style',
+                                          GRAPH_DROPDOWN, DEFAULT_GRAPH, placeholder='Choose a graph style',
                                           clearable=False, id='p-year-century-dropdown', className='dropdown'
                                           ),
                                       html.Div(id='p-year-century-graph'),
@@ -89,7 +92,7 @@ subject_information = html.Div(id='p_subject_info', className='container',
         html.H3('Subject information'),
         dcc.Dropdown(
             SUBJECT_DROPDOWN ,
-            'Appointment', placeholder='Choose a subject', clearable=False,
+            DEFAULT_SUBJECT, placeholder='Choose a subject', clearable=False,
             style={'background-color': 'rgba(223,223,218,0.7)', 'color': 'black', 'margin': '1% 1% 1% 1%'},
             id='p-subject-dropdown', className='dropdown'
         ),
@@ -122,7 +125,7 @@ geographical_information = html.Div(id='g_geo', className='container',
         html.P('Select subject:', className='inline'),
         dcc.Dropdown(
             GRAPH_SUBJECT_DROPDOWN,
-            'Birth',
+            DEFAULT_GRAPH_SUBJECT,
             placeholder='Choose a subject',
             clearable=False, id='p-geo-subject-dropdown', className='dropdown'
         ),
@@ -222,7 +225,7 @@ individual_information = html.Div(id='p_individual', className='container', chil
         dcc.RadioItems(
             inline=True,
             options=['Yes', 'No'],
-            value='No',
+            value='Yes',
             id='p-include-missing-dates',
             className='inline',
         ),

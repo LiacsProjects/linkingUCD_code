@@ -43,7 +43,7 @@ app.layout = html.Div([
         dcc.Tab(label='Students', value='tab-2', className='child_tab', selected_className='child_tab_selected'),
         dcc.Tab(label='Rectores Magnifici', value='tab-3', className='child_tab',
                 selected_className='child_tab_selected'),
-        dcc.Tab(label='Sources & Credits', value='tab-4', className='child_tab',
+        dcc.Tab(label='Colofon', value='tab-4', className='child_tab',
                 selected_className='child_tab_selected'),
         ]),
     html.Div(id='page_content'),
