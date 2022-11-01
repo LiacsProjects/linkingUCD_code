@@ -36,7 +36,7 @@ app = Dash(__name__, suppress_callback_exceptions=True,
 ########################################################################################################### START
 
 app.layout = html.Div([
-    html.H1('Linking University and City in Leiden, 1575-2020', id='page_title'),
+    html.H1('Leiden Univercity', id='page_title'),
     dcc.Tabs(id='tab_bar', value='tab-0', className='header_tab_bar', children=[
         dcc.Tab(label='Home', value='tab-0', className='child_tab', selected_className='child_tab_selected'),
         dcc.Tab(label='Professors', value='tab-1', className='child_tab', selected_className='child_tab_selected'),

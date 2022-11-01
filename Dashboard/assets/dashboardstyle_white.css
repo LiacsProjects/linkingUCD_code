@@ -1,3 +1,8 @@
+html {
+    /* font-family: "Arial", sans-serif; */
+    font-family: "Montserrat";
+}
+
 body {
     background-color: white;
 }
@@ -113,4 +118,3 @@ p {
     display: inline-block;
     vertical-align: top;
 }
-*/
