@@ -100,17 +100,19 @@ def create_year_cent_figure(subject, century, year, mode):
     filtered_df = filtered_df[filtered_df['century'] >= century[0]]
     filtered_df = filtered_df[filtered_df['year'] <= year[1]]
     filtered_df = filtered_df[filtered_df['year'] >= year[0]]
-    if mode == 'Line graph':
+    if mode == 'Scatter graph':
         fig = px.line(filtered_df, x='year', y='count', color=subjectx, markers=True,
                       labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year', 'century': 'Century'},
                       hover_name=subjectx, hover_data=['year', 'century'])
-    elif mode == 'Scatter graph':
-        fig = px.scatter(filtered_df, x='year', y='count', size='count', color=subjectx, color_continuous_scale='blues',
+    elif mode == 'Line graph':
+        fig = px.scatter(filtered_df, x='year', y='count', size='count',
+                         #color=subjectx, color_continuous_scale='blues',
                          log_x=True, labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year',
                                              'century': 'Century'},
                          hover_name=subjectx, hover_data=['year', 'century'])
     elif mode == 'Bar graph':
-        fig = px.bar(filtered_df, x='year', y='count', color=subjectx, color_continuous_scale='blues',
+        fig = px.bar(filtered_df, x='year', y='count',
+                     #color=subjectx, color_continuous_scale='blues',
                      labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year', 'century': 'Century'},
                      hover_name=subjectx, hover_data=['year', 'century'])
     if subjectx == 'year':
@@ -127,6 +129,7 @@ def create_year_cent_figure(subject, century, year, mode):
                           title=title_cent)
     else:
         fig.update_traces(mode='markers+lines')
+        fig.update_traces(marker_colorbar_bgcolor="#333", selector = dict(type='bar'))
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
                           title=title_cent)
