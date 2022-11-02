@@ -135,13 +135,37 @@ rector_content = html.Div(id='r_content', className='parent_content', children=[
 
 sources_content = html.Div(id='src_content', className='parent_content', children=[
     html.Div(id='src_info', className='container', children=[
-        html.H2('Sources & Credits'),
+        html.H2('ABOUT THIS SITE'),
+        html.P('This website is part of the project Linking City, University and Diversity'
+               'This website is work in progress. The dataset is not yet complete, '
+               'information on the website will be updated periodically.'),
+        html.H2('Projectteam', style={"text-align":"left"}),
+        html.P('Prof. dr Wessel Kraaij, Prof. dr Ariadne Schmidt (supervisors), '
+               'Prof. dr Joost Visser, Richard van Dijk, MA (research software engineer), '
+               'Michael de Koning, Ben van Yperen (student assistants).'),
+        html.H2('Datasources', style={"text-align":"left"}),
         html.P('The following sources are being used for this dashboard:'),
-        html.P(children=['Dataset Martine Zoeteman, Student Population Leiden University 1575-1812 (2011), '
-                         'based upon Album Studiosorum. See: ',
-                         html.A(children="https://scholarlypublications.universiteitleiden.nl/handle/1887/16453",
-                                href="https://scholarlypublications.universiteitleiden.nl/handle/1887/16453")])
-               
+        html.Li('Dataset Martine Zoeteman, Student Population Leiden University 1575-1812 (2011), based upon Album Studiosorum.'
+               'For an extensive explanation of the sources see:'  
+               'Martine Zoeteman-van Pelt, De studentenpopulatie van de Leidse universiteit, 1575-1812; :'
+               ' "Een volk op zyn Siams gekleet eenige mylen van Den Haag woonende" (Leiden 2011).'),
+        html.Li(children=[
+            html.A("https://hoogleraren.universiteitleiden.nl/ ",
+                   href="https://hoogleraren.universiteitleiden.nl/"),
+           'More information about this source can be found at ',
+            html.A("https://hoogleraren.universiteitleiden.nl/toelichting",
+                    href="https://hoogleraren.universiteitleiden.nl/toelichting"),
+                          ]),
+        html.Li('Additional information on rectors magnifici is retrieved from Wikipedia'),
+        html.H2('Student projects', style={"text-align":"left"}),
+        html.Li('Liam van Dreumel, ‘Visualisation tools to support historical research on a linked dataset about Leiden University’ BA thesis Computer Science, Leiden University.'),
+        html.Li('Rick Schreuder, ‘Design of a database supporting the exploration of historical documents and linked register data’ BA thesis Computer Science, Leiden University.'),
+        html.Li('Michael de Koning ‘Extraction, transformation, linking and loading of cultural heritage data’ BA thesis Computer Science, Leiden University.'),
+        html.H2('Credits', style={"text-align":"left"}),
+        html.P('We like to thank Martine Zoeteman, Saskia van Bergen, Stelios Paraschiakos, Antonis Somorakis, Wout Lamers, '
+               'Leida van Hees and Carel Stolker for their contributions to this project. '),
+        html.H2('Contact', style={"text-align":"left"}),
+        html.P('Ariadne Schmidt,  Wessel Kraaij'),
     ]),
 ])
 
