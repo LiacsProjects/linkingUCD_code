@@ -40,17 +40,19 @@ def create_year_cent_figure(subject, century, year, mode):
     filtered_df = filtered_df[filtered_df['century'] >= century[0]]
     filtered_df = filtered_df[filtered_df['year'] <= year[1]]
     filtered_df = filtered_df[filtered_df['year'] >= year[0]]
-    if mode == 'Line graph':
+    if mode == 'Scatter graph':
         fig = px.line(filtered_df, x='year', y='count', color=subjectx, markers=True,
                       labels={subjectx: name, 'count': 'Number of rectors', 'year': 'Year', 'century': 'Century'},
                       hover_name=subjectx, hover_data=['year', 'century'])
-    elif mode == 'Scatter graph':
-        fig = px.scatter(filtered_df, x='year', y='count', size='count', color=subjectx, color_continuous_scale='blues',
+    elif mode == 'Line graph':
+        fig = px.scatter(filtered_df, x='year', y='count', size='count',
+                         #color=subjectx, color_continuous_scale='blues',
                          log_x=True, labels={subjectx: name, 'count': 'Number of rectors', 'year': 'Year',
                                              'century': 'Century'},
                          hover_name=subjectx, hover_data=['year', 'century'])
     elif mode == 'Bar graph':
-        fig = px.bar(filtered_df, x='year', y='count', color=subjectx, color_continuous_scale='blues',
+        fig = px.bar(filtered_df, x='year', y='count',
+                     #color=subjectx, color_continuous_scale='blues',
                      labels={subjectx: name, 'count': 'Number of rectors', 'year': 'Year', 'century': 'Century'},
                      hover_name=subjectx, hover_data=['year', 'century'])
     if subjectx == 'year':

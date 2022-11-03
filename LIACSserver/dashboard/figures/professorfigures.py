@@ -63,7 +63,7 @@ def get_variables(subject):
         subjectx = 'appointment'
         name = 'Appointment'
     if subject == 'Job':
-        selected_df = data.job_df
+        selected_df = data.professor_job_df
         subjectx = 'job'
         name = 'Job'
     if subject == 'Subject area':
@@ -100,17 +100,19 @@ def create_year_cent_figure(subject, century, year, mode):
     filtered_df = filtered_df[filtered_df['century'] >= century[0]]
     filtered_df = filtered_df[filtered_df['year'] <= year[1]]
     filtered_df = filtered_df[filtered_df['year'] >= year[0]]
-    if mode == 'Line graph':
+    if mode == 'Scatter graph':
         fig = px.line(filtered_df, x='year', y='count', color=subjectx, markers=True,
                       labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year', 'century': 'Century'},
                       hover_name=subjectx, hover_data=['year', 'century'])
-    elif mode == 'Scatter graph':
-        fig = px.scatter(filtered_df, x='year', y='count', size='count', color=subjectx, color_continuous_scale='blues',
+    elif mode == 'Line graph':
+        fig = px.scatter(filtered_df, x='year', y='count', size='count',
+                         #color=subjectx, color_continuous_scale='blues',
                          log_x=True, labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year',
                                              'century': 'Century'},
                          hover_name=subjectx, hover_data=['year', 'century'])
     elif mode == 'Bar graph':
-        fig = px.bar(filtered_df, x='year', y='count', color=subjectx, color_continuous_scale='blues',
+        fig = px.bar(filtered_df, x='year', y='count',
+                     #color=subjectx, color_continuous_scale='blues',
                      labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year', 'century': 'Century'},
                      hover_name=subjectx, hover_data=['year', 'century'])
     if subjectx == 'year':
@@ -127,6 +129,7 @@ def create_year_cent_figure(subject, century, year, mode):
                           title=title_cent)
     else:
         fig.update_traces(mode='markers+lines')
+        fig.update_traces(marker_colorbar_bgcolor="#333", selector = dict(type='bar'))
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
                           title=title_cent)
@@ -180,8 +183,8 @@ def create_century_table(df, name):
     table_df = pd.DataFrame(columns=['Statistic', 'appointments'])
     for cent in df['century'].unique():
         table_df.loc[len(table_df)] = ['Century', cent]
-        table_df.loc[len(table_df)] = ['Total appointments', df.loc[df['century'] == cent, 'count'].sum().round(0)]
-        table_df.loc[len(table_df)] = ['Average appointments', df.loc[df['century'] == cent, 'count'].mean().round(0)]
+        table_df.loc[len(table_df)] = ['Total appointments', round(df.loc[df['century'] == cent, 'count'].sum(),0)]
+        table_df.loc[len(table_df)] = ['Average appointments', round(df.loc[df['century'] == cent, 'count'].mean(),0)]
         table_df.loc[len(table_df)] = ['Most appointments',
                                        df.loc[df['century'] == cent].sort_values(by='count', ascending=False).iloc[0][
                                            0]]
@@ -240,7 +243,7 @@ def create_country_line_map(min_year, max_year):
             lon=lons,
             mode='lines',
             line=dict(width=1, color='blue'),
-            name='Birth Country to Leiden'
+            name='Place of birth'
         )
     )
     return fig, filtered_df

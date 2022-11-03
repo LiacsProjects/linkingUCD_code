@@ -1,49 +1,91 @@
+############################################################################################## LOCAL
+# added for local server
+# extra regel om environmental variable te bepalen
+import Add_environment_variable
+
+########################################################################################### end local
+# import modules
 from dash import Dash, dcc, html, Input, Output, ctx, dash_table, State, ALL
 import pandas as pd
+
+# import data, page lay-outs and functions
 import data
 from figures import studentfigures
 from pages import professorvisuals, rectorvisuals, studentvisuals
 from figures import professorfigures, studentfigures, rectorfigures
 
-# Configurate dash application
+# Parameters and constants
+YEAR_STEP = 5
+MARK_SPACING = 10
+################################################################################################ LOCAL
+# Configurate dash application voor DASH
 app = Dash(__name__, suppress_callback_exceptions=True,
            routes_pathname_prefix='/',
-           requests_pathname_prefix='/dashboard/')
+           #  uitgeschakeld  #      requests_pathname_prefix='/dashboard/'
+           )
+           
+################################################################################################ SERVER
+# Configurate dash application voor server
+# server = app.server
 
-server = app.server
+########################################################################################################### TODO
 
 # TODO: implement store functions to allow users to save their changes made to the dashboard TODO: connect database to dashboard
 # TODO: create joined page for all persons TODO: link city/country coordinates to city/country dataframes, preferably through function that reads coordinates from a file: countries.geojson and cities1-2-3.csv
 
+########################################################################################################### START
+
 app.layout = html.Div([
-    html.H1('The history of Leiden and Leiden University', id='page_title'),
+    html.H1('Linking University and City in Leiden, 1575-2020', id='page_title'),
     dcc.Tabs(id='tab_bar', value='tab-0', className='header_tab_bar', children=[
         dcc.Tab(label='Home', value='tab-0', className='child_tab', selected_className='child_tab_selected'),
         dcc.Tab(label='Professors', value='tab-1', className='child_tab', selected_className='child_tab_selected'),
         dcc.Tab(label='Students', value='tab-2', className='child_tab', selected_className='child_tab_selected'),
         dcc.Tab(label='Rectores Magnifici', value='tab-3', className='child_tab',
                 selected_className='child_tab_selected'),
-        dcc.Tab(label='Sources', value='tab-4', className='child_tab', selected_className='child_tab_selected'),
-    ]),
+        dcc.Tab(label='Colofon', value='tab-4', className='child_tab',
+                selected_className='child_tab_selected'),
+        ]),
     html.Div(id='page_content'),
 ])
 
 home_content = html.Div(id='h_content', className='parent_content', children=[
     html.Div(id='h_info', className='container', children=[
         html.H2('Welcome'),
-        html.P('This dashboard is created for the Linking University, City and Diversity project by the university of '
-               'Leiden as part of a bachelor project. To get started, select one of the three options in the navigation'
-               ' bar at the top of the page. This brings you to the corresponding page that gives detailed information '
-               'about the chosen subject.'),
+        html.P('Leiden University was founded in 1575. '
+               'Since then, many thousands of students and staff have attended the university. '
+               'Who were they? Where did they come from?  '
+               'How did the academic population change over time? '
+               'This website allows you to explore and visualise the answers to these questions. '
+               'You can search for information on students and on academic staff.'),
+        html.H2('The project'),
+        html.P('This website is part of, and presents the first results of the project '
+               'Linking University and City in Leiden 1575-2020. '
+               'The aim of the project is to examine the interaction between the university and the city. '
+               'The impact of the presence of the university on the city has been described '
+               'from different perspectives, but we know little about the interaction between '
+               'the changing populations in town and gown. '
+               'The presence of an academic population affected the urban demography, '
+               'social-economic structures and culture. '
+               'The urban dynamics related to migration and socio-economic development '
+               'may -vice versa- have had impact on the university. The question is how.'  
+               'This project will examine the interaction between university and city through data science methods.'),
+        html.P('This project is work-in-progress. Data on the website will be regularly updated '
+               'and the functionalities will be extended'),
         html.Div(className='center_object', children=[
-            html.Embed(src='assets/mapbox.html', width='50%', height='300px')
+            html.Embed(src='assets/LEI001013879.jpg', width='40%', height='40%',
+                       title=('Academiegebouw, Rapenburg 73. '
+                              'Academie met op de voorgrond ijsvermaak op het Rapenburg.' 
+                              'Foto van een tekening in het album Amicorum van Johannes van Amstel '
+                              'van Mijnden, 1601, in Koninklijke Bibliotheek te Den Haag.')),
+            html.P('Erfgoed Leiden en Omstreken', style={'font-size': 'small'})
         ]),
     ]),
 ])
 
 profs_content = html.Div(id='p_content', className='parent_content', children=[
     html.H2('Information'),
-    html.P('This pages shows the information about professors previously working at the university of Leiden.'
+    html.P('This page shows the information about professors previously working at the university of Leiden.'
            ' Choose one of the following options to see more information.'),
     dcc.Tabs(id='p_tab_bar', value='p_tab-1', className='header_tab_bar', children=[
         dcc.Tab(label='Timeline', value='p_tab-1', className='child_tab', selected_className='child_tab_selected'),
@@ -60,7 +102,7 @@ profs_content = html.Div(id='p_content', className='parent_content', children=[
 students_content = html.Div(id='s_content', className='parent_content', children=[
     html.Div(id='s_info', className='container', children=[
         html.H2('Information'),
-        html.P('This pages shows the information about student enrollments from the period 1575 to 1812. Choose one of '
+        html.P('This page shows the information about student enrollments from the period 1575 to 1812. Choose one of '
                'the following options to see details about the enrollments of students at the university of Leiden.'),
         dcc.Tabs(id='s_tab_bar', value='s_tab-1', className='header_tab_bar', children=[
             dcc.Tab(label='Timeline', value='s_tab-1', className='child_tab', selected_className='child_tab_selected'),
@@ -77,7 +119,7 @@ students_content = html.Div(id='s_content', className='parent_content', children
 
 rector_content = html.Div(id='r_content', className='parent_content', children=[
     html.H2('Information'),
-    html.P('This pages shows the information about all the rectores magnifici the university of Leiden has had.'
+    html.P('This page shows the information about all the rectores magnifici the university of Leiden has had.'
            ' Choose one of the following options to see more information.'),
     dcc.Tabs(id='r_tab_bar', value='r_tab-1', className='header_tab_bar', children=[
         dcc.Tab(label='Timeline', value='r_tab-1', className='child_tab', selected_className='child_tab_selected'),
@@ -93,8 +135,37 @@ rector_content = html.Div(id='r_content', className='parent_content', children=[
 
 sources_content = html.Div(id='src_content', className='parent_content', children=[
     html.Div(id='src_info', className='container', children=[
-        html.H2('Sources'),
-        html.P('The following sources are being used for this dashboard:')
+        html.H2('ABOUT THIS SITE'),
+        html.P('This website is part of the project Linking City, University and Diversity'
+               'This website is work in progress. The dataset is not yet complete, '
+               'information on the website will be updated periodically.'),
+        html.H2('Projectteam', style={"text-align":"left"}),
+        html.P('Prof. dr Wessel Kraaij, Prof. dr Ariadne Schmidt (supervisors), '
+               'Prof. dr Joost Visser, Richard van Dijk, MA (research software engineer), '
+               'Michael de Koning, Ben van Yperen (student assistants).'),
+        html.H2('Datasources', style={"text-align":"left"}),
+        html.P('The following sources are being used for this dashboard:'),
+        html.Li('Dataset Martine Zoeteman, Student Population Leiden University 1575-1812 (2011), based upon Album Studiosorum.'
+               'For an extensive explanation of the sources see:'  
+               'Martine Zoeteman-van Pelt, De studentenpopulatie van de Leidse universiteit, 1575-1812; :'
+               ' "Een volk op zyn Siams gekleet eenige mylen van Den Haag woonende" (Leiden 2011).'),
+        html.Li(children=[
+            html.A("https://hoogleraren.universiteitleiden.nl/ ",
+                   href="https://hoogleraren.universiteitleiden.nl/"),
+           'More information about this source can be found at ',
+            html.A("https://hoogleraren.universiteitleiden.nl/toelichting",
+                    href="https://hoogleraren.universiteitleiden.nl/toelichting"),
+                          ]),
+        html.Li('Additional information on rectors magnifici is retrieved from Wikipedia'),
+        html.H2('Student projects', style={"text-align":"left"}),
+        html.Li('Liam van Dreumel, ‘Visualisation tools to support historical research on a linked dataset about Leiden University’ BA thesis Computer Science, Leiden University.'),
+        html.Li('Rick Schreuder, ‘Design of a database supporting the exploration of historical documents and linked register data’ BA thesis Computer Science, Leiden University.'),
+        html.Li('Michael de Koning ‘Extraction, transformation, linking and loading of cultural heritage data’ BA thesis Computer Science, Leiden University.'),
+        html.H2('Credits', style={"text-align":"left"}),
+        html.P('We like to thank Martine Zoeteman, Saskia van Bergen, Stelios Paraschiakos, Antonis Somorakis, Wout Lamers, '
+               'Leida van Hees and Carel Stolker for their contributions to this project. '),
+        html.H2('Contact', style={"text-align":"left"}),
+        html.P('Ariadne Schmidt,  Wessel Kraaij'),
     ]),
 ])
 
@@ -172,27 +243,32 @@ def render_content(tab):
     else:
         return 404
 
-
+###################################################################### 
 # Professor callbacks
+###################################################################### 
+
+
 # Year slider
 @app.callback(
-    Output('p-year-slider-container', 'children'),
-    Input('p-year-century-slider', 'value'),
+    Output('p-year-slider', 'min'),
+    Output('p-year-slider', 'max'),
+    Output('p-year-slider', 'value'),
+    Output('p-year-slider', 'marks'),
+    Input('p-year-century-slider', 'value')
 )
 def update_year_slider(century):
     current_century = data.all_dates_df[(data.all_dates_df['century'] <= century[-1])]
     years = []
-    for y in current_century['year'][0::5]:
+    for y in current_century['year'][0::YEAR_STEP]:
         years.append(y)
-        years.append(current_century['year'].max())
-    return (dcc.RangeSlider(
-        current_century['year'].min(),
-        current_century['year'].max(),
-        10,
-        value=[current_century['year'].min(), current_century['year'].max()],
-        marks={str(year): str(year) for year in years},
-        id='p-year-slider'
-    ))
+    years.append(current_century['year'].max())
+    min = current_century['year'].min()
+    max = current_century['year'].max()
+    value = [current_century['year'].min(), current_century['year'].max()]
+    marks: dict = {str(year): str(year) for year in 
+                   range(current_century['year'].min(), current_century['year'].max(),
+                   int((current_century['year'].max() - current_century['year'].min()) / MARK_SPACING))}
+    return min, max, value, marks
 
 
 # year-century graph
@@ -203,12 +279,12 @@ def update_year_slider(century):
     Input('p-year-slider', 'value'),
     Input('p-year-century-dropdown', 'value'),
     running=[
-        (Output('p-year-century-subject-dropdown', 'disabled'), True, False),
-    ],
+             (Output('p-year-century-subject-dropdown', 'disabled'), True, False),
+            ],
 )
 def update_year_century_output(selected_subject, selected_century, selected_year, selected_dropdown):
     return dcc.Graph(figure=professorfigures.create_year_cent_figure(selected_subject, selected_century, selected_year,
-                                                                     selected_dropdown),
+                                                                     selected_dropdown), 
                      id='p-year-century-graph')
 
 
@@ -294,7 +370,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
             ]),
             html.Tr(children=[
                 html.Td('Average appointments'),
-                html.Td(df['count'].mean().round(0)),
+                html.Td(round(df['count'].mean(), 0)),
             ]),
         ]),
     else:
@@ -349,7 +425,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
             ]),
             html.Tr(children=[
                 html.Td('Average appointments'),
-                html.Td(df['count'].mean().round(0)),
+                html.Td(round(df['count'].mean(), 0)),
             ]),
         ]),
 
@@ -371,7 +447,7 @@ def update_subject_output(selected_subject):
 @app.callback(
     Output('p-subject-table-container', 'children'),
     Input('p-subject-dropdown', 'value'),
-)
+    )
 def update_timeline_table(selected_subject):
     df, subject, name = professorfigures.get_variables(selected_subject)
     df = df.rename(columns={subject: name, 'year': 'Year', 'count': 'Appointments', 'century': 'Century'})
@@ -392,11 +468,12 @@ def update_timeline_table(selected_subject):
         style_header={'backgroundColor': '#001158', 'color': 'white'},
         style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
         virtualization=True,
-        export_format='xlsx',
-        export_headers='display',
+        #       export/download optie uitgeschakeld
+        #       export_format='xlsx',
+        #       export_headers='display',
         merge_duplicate_headers=True,
         id='p-subject-table'
-    )
+        )
 
 
 # Subject information
@@ -404,7 +481,7 @@ def update_timeline_table(selected_subject):
     Output('p-subject-information', 'children'),
     Input('p-subject-dropdown', 'value'),
     Input('p-subject-graph', 'hoverData'),
-)
+    )
 def update_timeline_information(selected_subject, hover_data):
     if hover_data is not None:
         text = hover_data['points'][0]['hovertext']
@@ -413,7 +490,7 @@ def update_timeline_information(selected_subject, hover_data):
     df, subject, name = professorfigures.get_variables(selected_subject)
     total = df['count'].sum()
     fraction = df.loc[df[subject] == text, 'count'].sum()
-    percentage = (fraction / total * 100).round(2)
+    percentage = round(fraction / total * 100, 2)
     if subject == 'year':
         return html.Div(id='p-subject-hover-info', children=[
             html.Table(id='p-subject-table', children=[
@@ -431,7 +508,7 @@ def update_timeline_information(selected_subject, hover_data):
                 ]),
                 html.Tr(children=[
                     html.Td('Average appointments per year'),
-                    html.Td(html.Td(df['count'].mean().round(0))),
+                    html.Td(html.Td(round(df['count'].mean(), 0))),
                 ]),
                 html.Tr(children=[
                     html.Td('Year with most appointments'),
@@ -477,7 +554,7 @@ def update_timeline_information(selected_subject, hover_data):
                 ]),
                 html.Tr(children=[
                     html.Td('Average yearly appointments per ' + str(subject)),
-                    html.Td(html.Td(df['count'].mean().round(0))),
+                    html.Td(html.Td(round(df['count'].mean(), 0))),
                 ]),
                 html.Tr(children=[
                     html.Td(str(name) + ' with most appointments in one year'),
@@ -536,8 +613,8 @@ def update_timeline_table(selected_subject):
                 'color': 'black',
             }],
         virtualization=True,
-        id='p-subject-information-table'
-    )
+        id='p-subject-information-table',
+        )
 
 
 # Geographical information callbacks
@@ -638,15 +715,16 @@ def create_map(min_year, max_year, map_choice):
     Input('p-individual-job-dropdown', 'value'),
     Input('p-individual-subjectarea-dropdown', 'value'),
     Input('p-individual-faculty-dropdown', 'value'),
-)
+    )
 def update_student_table(search_button, selected_name, search_option, min_enrol, max_enrol, min_birth, max_birth,
                          include_missing, selected_gender, selected_birthplace, selected_birthcountry,
                          selected_deathplace, selected_deathcountry, selected_promotion, selected_promotionplace,
                          selected_thesis, selected_job, selected_subjectarea, selected_faculty):
-    df = data.individual_profs_df[['First name', 'Last name', 'Gender', 'Appointment date', 'Appointment year', 'Birth date',
-                                   'Birth year', 'Birth place', 'Birth country', 'Death date', 'Death year',
-                                   'Death place', 'Death country', 'Promotion', 'Promotion place', 'Promotion date',
-                                   'Promotion year', 'Thesis', 'Job', 'Subject area', 'Faculty', 'Rating']]
+    df = data.individual_profs_df[['First name', 'Last name', 'Gender', 'Appointment date', 'Appointment year',
+                                   'Birth date', 'Birth year', 'Birth place', 'Birth country', 'Death date'
+                                   'Death year', 'Death place', 'Death country', 'Promotion', 'Promotion place',
+                                   'Promotion date', 'Promotion year', 'Thesis', 'Job', 'Subject area', 'Faculty',
+                                   'Rating']]
     text = 'professors were found'
     search_results_number = 0
     if ctx.triggered_id == 'p-search-individual':
@@ -834,8 +912,8 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             style_header={'backgroundColor': '#001158', 'color': 'white'},
             style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
             virtualization=True,
-            export_format='xlsx',
-            export_headers='display',
+            #            export_format='xlsx',
+            #            export_headers='display',
             merge_duplicate_headers=True,
             id='p-individual-table'
         )
@@ -849,7 +927,7 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
     Input('p-individual-table', "derived_virtual_selected_rows"),
     Input({'type': 'p-person-table', 'index': ALL}, 'id'),
     State('p-chosen-individual-information', 'children'),
-)
+    )
 def create_individual_information(rows, selected_rows, value, children):
     if rows is None:
         persons = 'No person selected'
@@ -982,7 +1060,7 @@ def create_individual_information(rows, selected_rows, value, children):
     Output('appointment-max-input', 'value'),
     Input('appointment-min-input', 'value'),
     Input('appointment-max-input', 'value'),
-)
+    )
 def synchronise_dates(min_year, max_year):
     trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
     if trigger_id == 'appointment-min-input' and min_year >= max_year:
@@ -1004,7 +1082,7 @@ def synchronise_dates(min_year, max_year):
     Output('p-birthyear-max-input', 'value'),
     Input('p-birthyear-min-input', 'value'),
     Input('p-birthyear-max-input', 'value'),
-)
+    )
 def synchronise_dates(min_year, max_year):
     trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
     if trigger_id == 'p-birthyear-min-input' and min_year >= max_year:
@@ -1019,26 +1097,33 @@ def synchronise_dates(min_year, max_year):
             max_year += 1
     return min_year, max_year
 
+###################################################################### 
 # Students callbacks
+###################################################################### 
 # Year slider
+
+
 @app.callback(
-    Output('year-slider-container', 'children'),
-    Input('year-century-slider', 'value'),
+    Output('year-slider', 'min'),
+    Output('year-slider', 'max'),
+    Output('year-slider', 'value'),
+    Output('year-slider', 'marks'),
+    Input('year-century-slider', 'value')
 )
 def update_year_slider(century):
-    current_century = data.year_df[(data.year_df['century'] <= century[-1])]
+    current_century = data.all_dates_df[(data.all_dates_df['century'] <= century[-1])]
     years = []
-    for y in current_century['year'][0::5]:
+    for y in current_century['year'][0::YEAR_STEP]:
         years.append(y)
-        years.append(current_century['year'].max())
-    return (dcc.RangeSlider(
-        current_century['year'].min(),
-        current_century['year'].max(),
-        10,
-        value=[current_century['year'].min(), current_century['year'].max()],
-        marks={str(year): str(year) for year in years},
-        id='year-slider'
-    ))
+    years.append(current_century['year'].max())
+    min = current_century['year'].min()
+    max = current_century['year'].max()
+    value = [current_century['year'].min(), current_century['year'].max()]
+    marks = {str(year): str(year) for year in 
+              range(current_century['year'].min(), current_century['year'].max(),
+              int((current_century['year'].max() - current_century['year'].min()) / MARK_SPACING )) }
+    id = 'year-slider'
+    return min, max, value, marks
 
 
 # year-century graph
@@ -1141,7 +1226,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
             ]),
             html.Tr(children=[
                 html.Td('Average Enrollments'),
-                html.Td(df['count'].mean().round(0)),
+                html.Td(round(df['count'].mean(),0)),
             ]),
         ]),
     else:
@@ -1196,7 +1281,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
             ]),
             html.Tr(children=[
                 html.Td('Average Enrollments'),
-                html.Td(df['count'].mean().round(0)),
+                html.Td(round(df['count'].mean(),0)),
             ]),
         ]),
 
@@ -1239,8 +1324,8 @@ def update_timeline_table(selected_subject):
         style_header={'backgroundColor': '#001158', 'color': 'white'},
         style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
         virtualization=True,
-        export_format='xlsx',
-        export_headers='display',
+#        export_format='xlsx',
+#        export_headers='display',
         merge_duplicate_headers=True,
         id='subject-table'
     )
@@ -1260,7 +1345,7 @@ def update_timeline_information(selected_subject, hover_data):
     df, subject, name = studentfigures.get_variables(selected_subject)
     total = df['count'].sum()
     fraction = df.loc[df[subject] == text, 'count'].sum()
-    percentage = (fraction / total * 100).round(2)
+    percentage = round(fraction / total * 100, 2)
     if subject == 'year':
         return html.Div(id='subject-hover-info', children=[
             html.Table(id='subject-table', children=[
@@ -1278,7 +1363,7 @@ def update_timeline_information(selected_subject, hover_data):
                 ]),
                 html.Tr(children=[
                     html.Td('Average enrollments per year'),
-                    html.Td(html.Td(df['count'].mean().round(0))),
+                    html.Td(html.Td(round(df['count'].mean(), 0))),
                 ]),
                 html.Tr(children=[
                     html.Td('Year with most enrollments'),
@@ -1324,7 +1409,7 @@ def update_timeline_information(selected_subject, hover_data):
                 ]),
                 html.Tr(children=[
                     html.Td('Average yearly enrollments per ' + str(subject)),
-                    html.Td(html.Td(df['count'].mean().round(0))),
+                    html.Td(html.Td(round(df['count'].mean(), 0))),
                 ]),
                 html.Tr(children=[
                     html.Td(str(name) + ' with most enrollments in one year'),
@@ -1667,8 +1752,8 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             style_header={'backgroundColor': '#001158', 'color': 'white'},
             style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
             virtualization=True,
-            export_format='xlsx',
-            export_headers='display',
+#            export_format='xlsx',
+#            export_headers='display',
             merge_duplicate_headers=True,
             id='individual-table'
         )
@@ -1848,27 +1933,31 @@ def synchronise_dates(min_year, max_year):
             max_year += 1
     return min_year, max_year
 
-
+###################################################################### 
 # Rector callbacks
+###################################################################### 
 # Year slider
 @app.callback(
-    Output('r-year-slider-container', 'children'),
-    Input('r-year-century-slider', 'value'),
+    Output('r-year-slider', 'min'),
+    Output('r-year-slider', 'max'),
+    Output('r-year-slider', 'value'),
+    Output('r-year-slider', 'marks'),
+    Input('r-year-century-slider', 'value')
 )
-def r_update_year_slider(century):
-    current_century = data.rector_years[(data.rector_years['century'] <= century[-1])]
+def update_year_slider(century):
+    current_century = data.all_dates_df[(data.all_dates_df['century'] <= century[-1])]
     years = []
-    for y in current_century['year'][0::5]:
+    for y in current_century['year'][0::YEAR_STEP]:
         years.append(y)
-        years.append(current_century['year'].max())
-    return (dcc.RangeSlider(
-        current_century['year'].min(),
-        current_century['year'].max(),
-        10,
-        value=[current_century['year'].min(), current_century['year'].max()],
-        marks={str(year): str(year) for year in years},
-        id='r-year-slider'
-    ))
+    years.append(current_century['year'].max())
+    min = current_century['year'].min()
+    max = current_century['year'].max()
+    value = [current_century['year'].min(), current_century['year'].max()]
+    marks = {str(year): str(year) for year in 
+              range(current_century['year'].min(), current_century['year'].max(),
+              int((current_century['year'].max() - current_century['year'].min()) / MARK_SPACING )) }
+    id = 'r-year-slider'
+    return min, max, value, marks
 
 
 # year-century graph
@@ -1973,7 +2062,7 @@ def r_update_timeline_information(selected_subject, hover_data, figure):
         ]),
         html.Tr(children=[
             html.Td('Average Rectors'),
-            html.Td(df['count'].mean().round(0)),
+            html.Td(round(df['count'].mean(),0)),
         ]),
     ]),
 
@@ -2016,8 +2105,8 @@ def r_update_timeline_table(selected_subject):
         style_header={'backgroundColor': '#001158', 'color': 'white'},
         style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
         virtualization=True,
-        export_format='xlsx',
-        export_headers='display',
+ #       export_format='xlsx',
+ #       export_headers='display',
         merge_duplicate_headers=True,
         id='r-subject-table'
     )
@@ -2037,7 +2126,7 @@ def r_update_timeline_information(selected_subject, hover_data):
     df, subject, name = rectorfigures.get_variables(selected_subject)
     total = df['count'].sum()
     fraction = df.loc[df[subject] == text, 'count'].sum()
-    percentage = (fraction / total * 100).round(2)
+    percentage = round(fraction / total * 100,2)
     return html.Div(id='r-subject-hover-info', children=[
         html.Table(id='r-subject-table', children=[
             html.Tr(children=[
@@ -2054,7 +2143,7 @@ def r_update_timeline_information(selected_subject, hover_data):
             ]),
             html.Tr(children=[
                 html.Td('Average rectors per year'),
-                html.Td(html.Td(df['count'].mean().round(0))),
+                html.Td(html.Td(round(df['count'].mean(),0))),
             ]),
             html.Tr(children=[
                 html.Td('Year with most rectors'),
@@ -2199,8 +2288,8 @@ def update_student_table(search_button, selected_name, search_option, min_term, 
             style_header={'backgroundColor': '#001158', 'color': 'white'},
             style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
             virtualization=True,
-            export_format='xlsx',
-            export_headers='display',
+#           export_format='xlsx', tijdelijk uitgeschakeld
+#           export_headers='display',
             merge_duplicate_headers=True,
             id='r-individual-table'
         )
@@ -2285,7 +2374,12 @@ def synchronise_dates(min_year, max_year):
             max_year += 1
     return min_year, max_year
 
-
+################################################################################################ LOCAL
 if __name__ == '__main__':
-    #app.run_server(debug=True)
-    app.run_server()
+    app.run_server(port=8050, debug=False)
+#
+################################################################################################ SERVER
+#if __name__ == '__main__':
+#    app.run_server(debug=True)
+#
+################################################################################################# END

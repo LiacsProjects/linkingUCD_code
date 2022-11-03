@@ -1,94 +1,131 @@
 # Creating dataframe
+# Import modules
 import dash
 from dash import dcc, html
 import data
+
+# Parameters and constants
+CENTURY_STEP     = 1
+YEAR_STEP        = 5
+MARK_SPACING     = 10
+START_CENTURY    = 16
+DEFAULT_SUBJECT = 'Appointment'
+SUBJECT_DROPDOWN = ['Gender', 'Birth', 'Birth place', 'Birth country', 'Death', 'Death place', 
+                    'Death country', 'Promotion', 'Promotion type', 'Promotion place', 'Appointment',
+                    'Job', 'Subject area', 'Faculty', 'End of employment']
+DEFAULT_GRAPH_SUBJECT = 'Appointment'
+GRAPH_SUBJECT_DROPDOWN = ['Gender', 'Birth', 'Death', 'Promotion', 'Promotion type', 'Appointment',
+                          'Job', 'Subject area', 'Faculty', 'End of employment']
+GEOMAPS_OPTIONS  = ['Heat map', 'Line map', 'MP Heat map', 'MP Scatter map', 'Animated map']                  
+DEFAULT_GRAPH = 'Bar graph'
+GRAPH_DROPDOWN   = ['Line graph', 'Bar graph']
+
+# Data year calculations
 from figures import professorfigures
+current_century = data.all_dates_df[(data.all_dates_df['century'] <= START_CENTURY)]
+years = []
+for y in current_century['year'][0::YEAR_STEP]:
+        years.append(y)
+years.append(current_century['year'].max())
 
-timeline = html.Div(id='p_timeline', className='container', children=[
-    html.Div(id='p_timeline_header', className='page_header', children=[
-        html.H1('Timeline')
-    ]),
-    html.Div(id='p-year-century-dropdown-container', className='left_container'),
-    html.Div(id='p_inputs', className='right_container ', children=[
-        html.H3('Graph settings:'),
-        html.P('Select Subject:'),
-        dcc.Dropdown(
-            ['Gender', 'Birth', 'Birth place', 'Birth country', 'Death', 'Death place', 'Death country',
-             'Promotion', 'Promotion type', 'Promotion place', 'Appointment', 'Job', 'Subject area', 'Faculty',
-             'End of employment'],
-            'Appointment', placeholder='Choose a subject', clearable=False,
-            id='p-year-century-subject-dropdown', className='dropdown'
-        ),
-        html.P('Select year range:'),
-        html.Div(id='p-year-slider-container'),
-        html.P('Select century range:'),
-        dcc.RangeSlider(
-            data.all_dates_df['century'].min(),
-            data.all_dates_df['century'].max(),
-            1,
-            value=[data.year_df['century'].min(), data.all_dates_df['century'].min()],
-            marks={str(cent): str(cent) for cent in data.all_dates_df['century']},
-            id='p-year-century-slider'
-        ),
-        html.P('Select graph type:'),
-        dcc.Dropdown(
-            ['Line graph', 'Scatter graph', 'Bar graph'], 'Scatter graph', placeholder='Choose a graph style',
-            clearable=False, id='p-year-century-dropdown', className='dropdown'
-        ),
-    ]),
-    html.Div(id='p-century-dropdown-container', className='left_container'),
-    html.Div(id='p-timeline-information', className='right_container ', children=[
-        html.H3('Information:'),
-        html.Div(id='p-timeline-information'),
-    ]),
-]),
+# layout page 
+timeline = html.Div(id='p_timeline', className='container',
+                     children=[
+                         html.Div(id='p_timeline_header', className='page_header',
+                                  children=[html.H1('Timeline')]),
+                         html.Div(id='p-year-century-dropdown-container', className='left_container'),
+                         html.Div(id='p_inputs', className='right_container',
+                                  children=[
+                                      html.H3('Graph settings:'),
+                                      html.P('Select Subject:'),
+                                      dcc.Dropdown(SUBJECT_DROPDOWN, DEFAULT_SUBJECT,
+                                                   placeholder='Choose a subject:', clearable=False,
+                                                   id='p-year-century-subject-dropdown', className='dropdown'
+                                                   ),
+                                      html.P('Select century range:'),
+                                      dcc.RangeSlider(
+                                          data.all_dates_df['century'].min(),
+                                          data.all_dates_df['century'].max(),
+                                          CENTURY_STEP,
+                                          value=[data.year_df['century'].min(),
+                                                 data.all_dates_df['century'].min()],
+                                          marks={str(cent): str(cent) for cent in data.all_dates_df['century']},
+                                          id='p-year-century-slider',
+                                          ),
+                                      html.P('Select year range:'),
+                                      dcc.RangeSlider(
+                                          current_century['year'].min(),
+                                          current_century['year'].max(),
+                                          YEAR_STEP,
+                                          id='p-year-slider',
+                                          ),
+                                      html.Div(id='p-year-slider-container'),
+                                      html.P('Select graph type:'),
+                                      dcc.Dropdown(
+                                          GRAPH_DROPDOWN, DEFAULT_GRAPH, placeholder='Choose a graph style',
+                                          clearable=False, id='p-year-century-dropdown', className='dropdown'
+                                          ),
+                                      html.Div(id='p-year-century-graph'),
+                                      ],
+                                  ),
+                         html.Div(id='p-century-dropdown-container', className='left_container'),
+                         html.Div(id='p-timeline-information', className='right_container ',
+                                  children=[
+                                      html.H3('Information:'),
+                                      html.Div(id='p-timeline-information'),
+                                  ]
+                                  ),
+                     ])
 
-subject_information = html.Div(id='p_subject_info', className='container', children=[
+subject_information = html.Div(id='p_subject_info', className='container', 
+    children=[
     html.Div(id='p_subject_header', className='page_header', children=[
         html.H1('Subject information')
-    ]),
+        ]),
     html.Div(id='p-subject-container', className='left_container', children=[
         html.Div(id='p-subject-dropdown-container'),
         html.H3('Subject information:'),
         html.Div(id='p-subject-table-container'),
-    ]),
-    html.Div(id='p-subject-information-container', className='right_container ', children=[
+        ]),
+    html.Div(id='p-subject-information-container', className='right_container ', 
+        children=[
         html.H3('Subject information'),
         dcc.Dropdown(
-            ['Gender', 'Birth', 'Birth place', 'Birth country', 'Death', 'Death place', 'Death country',
-             'Promotion', 'Promotion type', 'Promotion place', 'Appointment', 'Job', 'Subject area', 'Faculty',
-             'End of employment'],
-            'Appointment', placeholder='Choose a subject', clearable=False,
+            SUBJECT_DROPDOWN ,
+            DEFAULT_SUBJECT, placeholder='Choose a subject', clearable=False,
             style={'background-color': 'rgba(223,223,218,0.7)', 'color': 'black', 'margin': '1% 1% 1% 1%'},
             id='p-subject-dropdown', className='dropdown'
         ),
         html.Div(id='p-subject-information'),
+        html.Div(id='p-subject-graph'),
+        ]),
     ]),
-]),
 
-geographical_information = html.Div(id='g_geo', className='container', children=[
-    html.Div(id='g_geo_header', className='page_header', children=[
-        html.H1('Geographical information')
-    ]),
-    html.Div(id='p-geo-map-container', className='left_container', children=[
-        html.H3('Professor appointments per country'),
-        html.Div(id='p-map-title'),
-        html.Div(id='p-map-container'),
-        html.Div(id='p-animation-container'),
-        html.P('Choose map:', className='inline'),
-        dcc.RadioItems(
-            inline=True,
-            options=['Heat map', 'Line map', 'MP Heat map', 'MP Scatter map', 'Animated map'],
-            value='Heat map',
-            id='p-map-choice',
-            className='inline',
-        ),
+geographical_information = html.Div(id='g_geo', className='container',
+    children=[
+              html.Div(id='g_geo_header', className='page_header',
+                       children=[html.H1('Geographical information')]
+                       ),
+              html.Div(id='p-geo-map-container', className='left_container',
+                       children=[
+                                 html.H3('Geographical origin of professors'),
+                                 html.Div(id='p-map-title'),
+                                 html.Div(id='p-map-container'),
+                                 html.P('Map with present day borders'),
+                                 html.Div(id='p-animation-container'),
+                                 html.P('Choose map:', className='inline'),
+                                 dcc.RadioItems(
+                                                inline=True,
+                                                options=GEOMAPS_OPTIONS,
+                                                value='Heat map',
+                                                id='p-map-choice',
+                                                className='inline',
+                                                ),
         html.Br(),
         html.P('Select subject:', className='inline'),
         dcc.Dropdown(
-            ['Gender', 'Birth', 'Death', 'Promotion', 'Promotion type', 'Appointment', 'Job', 'Subject area',
-             'Faculty', 'End of employment'],
-            'Birth',
+            GRAPH_SUBJECT_DROPDOWN,
+            DEFAULT_GRAPH_SUBJECT,
             placeholder='Choose a subject',
             clearable=False, id='p-geo-subject-dropdown', className='dropdown'
         ),
@@ -120,7 +157,7 @@ geographical_information = html.Div(id='g_geo', className='container', children=
 ]),
 
 individual_information = html.Div(id='p_individual', className='container', children=[
-    html.Div(id='p_student_header', className='page_header', children=[
+    html.Div(id='p_Professor_header', className='page_header', children=[
         html.H1('Professor information')
     ]),
     html.Div(id='p_i_inputs_left', className='middle_small_container ', children=[
@@ -188,7 +225,7 @@ individual_information = html.Div(id='p_individual', className='container', chil
         dcc.RadioItems(
             inline=True,
             options=['Yes', 'No'],
-            value='No',
+            value='Yes',
             id='p-include-missing-dates',
             className='inline',
         ),
@@ -248,7 +285,7 @@ individual_information = html.Div(id='p_individual', className='container', chil
                      multi=True, id='p-individual-faculty-dropdown', className='dropdown'),
     ]),
     html.Div(id='p-individual-information', className='middle_container', children=[
-        html.H3('Student information:'),
+        html.H3('Professor information:'),
         html.Div(id='p-individual-search-results', children=[
             html.Div(id='p-individual-search-results-number', className='inline'),
             html.Div(id='p-individual-search-text', className='inline', style={'margin-left': '1px'})
