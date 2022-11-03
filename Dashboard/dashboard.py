@@ -5,6 +5,7 @@ import Add_environment_variable
 
 ########################################################################################### end local
 # import modules
+import dash_bootstrap_components as dbc
 from dash import Dash, dcc, html, Input, Output, ctx, dash_table, State, ALL
 import pandas as pd
 
@@ -21,6 +22,7 @@ MARK_SPACING = 10
 # Configurate dash application voor DASH
 app = Dash(__name__, suppress_callback_exceptions=True,
            routes_pathname_prefix='/',
+           external_stylesheets=[dbc.themes.BOOTSTRAP],
            #  uitgeschakeld  #      requests_pathname_prefix='/dashboard/'
            )
            
@@ -35,21 +37,97 @@ app = Dash(__name__, suppress_callback_exceptions=True,
 
 ########################################################################################################### START
 
-app.layout = html.Div([
-    html.H1('Leiden Univercity', id='page_title'),
-    dcc.Tabs(id='tab_bar', value='tab-0', className='header_tab_bar', children=[
-        dcc.Tab(label='Home', value='tab-0', className='child_tab', selected_className='child_tab_selected'),
-        dcc.Tab(label='Professors', value='tab-1', className='child_tab', selected_className='child_tab_selected'),
-        dcc.Tab(label='Students', value='tab-2', className='child_tab', selected_className='child_tab_selected'),
-        dcc.Tab(label='Rectores Magnifici', value='tab-3', className='child_tab',
-                selected_className='child_tab_selected'),
-        dcc.Tab(label='Colofon', value='tab-4', className='child_tab',
-                selected_className='child_tab_selected'),
-        ]),
-    html.Div(id='page_content'),
-])
 
-home_content = html.Div(id='h_content', className='parent_content', children=[
+card_professor = dbc.Card([
+    dbc.CardImg(
+        # src="/assets/resize/professors_780x400.jpeg",
+        src="/assets/resize/Student_400x267.jpg",
+        top=True,
+        style={"opacity": 0.5},
+        class_name="cardImg"
+    ),
+    dbc.CardImgOverlay(
+        dbc.CardBody([
+            html.H3("Professors", className="card-title"),
+            html.B("Visualizations of professors", className="card-text"),
+            dbc.Button("Go to visualizations", color="primary", class_name="card-btn"),
+        ]),
+    )],
+    # style={"width": "22rem"},
+    style={"width": "80%", "height": "75%"},
+)
+
+
+card_student = dbc.Card([
+    dbc.CardImg(
+        src="/assets/resize/Student_400x267.jpg",
+        top=True,
+        style={"opacity": 0.5},
+        class_name="cardImg"
+    ),
+    dbc.CardImgOverlay(
+        dbc.CardBody([
+            html.H3("Students", className="card-title"),
+            html.B("Student visualizations", className="card-text"),
+            dbc.Button("Go to visualizations", color="primary", class_name="card-btn"),
+        ]),
+    )],
+    # style={"width": "22rem"},
+    style={"width": "80%", "height": "75%"},
+)
+
+
+card_rectores = dbc.Card([
+    dbc.CardImg(
+        # src="/assets/leidenlogo.png",
+        src="/assets/resize/Student_400x267.jpg",
+        top=True,
+        style={"opacity": 0.5},
+        class_name="cardImg"
+    ),
+    dbc.CardImgOverlay(
+        dbc.CardBody([
+            html.H4("Rectores Magnifici", className="card-title"),
+            html.B("Rectores Magnifici visualizations", className="card-text"),
+            dbc.Button("Go to visualizations", color="primary", class_name="card-btn"),
+        ]),
+    )],
+    # style={"width": "22rem"},
+    style={"width": "80%", "height": "75%"},
+)
+
+
+card_colofon = dbc.Card([
+    dbc.CardImg(
+        # src="/assets/leidenlogo.png",
+        src="/assets/LEI001013879.jpg",
+        top=True,
+        style={"opacity": 0.5},
+        class_name="cardImg",
+    ),
+    dbc.CardImgOverlay(
+        dbc.CardBody([
+            html.H3("Colofon", className="card-title"),
+            html.B("Sources, contact information and more", className="card-text"),
+            dbc.Button("Go to page", color="primary", class_name="card-btn"),
+            # dbc.Button("Go to visualizations", color="primary", class_name="butcol"),
+        ]),
+    )],
+    style={"width": "80%", "height": "75%"},
+)
+
+home_grid = dbc.Container([
+    dbc.Row([
+        dbc.Col([card_professor], width={"size": 5, "offset": 1}, style={"padding-bottom": "5%"}),
+        dbc.Col([card_student], width={"size": 5, "offset": 1}, style={"padding-bottom": "5%"}),
+    ], align="center", justify="center",),
+    dbc.Row([
+        dbc.Col([card_rectores], width={"size": 5, "offset": 1}),
+        dbc.Col([card_colofon], width={"size": 5, "offset": 1}),
+    ], align="center", justify="center",),
+], fluid=True)
+
+home_content = dbc.Container(id='h_content', className='parent_content', children=[
     html.Div(id='h_info', className='container', children=[
         html.H2('Welcome'),
         html.P('Leiden University was founded in 1575. '
@@ -70,18 +148,18 @@ home_content = html.Div(id='h_content', className='parent_content', children=[
                'The urban dynamics related to migration and socio-economic development '
                'may -vice versa- have had impact on the university. The question is how.'  
                'This project will examine the interaction between university and city through data science methods.'),
-        html.P('This project is work-in-progress. Data on the website will be regularly updated '
-               'and the functionalities will be extended'),
-        html.Div(className='center_object', children=[
-            html.Embed(src='assets/LEI001013879.jpg', width='40%', height='40%',
-                       title=('Academiegebouw, Rapenburg 73. '
-                              'Academie met op de voorgrond ijsvermaak op het Rapenburg.' 
-                              'Foto van een tekening in het album Amicorum van Johannes van Amstel '
-                              'van Mijnden, 1601, in Koninklijke Bibliotheek te Den Haag.')),
-            html.P('Erfgoed Leiden en Omstreken', style={'font-size': 'small'})
-        ]),
+        html.P('NB. This project is a work-in-progress. Data and functionalities on the website will be regularly updated and improved.'),
+        # html.Div(className='center_object', children=[
+        #     html.Embed(src='assets/LEI001013879.jpg', width='40%', height='40%',
+        #                title=('Academiegebouw, Rapenburg 73. '
+        #                       'Academie met op de voorgrond ijsvermaak op het Rapenburg.' 
+        #                       'Foto van een tekening in het album Amicorum van Johannes van Amstel '
+        #                       'van Mijnden, 1601, in Koninklijke Bibliotheek te Den Haag.')),
+        #     html.P('Erfgoed Leiden en Omstreken', style={'font-size': 'small'})
+        # ]),
+        html.Div(home_grid)
     ]),
-])
+], fluid=True)
 
 profs_content = html.Div(id='p_content', className='parent_content', children=[
     html.H2('Information'),
@@ -145,6 +223,49 @@ sources_content = html.Div(id='src_content', className='parent_content', childre
     ]),
 ])
 
+
+# app.layout = html.Div(children=[
+#     html.H1('Leiden Univercity', id='page_title'),
+#     dcc.Tabs(id='tab_bar', value='tab-0', className='header_tab_bar', children=[
+#         dcc.Tab(label='Home', value='tab-0', className='child_tab', selected_className='child_tab_selected'),
+#         dcc.Tab(label='Professors', value='tab-1', className='child_tab', selected_className='child_tab_selected'),
+#         dcc.Tab(label='Students', value='tab-2', className='child_tab', selected_className='child_tab_selected'),
+#         dcc.Tab(label='Rectores Magnifici', value='tab-3', className='child_tab',
+#                 selected_className='child_tab_selected'),
+#         dcc.Tab(label='Colofon', value='tab-4', className='child_tab',
+#                 selected_className='child_tab_selected'),
+#         ]),
+#     html.Div(id='page_content'),
+# ], id='header')
+
+
+# TODO:M Remove tabs below
+app.layout = dbc.Container(children=[
+    html.Div(id='page_top', children=[html.Img(id="logo", src="assets/Leiden_zegel.png"), html.H1('Leiden Univercity', id="page_title")]),
+    # html.H1(id='page_title', children=['Leiden Univercity']),
+    html.Div(home_content, id="home"),
+    html.Div(id='page_content'),
+    ], fluid=True)
+
+
+# Test callback
+@app.callback(
+    Output('professor_page_content', 'children'),
+    Input('prof_button', 'value')
+)
+def render_content(tab):
+    if tab == 'tab-0':
+        return home_content
+    if tab == 'tab-1':
+        return profs_content
+    if tab == 'tab-2':
+        return students_content
+    if tab == 'tab-3':
+        return rector_content
+    if tab == 'tab-4':
+        return sources_content
+    else:
+        return 404
 
 # Index callbacks
 @app.callback(
