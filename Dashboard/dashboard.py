@@ -40,8 +40,7 @@ app = Dash(__name__, suppress_callback_exceptions=True,
 
 card_professor = dbc.Card([
     dbc.CardImg(
-        # src="/assets/resize/professors_780x400.jpeg",
-        src="/assets/resize/Student_400x267.jpg",
+        src="/assets/professors_780x400.jpeg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -50,7 +49,7 @@ card_professor = dbc.Card([
         dbc.CardBody([
             html.H3("Professors", className="card-title"),
             html.B("Visualizations of professors", className="card-text"),
-            dbc.Button("Go to visualizations", color="primary", class_name="card-btn"),
+            dbc.Button("Go to visualizations", id="btn-professor", color="primary", class_name="card-btn", n_clicks=0),
         ]),
     )],
     # style={"width": "22rem"},
@@ -60,7 +59,7 @@ card_professor = dbc.Card([
 
 card_student = dbc.Card([
     dbc.CardImg(
-        src="/assets/resize/Student_400x267.jpg",
+        src="/assets/Student_400x267.jpg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -68,8 +67,8 @@ card_student = dbc.Card([
     dbc.CardImgOverlay(
         dbc.CardBody([
             html.H3("Students", className="card-title"),
-            html.B("Student visualizations", className="card-text"),
-            dbc.Button("Go to visualizations", color="primary", class_name="card-btn"),
+            html.B("Visualizations of Students", className="card-text"),
+            dbc.Button("Go to visualizations", id="btn-student", color="primary", class_name="card-btn", n_clicks=0),
         ]),
     )],
     # style={"width": "22rem"},
@@ -79,8 +78,7 @@ card_student = dbc.Card([
 
 card_rectores = dbc.Card([
     dbc.CardImg(
-        # src="/assets/leidenlogo.png",
-        src="/assets/resize/Student_400x267.jpg",
+        src="/assets/alumni.jpeg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -88,18 +86,17 @@ card_rectores = dbc.Card([
     dbc.CardImgOverlay(
         dbc.CardBody([
             html.H4("Rectores Magnifici", className="card-title"),
-            html.B("Rectores Magnifici visualizations", className="card-text"),
-            dbc.Button("Go to visualizations", color="primary", class_name="card-btn"),
+            html.B("Visualizations of Rectores Magnifici", className="card-text"),
+            dbc.Button("Go to visualizations", id="btn-rectores", color="primary", class_name="card-btn", n_clicks=0),
         ]),
     )],
     # style={"width": "22rem"},
-    style={"width": "80%", "height": "75%"},
+    style={"width": "80%", "height": "75%", "box-shadow": "0 0 5px 1px rgb(120 110 100 / 30%)"},
 )
 
 
 card_colofon = dbc.Card([
     dbc.CardImg(
-        # src="/assets/leidenlogo.png",
         src="/assets/LEI001013879.jpg",
         top=True,
         style={"opacity": 0.5},
@@ -109,17 +106,18 @@ card_colofon = dbc.Card([
         dbc.CardBody([
             html.H3("Colofon", className="card-title"),
             html.B("Sources, contact information and more", className="card-text"),
-            dbc.Button("Go to page", color="primary", class_name="card-btn"),
+            dbc.Button("Go to page", id="btn-colofon", color="primary", class_name="card-btn", n_clicks=0),
             # dbc.Button("Go to visualizations", color="primary", class_name="butcol"),
         ]),
     )],
     style={"width": "80%", "height": "75%"},
 )
 
+
 home_grid = dbc.Container([
     dbc.Row([
-        dbc.Col([card_professor], width={"size": 5, "offset": 1}, style={"padding-bottom": "5%"}),
-        dbc.Col([card_student], width={"size": 5, "offset": 1}, style={"padding-bottom": "5%"}),
+        dbc.Col([card_professor], width={"size": 5, "offset": 1}, style={"margin-bottom": "3%"}),
+        dbc.Col([card_student], width={"size": 5, "offset": 1}, style={"margin-bottom": "3%"}),
     ], align="center", justify="center",),
     dbc.Row([
         dbc.Col([card_rectores], width={"size": 5, "offset": 1}),
@@ -129,26 +127,14 @@ home_grid = dbc.Container([
 
 home_content = dbc.Container(id='h_content', className='parent_content', children=[
     html.Div(id='h_info', className='container', children=[
-        html.H2('Welcome'),
+        html.H2('Introduction'),
         html.P('Leiden University was founded in 1575. '
                'Since then, many thousands of students and staff have attended the university. '
                'Who were they? Where did they come from?  '
                'How did the academic population change over time? '
                'This website allows you to explore and visualise the answers to these questions. '
                'You can search for information on students and on academic staff.'),
-        html.H2('The project'),
-        html.P('This website is part of, and presents the first results of the project '
-               'Linking University and City in Leiden 1575-2020. '
-               'The aim of the project is to examine the interaction between the university and the city. '
-               'The impact of the presence of the university on the city has been described '
-               'from different perspectives, but we know little about the interaction between '
-               'the changing populations in town and gown. '
-               'The presence of an academic population affected the urban demography, '
-               'social-economic structures and culture. '
-               'The urban dynamics related to migration and socio-economic development '
-               'may -vice versa- have had impact on the university. The question is how.'  
-               'This project will examine the interaction between university and city through data science methods.'),
-        html.P('NB. This project is a work-in-progress. Data and functionalities on the website will be regularly updated and improved.'),
+        html.P('NB. This project is a work-in-progress. The data and functionalities of this website will be regularly updated and improved.'),
         # html.Div(className='center_object', children=[
         #     html.Embed(src='assets/LEI001013879.jpg', width='40%', height='40%',
         #                title=('Academiegebouw, Rapenburg 73. '
@@ -162,9 +148,6 @@ home_content = dbc.Container(id='h_content', className='parent_content', childre
 ], fluid=True)
 
 profs_content = html.Div(id='p_content', className='parent_content', children=[
-    html.H2('Information'),
-    html.P('This page shows the information about professors previously working at the university of Leiden.'
-           ' Choose one of the following options to see more information.'),
     dcc.Tabs(id='p_tab_bar', value='p_tab-1', className='header_tab_bar', children=[
         dcc.Tab(label='Timeline', value='p_tab-1', className='child_tab', selected_className='child_tab_selected'),
         dcc.Tab(label='Subject information', value='p_tab-2', className='child_tab',
@@ -174,15 +157,16 @@ profs_content = html.Div(id='p_content', className='parent_content', children=[
         dcc.Tab(label='Individual information', value='p_tab-4', className='child_tab',
                 selected_className='child_tab_selected'),
     ]),
+    html.H2('Information'),
+    html.P('This page shows the information about professors previously working at the university of Leiden.'
+           ' Choose one of the following options to see more information.'),
     html.Div(id='professor_page_content'),
 ])
 
 students_content = html.Div(id='s_content', className='parent_content', children=[
     html.Div(id='s_info', className='container', children=[
-        html.H2('Information'),
-        html.P('This page shows the information about student enrollments from the period 1575 to 1812. Choose one of '
-               'the following options to see details about the enrollments of students at the university of Leiden.'),
         dcc.Tabs(id='s_tab_bar', value='s_tab-1', className='header_tab_bar', children=[
+            # dcc.Tab(label='Home', value='s_tab-0', className='child_tab', selected_className='child_tab_selected'),
             dcc.Tab(label='Timeline', value='s_tab-1', className='child_tab', selected_className='child_tab_selected'),
             dcc.Tab(label='Subject information', value='s_tab-2', className='child_tab',
                     selected_className='child_tab_selected'),
@@ -192,13 +176,13 @@ students_content = html.Div(id='s_content', className='parent_content', children
                     selected_className='child_tab_selected'),
         ]),
     ]),
+    html.H2('Information'),
+    html.P('This page shows the information about student enrollments from the period 1575 to 1812. Choose one of '
+            'the following options to see details about the enrollments of students at the university of Leiden.'),
     html.Div(id='student_page_content'),
 ])
 
 rector_content = html.Div(id='r_content', className='parent_content', children=[
-    html.H2('Information'),
-    html.P('This page shows the information about all the rectores magnifici the university of Leiden has had.'
-           ' Choose one of the following options to see more information.'),
     dcc.Tabs(id='r_tab_bar', value='r_tab-1', className='header_tab_bar', children=[
         dcc.Tab(label='Timeline', value='r_tab-1', className='child_tab', selected_className='child_tab_selected'),
         dcc.Tab(label='Subject information', value='r_tab-2', className='child_tab',
@@ -208,22 +192,37 @@ rector_content = html.Div(id='r_content', className='parent_content', children=[
         dcc.Tab(label='Individual information', value='r_tab-4', className='child_tab',
                 selected_className='child_tab_selected'),
     ]),
+    html.H2('Information'),
+    html.P('This page shows the information about all the rectores magnifici the university of Leiden has had.'
+           ' Choose one of the following options to see more information.'),
     html.Div(id='rector_page_content'),
 ])
 
 sources_content = html.Div(id='src_content', className='parent_content', children=[
     html.Div(id='src_info', className='container', children=[
-        html.H2('ABOUT THIS SITE'),
+        html.H2('About this site'),
         html.P('This website is part of the project Linking City, University and Diversity'
                'This website is work in progress. The dataset is not yet complete, '
                'information on the website will be updated periodically.'),
+        html.H2('The project'),
+        html.P('This website is part of, and presents the first results of the project '
+               'Linking University and City in Leiden 1575-2020. '
+               'The aim of the project is to examine the interaction between the university and the city. '
+               'The impact of the presence of the university on the city has been described '
+               'from different perspectives, but we know little about the interaction between '
+               'the changing populations in town and gown. '
+               'The presence of an academic population affected the urban demography, '
+               'social-economic structures and culture. '
+               'The urban dynamics related to migration and socio-economic development '
+               'may -vice versa- have had impact on the university. The question is how.'  
+               'This project will examine the interaction between university and city through data science methods.'),
         html.H2('Projectteam', style={"text-align":"left"}),
-        html.P('Prof. dr Wessel Kraaij, Prof. dr Ariadne Schmidt (supervisors), '
-               'Prof. dr Joost Visser, Richard van Dijk, MA (research software engineer), '
-               'Michael de Koning, Ben van Yperen (student assistants).'),
+        html.P('Wessel Kraaij (Data Science), Ariadne Schmidt (Humanities), '
+               'Joost Visser (Data Science), Richard van Dijk (Data Science), '
+               'Michael de Koning (Computer Science), Ben van Yperen (Humanities).'),
         html.H2('Datasources', style={"text-align":"left"}),
         html.P('The following sources are being used for this dashboard:'),
-        html.Li('Dataset Martine Zoeteman, Student Population Leiden University 1575-1812 (2011), based upon Album Studiosorum.'
+        html.Li('Dataset Martine Zoeteman, Student Population Leiden University 1575-1812 (2011), based upon Album Studiosorum. '
                'For an extensive explanation of the sources see:'  
                'Martine Zoeteman-van Pelt, De studentenpopulatie van de Leidse universiteit, 1575-1812; :'
                ' "Een volk op zyn Siams gekleet eenige mylen van Den Haag woonende" (Leiden 2011).'),
@@ -248,67 +247,62 @@ sources_content = html.Div(id='src_content', className='parent_content', childre
 ])
 
 
-# app.layout = html.Div(children=[
-#     html.H1('Leiden Univercity', id='page_title'),
-#     dcc.Tabs(id='tab_bar', value='tab-0', className='header_tab_bar', children=[
-#         dcc.Tab(label='Home', value='tab-0', className='child_tab', selected_className='child_tab_selected'),
-#         dcc.Tab(label='Professors', value='tab-1', className='child_tab', selected_className='child_tab_selected'),
-#         dcc.Tab(label='Students', value='tab-2', className='child_tab', selected_className='child_tab_selected'),
-#         dcc.Tab(label='Rectores Magnifici', value='tab-3', className='child_tab',
-#                 selected_className='child_tab_selected'),
-#         dcc.Tab(label='Colofon', value='tab-4', className='child_tab',
-#                 selected_className='child_tab_selected'),
-#         ]),
-#     html.Div(id='page_content'),
-# ], id='header')
-
-
-# TODO:M Remove tabs below
 app.layout = dbc.Container(children=[
-    html.Div(id='page_top', children=[html.Img(id="logo", src="assets/Leiden_zegel.png"), html.H1('Leiden Univercity', id="page_title")]),
-    # html.H1(id='page_title', children=['Leiden Univercity']),
-    html.Div(home_content, id="home"),
-    html.Div(id='page_content'),
+    html.Div(id='page_top', children=[html.Img(id="logo", src="assets/Leiden_zegel.png"), html.H1('Leiden Univercity Project', id="page_title")]),
+    # dcc.Tabs(id='tab_bar', className='header_tab_bar', children=[
+    #     dcc.Tab(label='Home', className='child_tab', selected_className='child_tab_selected'),
+    #     # dcc.Tab(label='Professors', value='tab-1', className='child_tab', selected_className='child_tab_selected'),
+    #     # dcc.Tab(label='Students', value='tab-2', className='child_tab', selected_className='child_tab_selected'),
+    #     # dcc.Tab(label='Rectores Magnifici', value='tab-3', className='child_tab',
+    #     #         selected_className='child_tab_selected'),
+    #     # dcc.Tab(label='Colofon', value='tab-4', className='child_tab',
+    #     #         selected_className='child_tab_selected'),
+    #     ]),
+    # html.Div(home_content, id="home"),
+    dbc.Button("Home", id="btn-home", class_name="card-btn", n_clicks=0),
+    html.Div(home_content, id='page_content'),
     ], fluid=True)
 
 
-# Test callback
-@app.callback(
-    Output('professor_page_content', 'children'),
-    Input('prof_button', 'value')
-)
-def render_content(tab):
-    if tab == 'tab-0':
-        return home_content
-    if tab == 'tab-1':
-        return profs_content
-    if tab == 'tab-2':
-        return students_content
-    if tab == 'tab-3':
-        return rector_content
-    if tab == 'tab-4':
-        return sources_content
-    else:
-        return 404
-
-# Index callbacks
+# Card button callbacks
 @app.callback(
     Output('page_content', 'children'),
-    Input('tab_bar', 'value')
+    Input('btn-professor', 'n_clicks'),
+    Input('btn-student', 'n_clicks'),
+    Input('btn-rectores', 'n_clicks'),
+    Input('btn-colofon', 'n_clicks'),
+    prevent_initial_call=True
 )
-def render_content(tab):
-    if tab == 'tab-0':
-        return home_content
-    if tab == 'tab-1':
+def render_content(btn1, btn2, btn3, btn4):
+    if 'btn-professor' == ctx.triggered_id:
         return profs_content
-    if tab == 'tab-2':
+    elif 'btn-student' == ctx.triggered_id:
         return students_content
-    if tab == 'tab-3':
+    elif 'btn-rectores' == ctx.triggered_id:
         return rector_content
-    if tab == 'tab-4':
+    elif 'btn-colofon' == ctx.triggered_id:
         return sources_content
     else:
-        return 404
+        return home_content
+
+# Home button callbacks
+# @app.callback(
+#     Output('page_content', 'children'),
+#     Input('btn-home', 'n_clicks'),
+#     Input('btn-professor', 'n_clicks'),
+#     prevent_initial_call=True
+# )
+# def do_some(btn1, btn2):
+#     try:
+#         w = 'btn-professor' == ctx.triggered_id
+#     except ReferenceError:
+#         w = False
+#     if 'btn-home' == ctx.triggered_id:
+#         return home_content
+#     elif w:
+#         return profs_content
+#     else:
+#         pass
 
 
 # Professor tabs
