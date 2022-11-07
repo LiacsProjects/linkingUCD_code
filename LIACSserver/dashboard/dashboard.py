@@ -1,7 +1,7 @@
 ############################################################################################## LOCAL
 # added for local server
 # extra regel om environmental variable te bepalen
-import Add_environment_variable
+#import Add_environment_variable
 
 ########################################################################################### end local
 # import modules
@@ -21,12 +21,12 @@ MARK_SPACING = 10
 # Configurate dash application voor DASH
 app = Dash(__name__, suppress_callback_exceptions=True,
            routes_pathname_prefix='/',
-           #  uitgeschakeld  #      requests_pathname_prefix='/dashboard/'
+           requests_pathname_prefix='/dashboard/'
            )
            
 ################################################################################################ SERVER
 # Configurate dash application voor server
-# server = app.server
+server = app.server
 
 ########################################################################################################### TODO
 
@@ -141,7 +141,7 @@ sources_content = html.Div(id='src_content', className='parent_content', childre
                'information on the website will be updated periodically.'),
         html.H2('Projectteam', style={"text-align":"left"}),
         html.P('Prof. dr Wessel Kraaij, Prof. dr Ariadne Schmidt (supervisors), '
-               'Prof. dr Joost Visser, Richard van Dijk, MA (research software engineer), '
+               'Prof. dr Joost Visser, Ir. Richard van Dijk (projectlead software, LIACS software lab), '
                'Michael de Koning, Ben van Yperen (student assistants).'),
         html.H2('Datasources', style={"text-align":"left"}),
         html.P('The following sources are being used for this dashboard:'),
@@ -2375,11 +2375,11 @@ def synchronise_dates(min_year, max_year):
     return min_year, max_year
 
 ################################################################################################ LOCAL
-if __name__ == '__main__':
-    app.run_server(port=8050, debug=False)
+#if __name__ == '__main__':
+#    app.run_server(port=8050, debug=False)
 #
 ################################################################################################ SERVER
-#if __name__ == '__main__':
-#    app.run_server(debug=True)
+if __name__ == '__main__':
+    app.run_server(debug=False)
 #
 ################################################################################################# END
