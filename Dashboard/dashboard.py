@@ -125,9 +125,11 @@ home_grid = dbc.Container([
     ], align="center", justify="center",),
 ], fluid=True)
 
-home_content = dbc.Container(id='h_content', className='parent_content', children=[
-    html.Div(id='h_info', className='container', children=[
-        html.H2('Introduction'),
+home_content = dbc.Container(id='h_content', className='parent_content',
+                             children=[
+                                       html.Div(id='h_info', className='container',
+                                                children=[
+                                                           html.H2('Introduction'),
         html.P('Leiden University was founded in 1575. '
                'Since then, many thousands of students and staff have attended the university. '
                'Who were they? Where did they come from?  '
@@ -143,9 +145,9 @@ home_content = dbc.Container(id='h_content', className='parent_content', childre
         #                       'van Mijnden, 1601, in Koninklijke Bibliotheek te Den Haag.')),
         #     html.P('Erfgoed Leiden en Omstreken', style={'font-size': 'small'})
         # ]),
-        html.Div(home_grid)
-    ]),
-], fluid=True)
+                                                           html.Div(home_grid)
+                                                         ]),
+                                        ], fluid=True)
 
 profs_content = html.Div(id='p_content', className='parent_content', children=[
     dcc.Tabs(id='p_tab_bar', value='p_tab-1', className='header_tab_bar', children=[
@@ -157,7 +159,7 @@ profs_content = html.Div(id='p_content', className='parent_content', children=[
         dcc.Tab(label='Individual information', value='p_tab-4', className='child_tab',
                 selected_className='child_tab_selected'),
     ]),
-    html.H2('Information'),
+#    html.H2('Information'),
     html.P('This page shows the information about professors previously working at the university of Leiden.'
            ' Choose one of the following options to see more information.'),
     html.Div(id='professor_page_content'),
@@ -176,7 +178,7 @@ students_content = html.Div(id='s_content', className='parent_content', children
                     selected_className='child_tab_selected'),
         ]),
     ]),
-    html.H2('Information'),
+#    html.H2('Information'),
     html.P('This page shows the information about student enrollments from the period 1575 to 1812. Choose one of '
             'the following options to see details about the enrollments of students at the university of Leiden.'),
     html.Div(id='student_page_content'),
@@ -192,7 +194,7 @@ rector_content = html.Div(id='r_content', className='parent_content', children=[
         dcc.Tab(label='Individual information', value='r_tab-4', className='child_tab',
                 selected_className='child_tab_selected'),
     ]),
-    html.H2('Information'),
+#    html.H2('Information'),
     html.P('This page shows the information about all the rectores magnifici the university of Leiden has had.'
            ' Choose one of the following options to see more information.'),
     html.Div(id='rector_page_content'),
@@ -248,7 +250,9 @@ sources_content = html.Div(id='src_content', className='parent_content', childre
 
 
 app.layout = dbc.Container(children=[
-    html.Div(id='page_top', children=[html.Img(id="logo", src="assets/Leiden_zegel.png"), html.H1('Leiden Univercity Project', id="page_title")]),
+                                     html.Div(id='page_top', children=[
+                                            html.Img(id="logo", src="assets/Leiden_zegel.png"),
+                                            html.H1('Leiden Univercity Project', id="page_title")]),
     # dcc.Tabs(id='tab_bar', className='header_tab_bar', children=[
     #     dcc.Tab(label='Home', className='child_tab', selected_className='child_tab_selected'),
     #     # dcc.Tab(label='Professors', value='tab-1', className='child_tab', selected_className='child_tab_selected'),
@@ -259,14 +263,15 @@ app.layout = dbc.Container(children=[
     #     #         selected_className='child_tab_selected'),
     #     ]),
     # html.Div(home_content, id="home"),
-    dbc.Button("Home", id="btn-home", class_name="card-btn", n_clicks=0),
-    html.Div(home_content, id='page_content'),
-    ], fluid=True)
+                                    dbc.Button("Home", id="btn-home", class_name="me-1", n_clicks=0),
+                                    html.Div(home_content, id='page_content'),
+                                    html.Div(id='page-handler', hidden=True),
+                                    ], fluid=True)
 
 
 # Card button callbacks
 @app.callback(
-    Output('page_content', 'children'),
+    Output('page-handler', 'children'),
     Input('btn-professor', 'n_clicks'),
     Input('btn-student', 'n_clicks'),
     Input('btn-rectores', 'n_clicks'),
@@ -275,15 +280,28 @@ app.layout = dbc.Container(children=[
 )
 def render_content(btn1, btn2, btn3, btn4):
     if 'btn-professor' == ctx.triggered_id:
-        return profs_content
+        return 1
     elif 'btn-student' == ctx.triggered_id:
-        return students_content
+        return 2
     elif 'btn-rectores' == ctx.triggered_id:
-        return rector_content
+        return 3
     elif 'btn-colofon' == ctx.triggered_id:
-        return sources_content
+        return 4
     else:
-        return home_content
+        return 0
+
+# Home button callback
+@app.callback(
+    Output('page_content', 'children'),
+    Input('btn-home', 'n_clicks'),
+    Input('page-handler', 'children'),
+    prevent_initial_call=True
+)
+def pagehandler(btn, pagenr):
+   if 'btn-home' == ctx.triggered_id:
+       pagenr = 0
+   return [home_content, profs_content, students_content, rector_content, sources_content][pagenr]
+
 
 # Home button callbacks
 # @app.callback(
@@ -308,7 +326,7 @@ def render_content(btn1, btn2, btn3, btn4):
 # Professor tabs
 @app.callback(
     Output('professor_page_content', 'children'),
-    Input('p_tab_bar', 'value')
+    Input('p_tab_bar', 'value'),
 )
 def render_content(tab):
     if tab == 'p_tab-1':
@@ -388,7 +406,7 @@ def update_year_slider(century):
 
 # year-century graph
 @app.callback(
-    Output('p-year-century-dropdown-container', 'children'),
+    Output('p-year-century-graph', 'figure'),
     Input('p-year-century-subject-dropdown', 'value'),
     Input('p-year-century-slider', 'value'),
     Input('p-year-slider', 'value'),
@@ -398,19 +416,23 @@ def update_year_slider(century):
             ],
 )
 def update_year_century_output(selected_subject, selected_century, selected_year, selected_dropdown):
-    return dcc.Graph(figure=professorfigures.create_year_cent_figure(selected_subject, selected_century, selected_year,
-                                                                     selected_dropdown), 
-                     id='p-year-century-graph')
+    figure = professorfigures.create_year_cent_figure(
+                 selected_subject,
+                 selected_century,
+                 selected_year,
+                 selected_dropdown)
+    return figure
 
 
 # century-graph
 @app.callback(
-    Output('p-century-dropdown-container', 'children'),
+    Output('p-century-graph', 'figure'),
     Input('p-year-century-subject-dropdown', 'value'),
     Input('p-year-century-slider', 'value'),
 )
 def update_century_output(selected_subject, selected_century):
-    return dcc.Graph(figure=professorfigures.create_cent_figure(selected_subject, selected_century), id='century-graph')
+    figure = professorfigures.create_cent_figure(selected_subject, selected_century)
+    return figure
 
 
 # Timeline information
@@ -548,14 +570,15 @@ def update_timeline_information(selected_subject, hover_data, figure):
 # Subject information callbacks
 # Subject-graph
 @app.callback(
-    Output('p-subject-dropdown-container', 'children'),
+    Output('p-subject-graph', 'figure'),
     Input('p-subject-dropdown', 'value'),
     running=[
         (Output('p-subject-dropdown', 'disabled'), True, False),
     ],
 )
 def update_subject_output(selected_subject):
-    return dcc.Graph(figure=professorfigures.create_subject_info_graph(selected_subject), id='p-subject-graph')
+    figure = professorfigures.create_subject_info_graph(selected_subject)
+    return figure
 
 
 # Subject table
@@ -1243,7 +1266,7 @@ def update_year_slider(century):
 
 # year-century graph
 @app.callback(
-    Output('year-century-dropdown-container', 'children'),
+    Output('year-century-graph', 'figure'),
     Input('year-century-subject-dropdown', 'value'),
     Input('year-century-slider', 'value'),
     Input('year-slider', 'value'),
@@ -1251,22 +1274,23 @@ def update_year_slider(century):
     Input('year-century-dropdown', 'value'),
     running=[
         (Output('year-century-subject-dropdown', 'disabled'), True, False),
-    ],
+            ],
 )
 def update_year_century_output(selected_subject, selected_century, selected_year, selected_age, selected_dropdown):
-    return dcc.Graph(figure=studentfigures.create_year_cent_figure(selected_subject, selected_century, selected_year,
-                                                                   selected_age, selected_dropdown),
-                     id='year-century-graph')
+    figure = studentfigures.create_year_cent_figure(selected_subject, selected_century, selected_year,
+                                                    selected_age, selected_dropdown)
+    return figure
 
 
 # century-graph
 @app.callback(
-    Output('century-dropdown-container', 'children'),
+    Output('century-graph', 'figure'),
     Input('year-century-subject-dropdown', 'value'),
     Input('year-century-slider', 'value'),
 )
 def update_century_output(selected_subject, selected_century):
-    return dcc.Graph(figure=studentfigures.create_cent_figure(selected_subject, selected_century), id='century-graph')
+    figure = studentfigures.create_cent_figure(selected_subject, selected_century)
+    return figure
 
 
 # Timeline information
@@ -1404,14 +1428,15 @@ def update_timeline_information(selected_subject, hover_data, figure):
 # Subject information callbacks
 # Subject-graph
 @app.callback(
-    Output('subject-dropdown-container', 'children'),
+    Output('subject-graph', 'figure'),
     Input('subject-dropdown', 'value'),
     running=[
         (Output('subject-dropdown', 'disabled'), True, False),
     ],
 )
 def update_subject_output(selected_subject):
-    return dcc.Graph(figure=studentfigures.create_subject_info_graph(selected_subject), id='subject-graph')
+    figure = studentfigures.create_subject_info_graph(selected_subject)
+    return figure
 
 
 # Subject table
@@ -2077,7 +2102,7 @@ def update_year_slider(century):
 
 # year-century graph
 @app.callback(
-    Output('r-year-century-dropdown-container', 'children'),
+    Output('r-year-century-graph', 'figure'),
     Input('r-year-century-subject-dropdown', 'value'),
     Input('r-year-century-slider', 'value'),
     Input('r-year-slider', 'value'),
@@ -2087,19 +2112,20 @@ def update_year_slider(century):
     ],
 )
 def r_update_year_century_output(selected_subject, selected_century, selected_year, selected_dropdown):
-    return dcc.Graph(figure=rectorfigures.create_year_cent_figure(selected_subject, selected_century, selected_year,
-                                                                  selected_dropdown),
-                     id='r-year-century-graph')
+    figure = rectorfigures.create_year_cent_figure(selected_subject, selected_century, selected_year,
+                                                                  selected_dropdown)
+    return figure
 
 
 # century-graph
 @app.callback(
-    Output('r-century-dropdown-container', 'children'),
+    Output('r-century-graph', 'figure'),
     Input('r-year-century-subject-dropdown', 'value'),
     Input('r-year-century-slider', 'value'),
 )
 def r_update_century_output(selected_subject, selected_century):
-    return dcc.Graph(figure=rectorfigures.create_cent_figure(selected_subject, selected_century), id='century-graph')
+    figure = rectorfigures.create_cent_figure(selected_subject, selected_century)
+    return figure
 
 
 # Timeline information
@@ -2185,14 +2211,15 @@ def r_update_timeline_information(selected_subject, hover_data, figure):
 # Subject information callbacks
 # Subject-graph
 @app.callback(
-    Output('r-subject-dropdown-container', 'children'),
+    Output('r-subject-graph', 'figure'),
     Input('r-subject-dropdown', 'value'),
     running=[
         (Output('r-subject-dropdown', 'disabled'), True, False),
     ],
 )
 def r_update_subject_output(selected_subject):
-    return dcc.Graph(figure=rectorfigures.create_subject_info_graph(selected_subject), id='r-subject-graph')
+    figure = rectorfigures.create_subject_info_graph(selected_subject)
+    return figure
 
 
 # Subject table

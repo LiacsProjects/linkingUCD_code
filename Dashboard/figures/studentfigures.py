@@ -1,3 +1,5 @@
+
+
 # Creating dataframe
 import plotly.express as px
 import plotly.graph_objects as go
@@ -97,13 +99,13 @@ def create_year_cent_figure(subject, century, year, age, mode):
                       hover_name=subjectx, hover_data=['year', 'century'])
     elif mode == 'Line graph':
         fig = px.scatter(filtered_df, x='year', y='count', size='count',
-                         #color=subjectx, color_continuous_scale='blues',
+                         color=subjectx, color_continuous_scale='blues',
                          log_x=True, labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year',
                                              'century': 'Century'},
                          hover_name=subjectx, hover_data=['year', 'century'])
     elif mode == 'Bar graph':
         fig = px.bar(filtered_df, x='year', y='count',
-                     #color=subjectx, color_continuous_scale='blues',
+                     color=subjectx, color_continuous_scale='blues',
                      labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'},
                      hover_name=subjectx, hover_data=['year', 'century'])
     if subjectx == 'year':
@@ -118,6 +120,7 @@ def create_year_cent_figure(subject, century, year, age, mode):
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
                           title=title_cent)
+       #fig.update_traces(marker_color='#001158')
     else:
         fig.update_traces(mode='markers+lines')
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',

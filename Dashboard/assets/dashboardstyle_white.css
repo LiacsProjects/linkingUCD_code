@@ -168,7 +168,7 @@ h2 {
     width: 49%;
 }
 
-.left_container {
+.right_container {
     width: 68%;
     display: inline-block;
     margin-left: 1%;
@@ -190,7 +190,7 @@ h2 {
     vertical-align: top;
 }
 
-.right_container {
+.left_container {
     width: 29%;
     display: inline-block;
     vertical-align: top;

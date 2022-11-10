@@ -105,14 +105,15 @@ def create_year_cent_figure(subject, century, year, mode):
                       labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year', 'century': 'Century'},
                       hover_name=subjectx, hover_data=['year', 'century'])
     elif mode == 'Line graph':
-        fig = px.scatter(filtered_df, x='year', y='count', size='count',
-                         #color=subjectx, color_continuous_scale='blues',
+        fig = px.scatter(filtered_df, x='year', y='count', size='count', color=subjectx,
+                         color_continuous_scale='blues',
                          log_x=True, labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year',
                                              'century': 'Century'},
                          hover_name=subjectx, hover_data=['year', 'century'])
     elif mode == 'Bar graph':
         fig = px.bar(filtered_df, x='year', y='count',
-                     #color=subjectx, color_continuous_scale='blues',
+                     color=subjectx,
+                     color_continuous_scale='blues',
                      labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year', 'century': 'Century'},
                      hover_name=subjectx, hover_data=['year', 'century'])
     if subjectx == 'year':
@@ -128,8 +129,7 @@ def create_year_cent_figure(subject, century, year, mode):
                           plot_bgcolor='rgba(223,223,218,0.7)',
                           title=title_cent)
     else:
-        fig.update_traces(mode='markers+lines')
-        fig.update_traces(marker_colorbar_bgcolor="#333", selector = dict(type='bar'))
+        fig.update_traces(mode='lines+markers')
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
                           title=title_cent)
@@ -147,7 +147,8 @@ def create_cent_figure(subject, century):
         filtered_df = filtered_df.sort_values(by=[subjectx, 'century'], ascending=True)
     else:
         filtered_df = filtered_df.sort_values(by=['count', 'century'], ascending=False)
-    fig = px.bar(filtered_df, x=subjectx, y='count', color=subjectx, color_continuous_scale='blues',
+    fig = px.bar(filtered_df, x=subjectx, y='count', color=subjectx,
+                 color_continuous_scale='blues',
                  hover_name=subjectx, hover_data=['century'],
                  labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year', 'century': 'Century'})
     if subjectx == 'year':
@@ -159,7 +160,8 @@ def create_cent_figure(subject, century):
     else:
         title_cent += (str(century[0]) + 'th' + '-' + str(century[1]) + 'th century')
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      title=title_cent)
+                      title=title_cent,
+                      )
     fig.update_xaxes(type='category')
     return fig
 
@@ -241,7 +243,7 @@ def create_country_line_map(min_year, max_year):
         go.Scattergeo(
             lat=lats,
             lon=lons,
-            mode='lines',
+            mode='line',
             line=dict(width=1, color='blue'),
             name='Place of birth'
         )

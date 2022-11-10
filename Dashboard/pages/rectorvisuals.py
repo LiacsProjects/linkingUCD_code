@@ -11,7 +11,7 @@ START_CENTURY    = 16
 SUBJECT_DROPDOWN = ['Rectors']
 DEFAULT_SUBJECT = 'Rectors'
 GRAPH_DROPDOWN   = ['Line graph', 'Bar graph']
-DEFAULT_GRAPH = 'Bar graph'
+DEFAULT_GRAPH = 'Line graph'
 
 # Data year calculaionss
 from figures import rectorfigures
@@ -23,71 +23,110 @@ for y in current_century['year'][0::YEAR_STEP]:
 years.append(current_century['year'].max() )
 
 # layout page 
-timeline = html.Div(id='r_timeline', className='container', children=[
-    html.Div(id='r_timeline_header', className='page_header', children=[
-        html.H1('Timeline')
-    ]),
-    html.Div(id='r-year-century-dropdown-container', className='left_container'),
-    html.Div(id='r_inputs', className='right_container ', children=[
-        html.H3('Graph settings:'),
-        html.P('Select Subject:'),
-        dcc.Dropdown(
-            SUBJECT_DROPDOWN, DEFAULT_SUBJECT, placeholder='Choose a subject', clearable=False,
-            id='r-year-century-subject-dropdown', className='dropdown'
-        ),
+timeline = html.Div(id='r_timeline', className='container',
+                    children=[
+                              html.Div(id='r_timeline_header', className='page_header',
+                                       children=[html.H1('Timeline')]
+                                       ),
+                              html.Div(id='r_inputs', className='left_container ',
+                                       children=[
+                                                 html.H3('Graph settings:'),
+                                                 html.P('Select Subject:'),
+                                                 dcc.Dropdown(
+                                                              SUBJECT_DROPDOWN,
+                                                              DEFAULT_SUBJECT,
+                                                              placeholder='Choose a subject',
+                                                              clearable=False,
+                                                              id='r-year-century-subject-dropdown',
+                                                              className='dropdown'
+                                                              ),
 
-        html.P('Select century range:'),
-        dcc.RangeSlider(
-            data.rector_years['century'].min(),
-            data.rector_years['century'].max(),
-            CENTURY_STEP,
-            value=[data.rector_years['century'].min(), data.rector_years['century'].min()],
-            marks={str(cent): str(cent) for cent in data.rector_years['century']},
-            id='r-year-century-slider'
-        ),
-        html.P('Select year range:'),
-        dcc.RangeSlider(
-                        current_century['year'].min(),
-                        current_century['year'].max(),
-                        YEAR_STEP,
-                        id='r-year-slider',
-                        ),
-        html.Div(id='r-year-slider-container'),
+                                                 html.P('Select century range:'),
+                                                 dcc.RangeSlider(
+                                                                 data.rector_years['century'].min(),
+                                                                 data.rector_years['century'].max(),
+                                                                 CENTURY_STEP,
+                                                                 value=[data.rector_years['century'].min(),
+                                                                        data.rector_years['century'].min()],
+                                                                 marks={str(cent):
+                                                                    str(cent) for cent in data.rector_years['century']},
+                                                                 id='r-year-century-slider'
+                                                                 ),
+                                                 html.P('Select year range:'),
+                                                 dcc.RangeSlider(
+                                                                 current_century['year'].min(),
+                                                                 current_century['year'].max(),
+                                                                 YEAR_STEP,
+                                                                 id='r-year-slider',
+                                                                 ),
+                                                 html.Div(id='r-year-slider-container'),
+                                                 html.P('Select graph type:'),
+                                                 dcc.Dropdown(
+                                                               GRAPH_DROPDOWN, DEFAULT_GRAPH,
+                                                               placeholder='Choose a graph style',
+                                                               clearable=False,
+                                                               id='r-year-century-dropdown',
+                                                               className='dropdown'
+                                                             ),
+                                               ]
+                                       ),
+                        html.Div(id='r-year-century-container', className='right_container',
+                                 children=[
+                                           html.H4('Graph:'),
+                                           dcc.Graph(id='r-year-century-graph',)
+                                           ],
+                                 ),
+                        html.Div(id='r-timeline-information-container', className='left_container',
+                                 children=[
+                                           html.H3('Information:'),
+                                           html.Div(id='r-timeline-information',),
+                                          ]
+                                 ),
+                        html.Div(id='r-century-graph-container', className='right_container',
+                                 children=[
+                                           html.H4('Sorted bar graph:'),
+                                           dcc.Graph(id='r-century-graph')
+                                          ],
+                                 ),
+                             ]),
 
-        html.P('Select graph type:'),
-        dcc.Dropdown(
-            GRAPH_DROPDOWN, DEFAULT_GRAPH, placeholder='Choose a graph style',
-            clearable=False, id='r-year-century-dropdown', className='dropdown'
-        ),
-        html.Div(id='r-year-century-graph'),
-    ]),
-    html.Div(id='r-century-dropdown-container', className='left_container'),
-    html.Div(id='r-timeline-information', className='right_container ', children=[
-        html.H3('Information:'),
-        html.Div(id='r-timeline-information'),
-    ]),
-]),
-
-subject_information = html.Div(id='r_subject_info', className='container', children=[
-    html.Div(id='r_subject_header', className='page_header', children=[
-        html.H1('Subject information')
-    ]),
-    html.Div(id='r-subject-container', className='left_container', children=[
-        html.Div(id='r-subject-dropdown-container'),
-        html.H3('Subject information:'),
-        html.Div(id='r-subject-table-container'),
-    ]),
-    html.Div(id='r-subject-information-container', className='right_container ', children=[
-        html.H3('Subject information'),
-        dcc.Dropdown(
-            SUBJECT_DROPDOWN, DEFAULT_SUBJECT, placeholder='Choose a subject', clearable=False,
-            style={'background-color': 'rgba(223,223,218,0.7)', 'color': 'black', 'margin': '1% 1% 1% 1%'},
-            id='r-subject-dropdown', className='dropdown'
-        ),
-        html.Div(id='r-subject-information'),
-        html.Div(id='r-subject-graph'),
-    ]),
-]),
+subject_information = html.Div(id='r_subject_info', className='container',
+                               children=[
+                                         html.Div(id='r_subject_header', className='page_header',
+                                            children=[html.H1('Subject information')]),
+                                         html.Div(id='r-subject-information-container', className='left_container',
+                                            children=[
+                                                      html.H3('Graph settings:'),
+                                                      dcc.Dropdown(
+                                                                   SUBJECT_DROPDOWN,
+                                                                   DEFAULT_SUBJECT,
+                                                                   placeholder='Choose a subject',
+                                                                   clearable=False,
+                                                                   style={'background-color':
+                                                                            'rgba(223,223,218,0.7)',
+                                                                          'color': 'black',
+                                                                          'margin': '1% 1% 1% 1%'},
+                                                                   id='r-subject-dropdown',
+                                                                   className='dropdown'
+                                                                 ),
+                                                      html.Div(id='r_subject_header2',
+                                                                   children=[html.H3('Subject information:'),
+                                                                             html.Div(id='r-subject-information'),
+                                                                            ],
+                                                               ),
+                                                ]),
+                                         html.Div(id='r-subject-dropdown-container', className='right_container',
+                                                  children=[
+                                                            html.H3('Graph:'),
+                                                            dcc.Graph(id='r-subject-graph'),
+                                                            html.Div(id='r-subject-container',
+                                                               children=[
+                                                                         html.H3('Subject data:'),
+                                                                         html.Div(id='r-subject-table-container'),
+                                                                        ],
+                                                               ),
+                                                           ]),
+                                       ])
 
 geographical_information = html.Div(id='r_geo', className='container', children=[
     html.Div(id='r_geo_header', className='page_header', children=[
