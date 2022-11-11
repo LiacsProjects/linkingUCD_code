@@ -20,6 +20,8 @@ GEOMAPS_OPTIONS  = ['Heat map', 'Line map', 'MP Heat map', 'MP Scatter map', 'An
 DEFAULT_GRAPH = 'Bar graph'
 GRAPH_DROPDOWN   = ['Line graph', 'Bar graph']
 
+
+
 # Data year calculations
 from figures import professorfigures
 current_century = data.all_dates_df[(data.all_dates_df['century'] <= START_CENTURY)]
@@ -33,8 +35,7 @@ timeline = html.Div(id='p_timeline', className='container',
                      children=[
                          html.Div(id='p_timeline_header', className='page_header',
                                   children=[html.H1('Timeline')]),
-                         html.Div(id='p-year-century-dropdown-container', className='left_container'),
-                         html.Div(id='p_inputs', className='right_container',
+                         html.Div(id='p_inputs', className='left_container',
                                   children=[
                                       html.H3('Graph settings:'),
                                       html.P('Select Subject:'),
@@ -68,45 +69,71 @@ timeline = html.Div(id='p_timeline', className='container',
                                       html.Div(id='p-year-century-graph'),
                                       ],
                                   ),
-                         html.Div(id='p-century-dropdown-container', className='left_container'),
-                         html.Div(id='p-timeline-information', className='right_container ',
+                         html.Div(id='p-year-century-dropdown-container', className='right_container',
                                   children=[
-                                      html.H3('Information:'),
-                                      html.Div(id='p-timeline-information'),
-                                  ]
+                                            html.H4('Graph:'),
+                                            dcc.Graph(id='p-year-century-graph',)
+                                           ],
+                                  ),
+                         html.Div(id='p-timeline-information-container', className='left_container ',
+                                  children=[
+                                            html.H3('Information:'),
+                                            html.Div(id='p-timeline-information'),
+                                           ]
+                                  ),
+                         html.Div(id='p-century-dropdown-container', className='right_container',
+                                  children=[
+                                            html.H4('Sorted bar graph:'),
+                                            dcc.Graph(id='p-century-graph'),
+                                           ]
                                   ),
                      ])
 
-subject_information = html.Div(id='p_subject_info', className='container', 
-    children=[
-    html.Div(id='p_subject_header', className='page_header', children=[
-        html.H1('Subject information')
-        ]),
-    html.Div(id='p-subject-container', className='left_container', children=[
-        html.Div(id='p-subject-dropdown-container'),
-        html.H3('Subject information:'),
-        html.Div(id='p-subject-table-container'),
-        ]),
-    html.Div(id='p-subject-information-container', className='right_container ', 
-        children=[
-        html.H3('Subject information'),
-        dcc.Dropdown(
-            SUBJECT_DROPDOWN ,
-            DEFAULT_SUBJECT, placeholder='Choose a subject', clearable=False,
-            style={'background-color': 'rgba(223,223,218,0.7)', 'color': 'black', 'margin': '1% 1% 1% 1%'},
-            id='p-subject-dropdown', className='dropdown'
-        ),
-        html.Div(id='p-subject-information'),
-        html.Div(id='p-subject-graph'),
-        ]),
-    ]),
+subject_information = html.Div(id='p_subject_info', className='container',
+                               children=[
+                                         html.Div(id='p_subject_header', className='page_header',
+                                            children=[html.H1('Subject information')]),
+                                         html.Div(id='p-subject-information-container', className='left_container',
+                                            children=[
+                                                      html.H3('Graph settings:'),
+                                                      dcc.Dropdown(
+                                                                   SUBJECT_DROPDOWN,
+                                                                   DEFAULT_SUBJECT,
+                                                                   placeholder='Choose a subject',
+                                                                   clearable=False,
+                                                                   style={'background-color':
+                                                                            'rgba(223,223,218,0.7)',
+                                                                          'color': 'black',
+                                                                          'margin': '1% 1% 1% 1%'},
+                                                                   id='p-subject-dropdown',
+                                                                   className='dropdown'
+                                                                 ),
+                                                      html.Div(id='p_subject_header2',
+                                                                   children=[html.H3('Subject information:'),
+                                                                             html.Div(id='p-subject-information'),
+                                                                            ]
+                                                         ),
+                                                     ]),
+
+                                         html.Div(id='p-subject-dropdown-container', className='right_container',
+                                                  children=[
+                                                            html.H3('Graph:'),
+                                                            dcc.Graph(id='p-subject-graph'),
+                                                            html.H3('Subject data:'),
+                                                            html.Div(id='p-subject-table-container'),
+                                                           ]),
+
+
+                                     ])
+
+
 
 geographical_information = html.Div(id='g_geo', className='container',
     children=[
               html.Div(id='g_geo_header', className='page_header',
                        children=[html.H1('Geographical information')]
                        ),
-              html.Div(id='p-geo-map-container', className='left_container',
+              html.Div(id='p-geo-map-container', className='right_container',
                        children=[
                                  html.H3('Geographical origin of professors'),
                                  html.Div(id='p-map-title'),
@@ -150,7 +177,7 @@ geographical_information = html.Div(id='g_geo', className='container',
             style={'background-color': 'rgba(223,223,218,0.7)', 'color': 'black', 'margin': '1%'},
         ),
     ]),
-    html.Div(id='p-map-info', className='right_container', children=[
+    html.Div(id='p-map-info', className='left_container', children=[
         html.H3('Country information'),
         html.Div(id='p-map-table-container'),
     ]),
