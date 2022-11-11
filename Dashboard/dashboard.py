@@ -67,7 +67,7 @@ card_student = dbc.Card([
     dbc.CardImgOverlay(
         dbc.CardBody([
             html.H3("Students", className="card-title"),
-            html.B("Visualizations of Students", className="card-text"),
+            html.B("Visualizations of students", className="card-text"),
             dbc.Button("Go to visualizations", id="btn-student", color="primary", class_name="card-btn", n_clicks=0),
         ]),
     )],
@@ -106,7 +106,7 @@ card_colofon = dbc.Card([
         dbc.CardBody([
             html.H3("Colofon", className="card-title"),
             html.B("Sources, contact information and more", className="card-text"),
-            dbc.Button("Go to page", id="btn-colofon", color="primary", class_name="card-btn", n_clicks=0),
+            dbc.Button("Go to colofon", id="btn-colofon", color="primary", class_name="card-btn", n_clicks=0),
             # dbc.Button("Go to visualizations", color="primary", class_name="butcol"),
         ]),
     )],
