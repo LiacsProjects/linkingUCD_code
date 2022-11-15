@@ -161,26 +161,23 @@ profs_content = html.Div(id='p_content', className='parent_content', children=[
     ]),
 #    html.H2('Information'),
     html.P('This page shows the information about professors previously working at the university of Leiden.'
-           ' Choose one of the following options to see more information.'),
+           ' Choose one of the following options to see more information.', style={"margin-left": "1%"}),
     html.Div(id='professor_page_content'),
 ])
 
 students_content = html.Div(id='s_content', className='parent_content', children=[
-    html.Div(id='s_info', className='container', children=[
-        dcc.Tabs(id='s_tab_bar', value='s_tab-1', className='header_tab_bar', children=[
-            # dcc.Tab(label='Home', value='s_tab-0', className='child_tab', selected_className='child_tab_selected'),
-            dcc.Tab(label='Timeline', value='s_tab-1', className='child_tab', selected_className='child_tab_selected'),
-            dcc.Tab(label='Subject information', value='s_tab-2', className='child_tab',
-                    selected_className='child_tab_selected'),
-            dcc.Tab(label='Geographical information', value='s_tab-3', className='child_tab',
-                    selected_className='child_tab_selected'),
-            dcc.Tab(label='Individual information', value='s_tab-4', className='child_tab',
-                    selected_className='child_tab_selected'),
-        ]),
+    dcc.Tabs(id='s_tab_bar', value='s_tab-1', className='header_tab_bar', children=[
+        dcc.Tab(label='Timeline', value='s_tab-1', className='child_tab', selected_className='child_tab_selected'),
+        dcc.Tab(label='Subject information', value='s_tab-2', className='child_tab',
+                selected_className='child_tab_selected'),
+        dcc.Tab(label='Geographical information', value='s_tab-3', className='child_tab',
+                selected_className='child_tab_selected'),
+        dcc.Tab(label='Individual information', value='s_tab-4', className='child_tab',
+                selected_className='child_tab_selected'),
     ]),
 #    html.H2('Information'),
     html.P('This page shows the information about student enrollments from the period 1575 to 1812. Choose one of '
-            'the following options to see details about the enrollments of students at the university of Leiden.'),
+            'the following options to see details about the enrollments of students at the university of Leiden.', style={"margin-left": "1%"}),
     html.Div(id='student_page_content'),
 ])
 
@@ -196,7 +193,7 @@ rector_content = html.Div(id='r_content', className='parent_content', children=[
     ]),
 #    html.H2('Information'),
     html.P('This page shows the information about all the rectores magnifici the university of Leiden has had.'
-           ' Choose one of the following options to see more information.'),
+           ' Choose one of the following options to see more information.', style={"margin-left": "1%"}),
     html.Div(id='rector_page_content'),
 ])
 
