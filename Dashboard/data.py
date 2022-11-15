@@ -43,7 +43,7 @@ status_df = pd.read_excel(base_path / 'excelfiles/students_status.xlsx', engine=
 job_df = pd.read_excel(base_path / 'excelfiles/students_job.xlsx', engine='openpyxl')
 rel_df = pd.read_excel(base_path / 'excelfiles/students_rel.xlsx', engine='openpyxl')
 previous_df = pd.read_excel(base_path / 'excelfiles/students_previous.xlsx', engine='openpyxl')
-individual_df = pd.read_excel(base_path / 'excelfiles/students_individual.xlsx', engine='openpyxl')
+individual_student_df = pd.read_excel(base_path / 'excelfiles/students_individual.xlsx', engine='openpyxl')
 
 #######################################################################################################################
 # Rectores Magnifici data handling

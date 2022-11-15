@@ -415,12 +415,12 @@ def create_map(city, country, birthyear):
 
 # Individual chart information
 def get_unique_values(subject):
-    unique_values = data.individual_df[subject].unique()
+    unique_values = data.individual_student_df[subject].unique()
     unique_values = unique_values.tolist()
     return unique_values
 
 
 def remove_nan(subject):
-    unique_values = data.individual_df[subject].unique()
+    unique_values = data.individual_student_df[subject].unique()
     unique_values = unique_values[1:]
     return unique_values

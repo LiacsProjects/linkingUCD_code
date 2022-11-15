@@ -276,7 +276,7 @@ app.layout = dbc.Container(children=[
     Input('btn-student', 'n_clicks'),
     Input('btn-rectores', 'n_clicks'),
     Input('btn-colofon', 'n_clicks'),
-    prevent_initial_call=True
+    prevent_initial_call=True,
 )
 def render_content(btn1, btn2, btn3, btn4):
     if 'btn-professor' == ctx.triggered_id:
@@ -853,17 +853,18 @@ def create_map(min_year, max_year, map_choice):
     Input('p-individual-job-dropdown', 'value'),
     Input('p-individual-subjectarea-dropdown', 'value'),
     Input('p-individual-faculty-dropdown', 'value'),
+    prevent_initial_call=True,
     )
-def update_student_table(search_button, selected_name, search_option, min_enrol, max_enrol, min_birth, max_birth,
+def update_professor_table(search_button, selected_name, search_option, min_enrol, max_enrol, min_birth, max_birth,
                          include_missing, selected_gender, selected_birthplace, selected_birthcountry,
                          selected_deathplace, selected_deathcountry, selected_promotion, selected_promotionplace,
                          selected_thesis, selected_job, selected_subjectarea, selected_faculty):
     df = data.individual_profs_df[['First name', 'Last name', 'Gender', 'Appointment date', 'Appointment year',
-                                   'Birth date', 'Birth year', 'Birth place', 'Birth country', 'Death date'
+                                   'Birth date', 'Birth year', 'Birth place', 'Birth country', 'Death date',
                                    'Death year', 'Death place', 'Death country', 'Promotion', 'Promotion place',
                                    'Promotion date', 'Promotion year', 'Thesis', 'Job', 'Subject area', 'Faculty',
                                    'Rating']]
-    text = 'professors were found'
+    text = ' professors were found'
     search_results_number = 0
     if ctx.triggered_id == 'p-search-individual':
         filtered_df = df
@@ -871,6 +872,7 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             words = selected_name.split(' ')
             temp_total_df = pd.DataFrame()
             for word in words:
+                # TODO: search "capitalized" to contain/include all records
                 if search_option == 'Contains':
                     temp_df = df[df['First name'].str.contains(word)]
                     if len(temp_df) > 0:
@@ -1055,7 +1057,7 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             merge_duplicate_headers=True,
             id='p-individual-table'
         )
-    # else: return None, None, None
+    else: return None, None, None
 
 
 # Chosen person information
@@ -1081,6 +1083,10 @@ def create_individual_information(rows, selected_rows, value, children):
                 counter += 1
         else:
             in_list.append(v['index'])
+
+    # None type causes error, return "children" instead
+    if selected_rows is None:
+        return children
     for number in selected_rows:
         if number not in in_list:
             person = persons.iloc[number].to_frame().T
@@ -1712,10 +1718,10 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
                          include_missing,
                          selected_age, selected_city, selected_country, selected_region, selected_faculty,
                          selected_royal, selected_job, selected_religion):
-    df = data.individual_df[['First name', 'Last name', 'Enrollment year', 'City', 'Country', 'Region',
+    df = data.individual_student_df[['First name', 'Last name', 'Enrollment year', 'City', 'Country', 'Region',
                              'Enrollment age', 'Birth year', 'Faculty', 'Royal title', 'Job', 'Religion',
                              'Enrollments', 'Rating']]
-    text = 'students were found'
+    text = ' students were found'
     search_results_number = 0
     if ctx.triggered_id == 'search-individual':
         filtered_df = df
@@ -1897,7 +1903,7 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             merge_duplicate_headers=True,
             id='individual-table'
         )
-    # else: return None, None, None
+    else: return None, None, None
 
 
 # Chosen person information
@@ -2361,9 +2367,9 @@ def r_update_timeline_table(selected_subject):
     Input('term-max-input', 'value'),
     Input('r-include-missing-dates', 'value')
 )
-def update_student_table(search_button, selected_name, search_option, min_term, max_term, include_missing):
+def update_recmag_table(search_button, selected_name, search_option, min_term, max_term, include_missing):
     df = data.recmag_df[['Period_start', 'Period_end', 'Name', 'Picture_saved', 'Term/Details']]
-    text = 'rectors were found'
+    text = ' rectors were found'
     search_results_number = 0
     if ctx.triggered_id == 'r-search-individual':
         filtered_df = df
@@ -2435,7 +2441,7 @@ def update_student_table(search_button, selected_name, search_option, min_term, 
             merge_duplicate_headers=True,
             id='r-individual-table'
         )
-    # else: return None, None, None
+    else: return None, None, None
 
 
 # Chosen person information
