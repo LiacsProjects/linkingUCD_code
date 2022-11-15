@@ -864,7 +864,6 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
                                    'Death year', 'Death place', 'Death country', 'Promotion', 'Promotion place',
                                    'Promotion date', 'Promotion year', 'Thesis', 'Job', 'Subject area', 'Faculty',
                                    'Rating']]
-    text = ' professors were found'
     search_results_number = 0
     if ctx.triggered_id == 'p-search-individual':
         filtered_df = df
@@ -1026,6 +1025,10 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
                 if len(temp_missing_df) > 0:
                     filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
         search_results_number = len(filtered_df)
+        if search_results_number == 1:
+            text = "professor was found"
+        else:
+            text = "professors were found"
         return search_results_number, text, dash_table.DataTable(
             data=filtered_df.to_dict('records'),
             columns=[{'id': i, 'name': i, 'hideable': 'last'} for i in filtered_df.columns],
@@ -1721,7 +1724,6 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
     df = data.individual_student_df[['First name', 'Last name', 'Enrollment year', 'City', 'Country', 'Region',
                              'Enrollment age', 'Birth year', 'Faculty', 'Royal title', 'Job', 'Religion',
                              'Enrollments', 'Rating']]
-    text = ' students were found'
     search_results_number = 0
     if ctx.triggered_id == 'search-individual':
         filtered_df = df
@@ -1848,6 +1850,10 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
                     filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
         filtered_df = filtered_df.rename(columns={'Enrollment year': 'Year', 'Enrollment age': 'Age'})
         search_results_number = len(filtered_df)
+        if search_results_number == 1:
+            text = "student was found"
+        else:
+            text = "students were found"
         return search_results_number, text, dash_table.DataTable(
             data=filtered_df.to_dict('records'),
             columns=[{'id': i, 'name': i, 'hideable': 'last'} for i in filtered_df.columns],
@@ -2369,7 +2375,6 @@ def r_update_timeline_table(selected_subject):
 )
 def update_recmag_table(search_button, selected_name, search_option, min_term, max_term, include_missing):
     df = data.recmag_df[['Period_start', 'Period_end', 'Name', 'Picture_saved', 'Term/Details']]
-    text = ' rectors were found'
     search_results_number = 0
     if ctx.triggered_id == 'r-search-individual':
         filtered_df = df
@@ -2404,6 +2409,10 @@ def update_recmag_table(search_button, selected_name, search_option, min_term, m
         filtered_df = filtered_df.rename(
             columns={'Period_start': 'Period start', 'Period_end': 'Period end', 'Picture_saved': 'Picture'})
         search_results_number = len(filtered_df)
+        if search_results_number == 1:
+            text = "rector was found"
+        else:
+            text = "rectors were found"
         return search_results_number, text, dash_table.DataTable(
             data=filtered_df.to_dict('records'),
             columns=[{'id': i, 'name': i, 'hideable': 'last'} for i in filtered_df.columns],
