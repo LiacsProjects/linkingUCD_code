@@ -35,24 +35,6 @@ app = Dash(__name__, suppress_callback_exceptions=True,
 # TODO: create joined page for all persons TODO: link city/country coordinates to city/country dataframes, preferably through function that reads coordinates from a file: countries.geojson and cities1-2-3.csv
 
 ########################################################################################################### START
-# card_professor = dbc.Card([
-#     dbc.CardImg(
-#         src="/assets/professors_780x400.jpeg",
-#         top=True,
-#         style={"opacity": 0.5},
-#         class_name="cardImg"
-#     ),
-#     dbc.CardImgOverlay(
-#         dbc.CardBody([
-#             html.H3("Professors", className="card-title"),
-#             html.B("Visualizations of professors", className="card-text"),
-#             dbc.Button("Go to visualizations", id="btn-professor", color="primary", class_name="card-btn", n_clicks=0),
-#         ]),
-#     )],
-#     # style={"width": "22rem"},
-#     style={"width": "80%", "height": "75%"},
-# )
-
 app.layout = dbc.Container(children=[
                                      html.Div(id='page_top', children=[
                                             html.Img(id="logo", src="assets/Leiden_zegel.png"),
@@ -699,95 +681,50 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
                 #                    'Promotion', 'Promotion place', 'Promotion date','Promotion year', 'Thesis', 'Job', 'Subject area', 'Faculty', 'Rating'])
 
         if min_enrol is not None and max_enrol is not None:
-            # Get NaN entries
-            temp_missing_df = filtered_df.loc[filtered_df['Appointment year'].isna()]
-            # print("Temp_missing_df", temp_missing_df)
-            # This automatically excludes None values
-            filtered_df = filtered_df.loc[filtered_df['Appointment year'] <= int(max_enrol)]
-            filtered_df = filtered_df[filtered_df['Appointment year'] >= int(min_enrol)]
-            # print("Filtered", filtered_df)
-            if include_missing == 'Yes':  # Reappend temp_missing_df as it was excluded by the ranges
-                filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0)  # .drop_duplicates()
-                # print("filtered + missing", filtered_df)
+            filtered_df = select_range(filtered_df, min_enrol, max_enrol, 'Appointment year', include_missing)
             
         if min_birth is not None and max_enrol is not None:
-            # Get NaN entries
-            temp_missing_df = filtered_df.loc[filtered_df['Birth year'].isna()]
-            # Ranges automatically excludes None values
-            filtered_df = filtered_df.loc[filtered_df['Birth year'] <= int(max_enrol)]
-            filtered_df = filtered_df[filtered_df['Birth year'] >= int(min_enrol)]
-            if include_missing == 'Yes':  # Reappend temp_missing_df as it was excluded by the ranges
-                filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0)  # .drop_duplicates()
+            filtered_df = select_range(filtered_df, min_birth, max_birth, 'Birth year', include_missing)
+
+        # selected_non_ranges = [selected_gender, selected_birthplace, selected_birthcountry, selected_deathplace, selected_deathcountry, selected_promotion, 
+        #                 selected_promotionplace, selected_thesis, selected_job, selected_subjectarea, selected_faculty]
+
+        # for selected_non_range in selected_non_ranges:
+        #     if selected_non_ranges is not None and select_non_range !=[]:
+        #         filtered_df = select_non_range(filtered_df, selected_gender, ?)
 
         if selected_gender is not None and selected_gender != []:
-            temp_df = pd.DataFrame()
-            for gender in selected_gender:  # append all selected
-                temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Gender'] == gender]], axis=0)  # .drop_duplicates()
-            # if include_missing == 'Yes':  # append rows where field is empty
-            #     temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Gender'].isna()]], axis=0)
-            filtered_df = temp_df.copy()
+            filtered_df = select_non_range(filtered_df, selected_gender, 'Gender')
 
         if selected_birthplace is not None and selected_birthplace != []:
-            temp_df = pd.DataFrame()
-            for birthplace in selected_birthplace:  # append all selected
-                temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Birth place'] == birthplace]], axis=0)  # .drop_duplicates()
-            # if include_missing == 'Yes':  # append rows where field is empty
-            #     temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Birth place'].isna()]], axis=0)
-            filtered_df = temp_df.copy()
+            filtered_df = select_non_range(filtered_df, selected_birthplace, 'Birth place')
 
         if selected_birthcountry is not None and selected_birthcountry != []:
-            temp_df = pd.DataFrame()
-            for birthcountry in selected_birthcountry:  # append all selected
-                temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Birth country'] == birthcountry]], axis=0)  # .drop_duplicates()
-            filtered_df = temp_df.copy()
+            filtered_df = select_non_range(filtered_df, selected_birthcountry, 'Birth country')
 
         if selected_deathplace is not None and selected_deathplace != []:
-            temp_df = pd.DataFrame()
-            for deathplace in selected_deathplace:  # append all selected
-                temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Death place'] == deathplace]], axis=0)  # .drop_duplicates()
-            filtered_df = temp_df.copy()
+            filtered_df = select_non_range(filtered_df, selected_deathplace, 'Death place')
 
         if selected_deathcountry is not None and selected_deathcountry != []:
-            temp_df = pd.DataFrame()
-            for deathcountry in selected_deathcountry:  # append all selected
-                temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Death country'] == deathcountry]], axis=0)  # .drop_duplicates()
-            filtered_df = temp_df.copy()
+            filtered_df = select_non_range(filtered_df, selected_deathcountry, 'Death country')
 
         if selected_promotion is not None and selected_promotion != []:
-            temp_df = pd.DataFrame()
-            for promotion in selected_promotion:  # append all selected
-                temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Promotion'] == promotion]], axis=0)  # .drop_duplicates()
-            filtered_df = temp_df.copy()
+            filtered_df = select_non_range(filtered_df, selected_promotion, 'Promotion')
 
         if selected_promotionplace is not None and selected_promotionplace != []:
-            temp_df = pd.DataFrame()
-            for promotionplace in selected_promotionplace:  # append all selected
-                temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Promotion place'] == promotionplace]], axis=0)  # .drop_duplicates()
-            filtered_df = temp_df.copy()
+            filtered_df = select_non_range(filtered_df, selected_promotionplace, 'Promotion place')
 
         if selected_thesis is not None and selected_thesis != []:
-            temp_df = pd.DataFrame()
-            for thesis in selected_thesis:  # append all selected
-                temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Thesis'] == thesis]], axis=0)  # .drop_duplicates()
-            filtered_df = temp_df.copy()
+            filtered_df = select_non_range(filtered_df, selected_thesis, 'Thesis')
 
         if selected_job is not None and selected_job != []:
-            temp_df = pd.DataFrame()
-            for job in selected_job:  # append all selected
-                temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Job'] == job]], axis=0)  # .drop_duplicates()
-            filtered_df = temp_df.copy()
+            filtered_df = select_non_range(filtered_df, selected_job, 'Job')
 
         if selected_subjectarea is not None and selected_subjectarea != []:
-            temp_df = pd.DataFrame()
-            for subjectarea in selected_subjectarea:  # append all selected
-                temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Subject area'] == subjectarea]], axis=0)  # .drop_duplicates()
-            filtered_df = temp_df.copy()
+            filtered_df = select_non_range(filtered_df, selected_subjectarea, 'Subject area')
 
         if selected_faculty is not None and selected_faculty != []:
-            temp_df = pd.DataFrame()
-            for faculty in selected_faculty:  # append all selected
-                temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Faculty'] == faculty]], axis=0)  # .drop_duplicates()
-            filtered_df = temp_df.copy()
+            filtered_df = select_non_range(filtered_df, selected_faculty, 'Faculty')
 
         search_results_number = len(filtered_df)
         if search_results_number == 1:
@@ -826,6 +763,27 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
             id='p-individual-table'
         )
     else: return None, None, None
+
+
+def select_non_range(filtered_df, selected_field, column_name):
+    temp_df = pd.DataFrame()
+    for field in selected_field:  # append all selected
+        temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df[column_name] == field]], axis=0)
+    # if include_missing == 'Yes':  # append rows where field is empty
+    #     temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Gender'].isna()]], axis=0)
+    filtered_df = temp_df.copy()
+    return filtered_df
+
+
+def select_range(filtered_df, range_min, range_max, column_name, include_missing):
+    # Get NaN entries
+    temp_missing_df = filtered_df.loc[filtered_df[column_name].isna()]
+    # Ranges automatically excludes None values
+    filtered_df = filtered_df.loc[filtered_df[column_name] <= int(range_max)]
+    filtered_df = filtered_df[filtered_df[column_name] >= int(range_min)]
+    if include_missing == 'Yes':  # Reappend temp_missing_df as it was excluded by the ranges
+        filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0)
+    return filtered_df
 
 
 # Chosen person information
@@ -1491,128 +1449,60 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
                              'Enrollments', 'Rating']]
     search_results_number = 0
     if ctx.triggered_id == 'search-individual':
-        filtered_df = df
+        filtered_df = df.copy()
         if selected_name is not None and selected_name != '':
             words = selected_name.split(' ')
             selected_df = pd.DataFrame()
             for word in words:
+                # TODO: search for complete names, e.g. "Herman Boerhaave"
                 if search_option == 'Contains':
-                    temp_df = df[df['First name'].str.contains(word)]
-                    if len(temp_df) > 0:
-                        selected_df = pd.concat((selected_df, temp_df), axis=0).drop_duplicates()
-                    temp_df = df[df['Last name'].str.contains(word)]
-                    if len(temp_df) > 0:
-                        selected_df = pd.concat((selected_df, temp_df), axis=0).drop_duplicates()
+                    contains_df = df.loc[df['First name'].str.contains(str(word))]
+                    contains_df1 = df.loc[df['Last name'].str.contains(str(word))]
+                    temp_total_df = pd.concat([contains_df, contains_df1], ignore_index=True)
                 elif search_option == 'Equals':
-                    temp_df = df.loc[df['First name'] == word]
-                    if len(temp_df) > 0:
-                        selected_df = pd.concat((selected_df, temp_df), axis=0).drop_duplicates()
-                    temp_df = df.loc[df['Last name'] == word]
-                    if len(temp_df) > 0:
-                        selected_df = pd.concat((selected_df, temp_df), axis=0).drop_duplicates()
+                    equals_df = df.loc[df['First name'] == str(word)]
+                    equals_df1 = df.loc[df['Last name'] == str(word)]
+                    temp_total_df = pd.concat([equals_df, equals_df1], ignore_index=True)
+
             if len(selected_df) > 0:
-                filtered_df = pd.merge(filtered_df, selected_df, how='inner')
-            else:
-                filtered_df = pd.DataFrame(columns=['First name', 'Last name', 'Enrollment year', 'City', 'Country',
-                                                    'Region', 'Enrollment age', 'Birth year', 'Faculty', 'Royal title',
-                                                    'Job', 'Religion', 'Enrollments', 'Rating'])
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['First name'].isnull()]
-                temp_missing_df = pd.concat((temp_missing_df, df.loc[df['Last name'].isnull()]),
-                                            axis=0).drop_duplicates()
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+                filtered_df = temp_total_df.copy()
+                # filtered_df = pd.merge(filtered_df, selected_df, how='inner')
+            else: 
+                filtered_df = pd.DataFrame()
+                # filtered_df = pd.DataFrame(columns=['First name', 'Last name', 'Enrollment year', 'City', 'Country',
+                #                                     'Region', 'Enrollment age', 'Birth year', 'Faculty', 'Royal title',
+                #                                     'Job', 'Religion', 'Enrollments', 'Rating'])
+
         if min_enrol is not None and max_enrol is not None:
-            filtered_df = filtered_df.loc[filtered_df['Enrollment year'] <= int(max_enrol)]
-            filtered_df = filtered_df[filtered_df['Enrollment year'] >= int(min_enrol)]
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Enrollment year'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
-        if min_birth is not None and max_enrol is not None:
-            filtered_df = filtered_df.loc[filtered_df['Birth year'] <= int(max_birth)]
-            filtered_df = filtered_df[filtered_df['Birth year'] >= int(min_birth)]
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Birth year'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_range(filtered_df, min_enrol, max_enrol, 'Enrollment year', include_missing)
+
+        if min_birth is not None and max_birth is not None:
+            filtered_df = select_range(filtered_df, min_birth, max_birth, 'Birth year', include_missing)
+
         if selected_age is not None:
-            filtered_df = filtered_df.loc[filtered_df['Enrollment age'] <= int(selected_age[1])]
-            filtered_df = filtered_df[filtered_df['Enrollment age'] >= int(selected_age[0])]
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Enrollment age'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_range(filtered_df, selected_age[0], selected_age[1], 'Enrollment age', include_missing)
+
         if selected_city is not None and selected_city != []:
-            selected_df = pd.DataFrame()
-            for c in selected_city:
-                temp_df = df.loc[df['City'] == c]
-                selected_df = pd.concat([selected_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, selected_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['City'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_city, 'City')
+
         if selected_country is not None and selected_country != []:
-            selected_df = pd.DataFrame()
-            for c in selected_country:
-                temp_df = df.loc[df['Country'] == c]
-                selected_df = pd.concat([selected_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, selected_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Country'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_country, 'Country')
+
         if selected_region is not None and selected_region != []:
-            selected_df = pd.DataFrame()
-            for c in selected_region:
-                temp_df = df.loc[df['Region'] == c]
-                selected_df = pd.concat([selected_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, selected_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Region'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_region, 'Region')
+
         if selected_faculty is not None and selected_faculty != []:
-            selected_df = pd.DataFrame()
-            for c in selected_faculty:
-                temp_df = df.loc[df['Faculty'] == c]
-                selected_df = pd.concat([selected_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, selected_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Faculty'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_faculty, 'Faculty')
+
         if selected_royal is not None and selected_royal != []:
-            selected_df = pd.DataFrame()
-            for c in selected_royal:
-                temp_df = df.loc[df['Royal title'] == c]
-                selected_df = pd.concat([selected_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, selected_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Royal title'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_royal, 'Royal title')
+
         if selected_job is not None and selected_job != []:
-            selected_df = pd.DataFrame()
-            for c in selected_job:
-                temp_df = df.loc[df['Job'] == c]
-                selected_df = pd.concat([selected_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, selected_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Job'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_job, 'Job')
+
         if selected_religion is not None and selected_religion != []:
-            selected_df = pd.DataFrame()
-            for c in selected_religion:
-                temp_df = df.loc[df['Religion'] == c]
-                selected_df = pd.concat([selected_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, selected_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Religion'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_religion, 'Religion')
+                    
         filtered_df = filtered_df.rename(columns={'Enrollment year': 'Year', 'Enrollment age': 'Age'})
         search_results_number = len(filtered_df)
         if search_results_number == 1:
@@ -1700,6 +1590,9 @@ def create_individual_information(rows, selected_rows, value, children):
                 counter += 1
         else:
             in_list.append(v['index'])
+            # None type causes error, return "children" instead
+    if selected_rows is None:
+        return children
     for number in selected_rows:
         if number not in in_list:
             person = persons.iloc[number].to_frame().T
@@ -2142,37 +2035,35 @@ def update_recmag_table(search_button, selected_name, search_option, min_term, m
     df = data.recmag_df[['Period_start', 'Period_end', 'Name', 'Picture_saved', 'Term/Details']]
     search_results_number = 0
     if ctx.triggered_id == 'r-search-individual':
-        filtered_df = df
+        filtered_df = df.copy()
         if selected_name is not None and selected_name != '':
             words = selected_name.split(' ')
             selected_df = pd.DataFrame()
             for word in words:
+                # TODO: search for complete names, e.g. "Herman Boerhaave"
                 if search_option == 'Contains':
-                    temp_df = df[df['Name'].str.contains(word)]
-                    if len(temp_df) > 0:
-                        selected_df = pd.concat((selected_df, temp_df), axis=0).drop_duplicates()
+                    contains_df = df.loc[df['First name'].str.contains(str(word))]
+                    contains_df1 = df.loc[df['Last name'].str.contains(str(word))]
+                    temp_total_df = pd.concat([contains_df, contains_df1], ignore_index=True)
                 elif search_option == 'Equals':
-                    temp_df = df.loc[df['Name'] == word]
-                    if len(temp_df) > 0:
-                        selected_df = pd.concat((selected_df, temp_df), axis=0).drop_duplicates()
+                    equals_df = df.loc[df['First name'] == str(word)]
+                    equals_df1 = df.loc[df['Last name'] == str(word)]
+                    temp_total_df = pd.concat([equals_df, equals_df1], ignore_index=True)
+
             if len(selected_df) > 0:
-                filtered_df = pd.merge(filtered_df, selected_df, how='inner')
+                filtered_df = temp_total_df.copy()
+                # filtered_df = pd.merge(filtered_df, selected_df, how='inner')
             else:
-                filtered_df = pd.DataFrame(
-                    columns=['Period_start', 'Period_end', 'Name', 'Picture_saved', 'Term/Details'])
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Name'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+                filtered_df = pd.DataFrame()
+                # filtered_df = pd.DataFrame(
+                #     columns=['Period_start', 'Period_end', 'Name', 'Picture_saved', 'Term/Details'])
+
         if min_term is not None and max_term is not None:
-            filtered_df = filtered_df.loc[filtered_df['Period_start'] <= int(max_term)]
-            filtered_df = filtered_df[filtered_df['Period_start'] >= int(min_term)]
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Period_start'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_range(filtered_df, min_term, max_term, 'Period_start', include_missing)
+
         filtered_df = filtered_df.rename(
             columns={'Period_start': 'Period start', 'Period_end': 'Period end', 'Picture_saved': 'Picture'})
+        
         search_results_number = len(filtered_df)
         if search_results_number == 1:
             text = "rector was found"
@@ -2241,6 +2132,9 @@ def create_individual_information(rows, selected_rows, value, children):
                 counter += 1
         else:
             in_list.append(v['index'])
+            # None type causes error, return "children" instead
+    if selected_rows is None:
+        return children
     for number in selected_rows:
         if number not in in_list:
             person = persons.iloc[number].to_frame().T
