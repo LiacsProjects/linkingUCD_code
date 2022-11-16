@@ -310,8 +310,8 @@ individual_information = html.Div(id='s_individual', className='container', chil
     html.Div(id='individual-information', className='middle_container', children=[
         html.H3('Student information:'),
         html.Div(id='individual-search-results', children=[
-            html.Div(id='individual-search-results-number', className='inline'),
-            html.Div(id='individual-search-text', className='inline', style={'margin-left': '1px'})
+            html.Div(id='individual-search-results-number', className='inline', style={"font-weight":"bold"}),
+            html.Div(id='individual-search-text', className='inline', style={'margin-left': '8px'})
         ]),
         html.Div(id='individual-table-container'),
         html.Div(id='individual-detailed-information', children=[
