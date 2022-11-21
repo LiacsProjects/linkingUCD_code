@@ -166,7 +166,8 @@ individual_information = html.Div(id='r_individual', className='container', chil
             className='inline',
         ),
         html.Br(),
-        html.P('Select term year range', className='inline'),
+        html.P('Select term year range:', className='inline'),
+        html.Br(),
         dcc.Input(
             id='term-min-input', className='inline',
             type='number',
@@ -194,7 +195,7 @@ individual_information = html.Div(id='r_individual', className='container', chil
         ),
     ]),
     html.Div(id='r-individual-information', className='middle_container', children=[
-        html.H3('Rector information:'),
+        html.H3('Rector search data:'),
         html.Div(id='r-individual-search-results', children=[
             html.Div(id='r-individual-search-results-number', className='inline', style={"font-weight":"bold"}),
             html.Div(id='r-individual-search-text', className='inline', style={'margin-left': '8px'})

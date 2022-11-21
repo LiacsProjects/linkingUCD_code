@@ -185,8 +185,8 @@ def create_century_table(df, name):
     table_df = pd.DataFrame(columns=['Statistic', 'appointments'])
     for cent in df['century'].unique():
         table_df.loc[len(table_df)] = ['Century', cent]
-        table_df.loc[len(table_df)] = ['Total appointments', round(df.loc[df['century'] == cent, 'count'].sum(),0)]
-        table_df.loc[len(table_df)] = ['Average appointments', round(df.loc[df['century'] == cent, 'count'].mean(),0)]
+        table_df.loc[len(table_df)] = ['Total appointments', round(df.loc[df['century'] == cent, 'count'].sum(), 0)]
+        table_df.loc[len(table_df)] = ['Average appointments', round(df.loc[df['century'] == cent, 'count'].mean(), 0)]
         table_df.loc[len(table_df)] = ['Most appointments',
                                        df.loc[df['century'] == cent].sort_values(by='count', ascending=False).iloc[0][
                                            0]]
