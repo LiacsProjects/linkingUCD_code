@@ -311,7 +311,7 @@ individual_information = html.Div(id='p_individual', className='container', chil
              html.Tr([
                  html.Td(html.P('Select thesis:', className='inline'), ),
                  html.Td(dcc.Dropdown(professorfigures.get_unique_values('Thesis'), placeholder='Choose a thesis',
-                                      clearable=False, multi=True, id='p-individual-thesis-dropdown',
+                                      clearable=False, multi=True, optionHeight=120, id='p-individual-thesis-dropdown',
                                       className='dropdown', style={"width": "400px"}), ),
                       ]),
              html.Tr([
@@ -323,7 +323,7 @@ individual_information = html.Div(id='p_individual', className='container', chil
              html.Tr([
                  html.Td( html.P('Select subject area:', className='inline'), ),
                  html.Td(dcc.Dropdown(professorfigures.get_unique_values('Subject area'),
-                                      placeholder='Choose a subject area', clearable=False, multi=True,
+                                      placeholder='Choose a subject area', clearable=False, multi=True, optionHeight=50,
                                       id='p-individual-subjectarea-dropdown', className='dropdown',
                                       style={"width": "400px"}), ),
                       ]),
