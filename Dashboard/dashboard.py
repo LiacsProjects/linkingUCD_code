@@ -37,7 +37,8 @@ app = Dash(__name__, suppress_callback_exceptions=True,
 ########################################################################################################### START
 app.layout = dbc.Container(children=[
                                      html.Div(id='page_top', children=[
-                                            html.Img(id="logo", src="assets/Leiden_zegel.png"),
+                                            # html.A(id="logoA", children=[html.Img(id="logo", src="assets/Leiden_zegel.png")]),
+                                            html.Img(id="logo", src="assets/Leiden_zegel.png", n_clicks=0),
                                             html.H1('Leiden Univercity Project', id="page_title")]),
     # dcc.Tabs(id='tab_bar', className='header_tab_bar', children=[
     #     dcc.Tab(label='Home', className='child_tab', selected_className='child_tab_selected'),
@@ -75,6 +76,23 @@ def render_content(btn1, btn2, btn3, btn4):
         return 4
     else:
         return 0
+
+
+# # Logo home callback
+# @app.callback(
+#     Output('page_content', 'children'),
+#     Input('logoA', 'n_clicks'),
+#     Input('page-handler', 'children'),
+#     prevent_initial_call=True
+# )
+# def pagehandler1(btn, pagenr):
+#    if 'btn-home' == ctx.triggered_id:
+#        pagenr = 0
+#    return [introfigures.home_content,
+#            introfigures.profs_content,
+#            introfigures.students_content, introfigures.
+#            rector_content, introfigures.
+#            sources_content][pagenr]
 
 # Home button callback
 @app.callback(
@@ -662,6 +680,7 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
             temp_total_df = pd.DataFrame()
             for word in words:
                 # TODO: search for complete names, e.g. "Herman Boerhaave"
+                # TODO: sort on relevance
                 if search_option == 'Contains':
                     contains_df = df.loc[df['First name'].str.contains(str(word))]
                     contains_df1 = df.loc[df['Last name'].str.contains(str(word))]

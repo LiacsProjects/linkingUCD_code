@@ -159,8 +159,8 @@ geographical_information = html.Div(id='s_geo', className='container', children=
             className='inline',
         ),
         html.Br(),
-        html.A('Go to globe', href='assets/mapboxLeiden.html', target='_blank', rel='noreferrer noopener'),
-        html.Br(),
+        # html.A('Go to globe', href='assets/mapboxLeiden.html', target='_blank', rel='noreferrer noopener'),
+        # html.Br(),
         html.P('Select subject:', className='inline'),
         dcc.Dropdown(
             GRAPH_SUBJECT_DROPDOWN,

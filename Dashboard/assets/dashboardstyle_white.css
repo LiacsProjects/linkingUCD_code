@@ -219,6 +219,11 @@ h2 {
     margin-top: 0;
 }
 
+button { 
+    color: white;
+    background-color: #001158 !important;
+}
+
 /* #h_content{
     width: 100%;
     padding-top: 5%;
