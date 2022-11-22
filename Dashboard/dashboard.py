@@ -679,7 +679,6 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
             words = selected_name.split(' ')
             temp_total_df = pd.DataFrame()
             for word in words:
-                # TODO: search for complete names, e.g. "Herman Boerhaave"
                 # TODO: sort on relevance
                 if search_option == 'Contains':
                     contains_df = df.loc[df['First name'].str.contains(str(word))]
@@ -694,10 +693,10 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
                 filtered_df = temp_total_df.copy()
                 # filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
             else:  # No results, filtered_df is empty df 
-                filtered_df = pd.DataFrame()
-                # filtered_df = pd.DataFrame(columns=['First name', 'Last name', 'Gender', 'Appointment date', 'Appointment year', 'Birth date',
-                #                    'Birth year', 'Birth place', 'Birth country', 'Death date', 'Death year', 'Death place', 'Death country', 
-                #                    'Promotion', 'Promotion place', 'Promotion date','Promotion year', 'Thesis', 'Job', 'Subject area', 'Faculty', 'Rating'])
+                # filtered_df = pd.DataFrame()
+                filtered_df = pd.DataFrame(columns=['First name', 'Last name', 'Gender', 'Appointment date', 'Appointment year', 'Birth date',
+                                   'Birth year', 'Birth place', 'Birth country', 'Death date', 'Death year', 'Death place', 'Death country', 
+                                   'Promotion', 'Promotion place', 'Promotion date','Promotion year', 'Thesis', 'Job', 'Subject area', 'Faculty', 'Rating'])
 
         if min_enrol is not None and max_enrol is not None:
             filtered_df = select_range(filtered_df, min_enrol, max_enrol, 'Appointment year', include_missing)
@@ -1473,7 +1472,6 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             words = selected_name.split(' ')
             selected_df = pd.DataFrame()
             for word in words:
-                # TODO: search for complete names, e.g. "Herman Boerhaave"
                 if search_option == 'Contains':
                     contains_df = df.loc[df['First name'].str.contains(str(word))]
                     contains_df1 = df.loc[df['Last name'].str.contains(str(word))]
@@ -1487,10 +1485,10 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
                 filtered_df = temp_total_df.copy()
                 # filtered_df = pd.merge(filtered_df, selected_df, how='inner')
             else: 
-                filtered_df = pd.DataFrame()
-                # filtered_df = pd.DataFrame(columns=['First name', 'Last name', 'Enrollment year', 'City', 'Country',
-                #                                     'Region', 'Enrollment age', 'Birth year', 'Faculty', 'Royal title',
-                #                                     'Job', 'Religion', 'Enrollments', 'Rating'])
+                # filtered_df = pd.DataFrame()
+                filtered_df = pd.DataFrame(columns=['First name', 'Last name', 'Enrollment year', 'City', 'Country',
+                                                    'Region', 'Enrollment age', 'Birth year', 'Faculty', 'Royal title',
+                                                    'Job', 'Religion', 'Enrollments', 'Rating'])
 
         if min_enrol is not None and max_enrol is not None:
             filtered_df = select_range(filtered_df, min_enrol, max_enrol, 'Enrollment year', include_missing)
@@ -2059,7 +2057,6 @@ def update_recmag_table(search_button, selected_name, search_option, min_term, m
             words = selected_name.split(' ')
             selected_df = pd.DataFrame()
             for word in words:
-                # TODO: search for complete names, e.g. "Herman Boerhaave"
                 if search_option == 'Contains':
                     contains_df = df.loc[df['First name'].str.contains(str(word))]
                     contains_df1 = df.loc[df['Last name'].str.contains(str(word))]
@@ -2073,9 +2070,9 @@ def update_recmag_table(search_button, selected_name, search_option, min_term, m
                 filtered_df = temp_total_df.copy()
                 # filtered_df = pd.merge(filtered_df, selected_df, how='inner')
             else:
-                filtered_df = pd.DataFrame()
-                # filtered_df = pd.DataFrame(
-                #     columns=['Period_start', 'Period_end', 'Name', 'Picture_saved', 'Term/Details'])
+                # filtered_df = pd.DataFrame()
+                filtered_df = pd.DataFrame(
+                    columns=['Period_start', 'Period_end', 'Name', 'Picture_saved', 'Term/Details'])
 
         if min_term is not None and max_term is not None:
             filtered_df = select_range(filtered_df, min_term, max_term, 'Period_start', include_missing)
