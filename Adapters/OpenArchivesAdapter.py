@@ -1,7 +1,6 @@
 from urllib.request import urlopen
 import database
 import json
-from Levenshtein import distance
 
 """
 Description of input parameters for Records/Search:
