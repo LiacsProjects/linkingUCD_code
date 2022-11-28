@@ -1,0 +1,14 @@
+Person 1,Relation,Person 2,Gender,Details
+Jonathan,Earliest Ancestor,,M,Professor
+Sara,Spouse,Jonathan,F,Professor
+Henry,Child,Jonathan,M,Student
+Julie,Child,Jonathan,F,Student
+William,Child,Jonathan,M,Student
+Katie,Spouse,Henry,F,Non
+Kevin,Spouse,Julie,M,Student
+Laura,Spouse,William,F,Student
+Betty,Child,Henry,F,Non
+Katherine,Child,Julie,F,Student
+David,Child,William,M,Student
+Richard,Child,William,M,Student
+Daniel,Spouse,Betty,M,Professor

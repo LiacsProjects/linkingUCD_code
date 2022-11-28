@@ -1,0 +1,162 @@
+body {
+    background-color: white;
+}
+
+#page_title {
+    text-align: center;
+    color: black;
+    margin-bottom: 0;
+}
+
+#page_content {
+    color: black;
+    width: 100%;
+    margin: 0 auto;
+    background-color: white;
+    border: none;
+}
+
+.header_tab_bar {
+    width: 100%;
+    height: 10%;
+    margin: 0 auto;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    background-color: #001158;
+    border: 1px solid black !important;
+}
+
+.child_tab {
+    color: white;
+    background-color: #001158 !important;
+    border: none !important;
+}
+.child_tab_selected {
+    border-top: 0px solid transparent;
+    color: white;
+    background-color: white !important;
+}
+
+.child_tab:hover {
+    background-color: white !important;
+    color: black;
+    border: none;
+}
+
+.container {
+    width: 98%;
+    margin-top: 1%;
+    margin-left: 1%;
+    background-color: rgba(223,223,218,0.7);
+    border: 1px solid black;
+    display: inline-block;
+}
+
+.page_header {
+    width: 98%;
+    margin-top: 1%;
+    margin-left: 1%;
+}
+
+.center_object {
+    text-align: center;
+}
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+}
+
+.inline {
+    display: inline-block;
+}
+
+.dash-dropdown{
+    display: inline-block;
+    vertical-align: middle;
+    width: 50%;
+    margin-left: 1%;
+}
+
+.Select--single{
+    background-color: rgba(223,223,218,0.7);
+}
+
+.Select-control{
+    background-color: rgba(223,223,218,0.7) !important;
+}
+
+.Select-multi-value-wrapper{
+    background-color: rgba(223,223,218,0.7);
+}
+
+.Select-value{
+    background-color: rgba(223,223,218,0.7);
+}
+
+.Select-placeholder {
+    color: black;
+}
+
+.Select-input{
+    background-color: rgba(223,223,218,0.7);
+}
+
+.Select-arrow-zone{
+    background-color: rgba(223,223,218,0.7);
+}
+
+.Select-menu-outer{
+    background-color: rgba(223,223,218,1);
+}
+
+.bigblock{
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 0%;
+    margin-right: 1%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    width: 44%;
+    border: 1px solid black;
+}
+
+.block {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 1%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    width: 49%;
+}
+
+.left_container {
+    width: 68%;
+    display: inline-block;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+.middle_container {
+    width: 98%;
+    display: inline-block;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+.middle_small_container {
+    width: 45%;
+    display: inline-block;
+    margin-left: 1%;
+    margin-right: 1%;
+    vertical-align: top;
+}
+
+.right_container {
+    width: 29%;
+    display: inline-block;
+    vertical-align: top;
+}
