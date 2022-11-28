@@ -15,20 +15,49 @@ CREATE SCHEMA IF NOT EXISTS `Test_via_eer` DEFAULT CHARACTER SET utf8 ;
 USE `Test_via_eer` ;
 
 -- -----------------------------------------------------
+-- Table `Test_via_eer`.`Location`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Location` (
+  `LocationID` INT NOT NULL,
+  `Streetname` VARCHAR(100) NULL COMMENT 'Holds street name of the location',
+  `Postalcode` VARCHAR(10) NULL COMMENT 'Holds postalcode of the location',
+  `City` VARCHAR(50) NULL COMMENT 'Holds city of the location',
+  `Country` VARCHAR(30) NULL COMMENT 'Holds country of the location',
+  `Housenumber` INT NULL COMMENT 'Holds housenumber of the location',
+  PRIMARY KEY (`LocationID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `Test_via_eer`.`Person`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Person` (
-  `idPerson` INT NOT NULL,
+  `idPerson` INT NOT NULL AUTO_INCREMENT,
+  `PobID` INT NULL COMMENT 'Holds person place of birth\n',
+  `PodID` INT NULL COMMENT 'Holds person place of death\n',
   `Firstname` VARCHAR(50) NULL COMMENT 'Holds person firstname',
   `Lastname` VARCHAR(50) NULL COMMENT 'Holds person lastname',
   `Call sign` VARCHAR(45) NULL COMMENT 'Holds person call sign',
-  `Pob` VARCHAR(100) NULL COMMENT 'Holds person place of birth\n',
-  `Pod` VARCHAR(100) NULL COMMENT 'Holds person place of death\n',
   `Gender` VARCHAR(45) NULL COMMENT 'Possible values:\nF = Female\nM = Male\nX = Not identified',
   `IsEnrolled` TINYINT NULL COMMENT 'Possible values 1 or 0:\n0 = false\n1 = true',
   `Dob` DATE NULL COMMENT 'Holds person date of birth',
   `Dod` DATE NULL COMMENT 'Holds person date of death',
-  PRIMARY KEY (`idPerson`))
+  `Religion` VARCHAR(255) NULL,
+  `Dob_original` VARCHAR(255) NULL COMMENT 'Holds person date of birth original',
+  `Dod_original` VARCHAR(255) NULL COMMENT 'Holds person date of death original',
+  PRIMARY KEY (`idPerson`),
+  INDEX `fk_Person_Location1_idx` (`PobID` ASC) VISIBLE,
+  INDEX `fk_Person_Location2_idx` (`PodID` ASC) VISIBLE,
+  CONSTRAINT `fk_Person_Location1`
+    FOREIGN KEY (`PobID`)
+    REFERENCES `Test_via_eer`.`Location` (`LocationID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Person_Location2`
+    FOREIGN KEY (`PodID`)
+    REFERENCES `Test_via_eer`.`Location` (`LocationID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -50,11 +79,11 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Experiment` (
   `ExperimentID` INT NOT NULL,
   `ExperimentName` VARCHAR(255) NULL COMMENT 'Holds name of the experiment',
-  `Paper_PaperID` INT NOT NULL,
-  PRIMARY KEY (`ExperimentID`),
-  INDEX `fk_Experiment_Paper1_idx` (`Paper_PaperID` ASC) VISIBLE,
-  CONSTRAINT `fk_Experiment_Paper1`
-    FOREIGN KEY (`Paper_PaperID`)
+  `Paper_PaperID1` INT NOT NULL,
+  PRIMARY KEY (`ExperimentID`, `Paper_PaperID1`),
+  INDEX `fk_Experiment_Paper2_idx` (`Paper_PaperID1` ASC) VISIBLE,
+  CONSTRAINT `fk_Experiment_Paper2`
+    FOREIGN KEY (`Paper_PaperID1`)
     REFERENCES `Test_via_eer`.`Paper` (`PaperID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -121,9 +150,22 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Professor` (
   `ProfessorID` INT NOT NULL,
   `Nobelaward` VARCHAR(255) NULL COMMENT 'Holds the name of the nobelaward',
-  `Appointment` VARCHAR(255) NULL COMMENT 'Holds appointment of professor',
-  `Discipline` VARCHAR(100) NULL COMMENT 'Holds discipline of the professor',
-  `Doa` DATE NULL COMMENT 'Holds date of appointment',
+  `Appointment1` VARCHAR(255) NULL COMMENT 'Holds first appointment of professor',
+  `Appointment2` VARCHAR(255) NULL COMMENT 'Holds second appointment of professor',
+  `Appointment3` VARCHAR(255) NULL COMMENT 'Holds third appointment of professor',
+  `Appointment4` VARCHAR(255) NULL COMMENT 'Holds fourth appointment of professor',
+  `Doa1` DATE NULL COMMENT 'Holds first date of appointment',
+  `Doa2` DATE NULL COMMENT 'Holds second date of appointment',
+  `Doa3` DATE NULL COMMENT 'Holds third date of appointment',
+  `Doa4` DATE NULL COMMENT 'Holds fourth date of appointment',
+  `Discipline1` VARCHAR(100) NULL COMMENT 'Holds first discipline of the professor',
+  `Discipline2` VARCHAR(100) NULL COMMENT 'Holds second discipline of the professor',
+  `Discipline3` VARCHAR(100) NULL COMMENT 'Holds third discipline of the professor',
+  `Discipline4` VARCHAR(100) NULL COMMENT 'Holds fourth discipline of the professor',
+  `Eoa1` DATE NULL COMMENT 'Holds end of first appointment',
+  `Eoa2` DATE NULL COMMENT 'Holds end of second appointment',
+  `Eoa3` DATE NULL COMMENT 'Holds end of third appointment',
+  `Eoa4` DATE NULL COMMENT 'Holds end of fourth appointment',
   `Employee_EmployeeID` INT NOT NULL,
   `Employee_Person_idPerson` INT NOT NULL,
   PRIMARY KEY (`ProfessorID`, `Employee_EmployeeID`, `Employee_Person_idPerson`),
@@ -190,7 +232,7 @@ CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Institute` (
   `Doc` VARCHAR(45) NULL COMMENT 'Holds date of creation of the institute',
   `Faculty_FacultyID` INT NOT NULL,
   `Faculty_University_UniversityID` INT NOT NULL,
-  PRIMARY KEY (`InstituteID`),
+  PRIMARY KEY (`InstituteID`, `Faculty_FacultyID`, `Faculty_University_UniversityID`),
   INDEX `fk_Institute_Faculty1_idx` (`Faculty_FacultyID` ASC, `Faculty_University_UniversityID` ASC) VISIBLE,
   CONSTRAINT `fk_Institute_Faculty1`
     FOREIGN KEY (`Faculty_FacultyID` , `Faculty_University_UniversityID`)
@@ -229,40 +271,15 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Test_via_eer`.`Location`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Location` (
-  `LocationID` INT NOT NULL,
-  `Streetname` VARCHAR(100) NULL COMMENT 'Holds street name of the location',
-  `Postalcode` VARCHAR(10) NULL COMMENT 'Holds postalcode of the location',
-  `City` VARCHAR(50) NULL COMMENT 'Holds city of the location',
-  `Country` VARCHAR(30) NULL COMMENT 'Holds country of the location',
-  `Housnumber` INT NULL COMMENT 'Holds housenumber of the location',
-  PRIMARY KEY (`LocationID`)
-  -- CONSTRAINT `fk_Location_Person1`
---     FOREIGN KEY (`LocationID`)
---     REFERENCES `Test_via_eer`.`Person` (`Pod`)
---     ON DELETE NO ACTION
---     ON UPDATE NO ACTION,
---   CONSTRAINT `fk_Location_Person2`
---     FOREIGN KEY (`LocationID`)
---     REFERENCES `Test_via_eer`.`Person` (`Pod`)
---     ON DELETE NO ACTION
---     ON UPDATE NO ACTION
-    )
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `Test_via_eer`.`Building`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Building` (
   `BuildingID` INT NOT NULL,
   `BuildingName` VARCHAR(45) NULL COMMENT 'Holds the name of the building',
   `Location_LocationID` INT NOT NULL,
-  PRIMARY KEY (`BuildingID`),
-  INDEX `fk_Building_Location_idx` (`Location_LocationID` ASC) VISIBLE,
-  CONSTRAINT `fk_Building_Location`
+  PRIMARY KEY (`BuildingID`, `Location_LocationID`),
+  INDEX `fk_Building_Location1_idx` (`Location_LocationID` ASC) VISIBLE,
+  CONSTRAINT `fk_Building_Location1`
     FOREIGN KEY (`Location_LocationID`)
     REFERENCES `Test_via_eer`.`Location` (`LocationID`)
     ON DELETE NO ACTION
@@ -379,6 +396,140 @@ CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Study_has_Professor` (
   CONSTRAINT `fk_Study_has_Professor_Professor1`
     FOREIGN KEY (`Professor_ProfessorID`)
     REFERENCES `Test_via_eer`.`Professor` (`ProfessorID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Test_via_eer`.`Mother`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Mother` (
+  `WomanID` INT NOT NULL,
+  PRIMARY KEY (`WomanID`),
+  UNIQUE INDEX `WomanID_UNIQUE` (`WomanID` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Test_via_eer`.`Father`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Father` (
+  `ManID` INT NOT NULL,
+  PRIMARY KEY (`ManID`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Test_via_eer`.`Person_Is_Father`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Person_Is_Father` (
+  `Person_idPerson` INT NOT NULL,
+  `Man_ManID` INT NOT NULL,
+  PRIMARY KEY (`Person_idPerson`, `Man_ManID`),
+  INDEX `fk_Person_has_Man_Man1_idx` (`Man_ManID` ASC) VISIBLE,
+  INDEX `fk_Person_has_Man_Person1_idx` (`Person_idPerson` ASC) VISIBLE,
+  CONSTRAINT `fk_Person_has_Man_Person1`
+    FOREIGN KEY (`Person_idPerson`)
+    REFERENCES `Test_via_eer`.`Person` (`idPerson`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Person_has_Man_Man1`
+    FOREIGN KEY (`Man_ManID`)
+    REFERENCES `Test_via_eer`.`Father` (`ManID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Test_via_eer`.`Person_Is_Mother`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Person_Is_Mother` (
+  `Person_idPerson` INT NOT NULL,
+  `Woman_WomanID` INT NOT NULL,
+  PRIMARY KEY (`Person_idPerson`, `Woman_WomanID`),
+  INDEX `fk_Person_has_Woman_Woman1_idx` (`Woman_WomanID` ASC) VISIBLE,
+  INDEX `fk_Person_has_Woman_Person1_idx` (`Person_idPerson` ASC) VISIBLE,
+  CONSTRAINT `fk_Person_has_Woman_Person1`
+    FOREIGN KEY (`Person_idPerson`)
+    REFERENCES `Test_via_eer`.`Person` (`idPerson`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Person_has_Woman_Woman1`
+    FOREIGN KEY (`Woman_WomanID`)
+    REFERENCES `Test_via_eer`.`Mother` (`WomanID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Test_via_eer`.`Child`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Child` (
+  `ChildID` INT NOT NULL,
+  `Mother_WomanID` INT NOT NULL,
+  `Father_ManID` INT NOT NULL,
+  PRIMARY KEY (`ChildID`, `Mother_WomanID`, `Father_ManID`),
+  INDEX `fk_Child_Mother1_idx` (`Mother_WomanID` ASC) VISIBLE,
+  INDEX `fk_Child_Father1_idx` (`Father_ManID` ASC) VISIBLE,
+  CONSTRAINT `fk_Child_Mother1`
+    FOREIGN KEY (`Mother_WomanID`)
+    REFERENCES `Test_via_eer`.`Mother` (`WomanID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Child_Father1`
+    FOREIGN KEY (`Father_ManID`)
+    REFERENCES `Test_via_eer`.`Father` (`ManID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Test_via_eer`.`Person_has_Child`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Person_has_Child` (
+  `Person_idPerson` INT NOT NULL,
+  `Child_ChildID` INT NOT NULL,
+  PRIMARY KEY (`Person_idPerson`, `Child_ChildID`),
+  INDEX `fk_Person_has_Child_Child1_idx` (`Child_ChildID` ASC) VISIBLE,
+  INDEX `fk_Person_has_Child_Person1_idx` (`Person_idPerson` ASC) VISIBLE,
+  CONSTRAINT `fk_Person_has_Child_Person1`
+    FOREIGN KEY (`Person_idPerson`)
+    REFERENCES `Test_via_eer`.`Person` (`idPerson`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Person_has_Child_Child1`
+    FOREIGN KEY (`Child_ChildID`)
+    REFERENCES `Test_via_eer`.`Child` (`ChildID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Test_via_eer`.`Relation`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Test_via_eer`.`Relation` (
+  `RelationID` INT NOT NULL,
+  `Relationtype` VARCHAR(255) NULL COMMENT 'Holds the relationtype, possible options are:\nGetrouwd\nGewezen echtgenoot\nGemeenschap van goederen',
+  `Sor` DATE NULL COMMENT 'Holds the startdate of relationship',
+  `Eor` DATE NULL COMMENT 'Holds the enddate of relationship',
+  `Mother_WomanID` INT NOT NULL,
+  `Father_ManID` INT NOT NULL,
+  PRIMARY KEY (`RelationID`, `Mother_WomanID`, `Father_ManID`),
+  INDEX `fk_Relation_Mother1_idx` (`Mother_WomanID` ASC) VISIBLE,
+  INDEX `fk_Relation_Father1_idx` (`Father_ManID` ASC) VISIBLE,
+  CONSTRAINT `fk_Relation_Mother1`
+    FOREIGN KEY (`Mother_WomanID`)
+    REFERENCES `Test_via_eer`.`Mother` (`WomanID`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Relation_Father1`
+    FOREIGN KEY (`Father_ManID`)
+    REFERENCES `Test_via_eer`.`Father` (`ManID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

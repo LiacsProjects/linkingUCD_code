@@ -1,7 +1,7 @@
 from urllib.request import urlopen
 import database
 import json
-import pandas as pd
+from Levenshtein import distance
 
 """
 Description of input parameters for Records/Search:
@@ -41,10 +41,10 @@ def constructQuery():
     return query
 
 
-def classifyRecordLink(prof_records, persons, event):
+def classifyRecordLink(prof_record, persons, event):
     """
     Returns a classification of a link between two records based on several factors
-        :param prof_records: professor record(s) from database
+        :param prof_record: professor record from database
         :param persons: person record(s) from external source
         :param event: linkage event
         :return: classification of a link between two records based on several factors
@@ -58,6 +58,20 @@ def classifyRecordLink(prof_records, persons, event):
     Constraint based, if "checklist" fails, classification is non-, or potential link
     """
 
+    """
+    To compare:
+        name
+        logical time period (e.g. date of marriage -> check event date or else source index date)
+        age
+        place and date of birth and/or death
+        family relations (if available)
+        residence
+    """
+    print("Prof record", prof_record)
+    prof_person = prof_record[0]['person'][0]
+    prof_locations = prof_record[1]['locations']
+
+    print("P", prof_locations)
     return
 
 
@@ -66,10 +80,10 @@ def getIdentifiers(query):
     query = query.split(", ")
     if len(query) < 10:
         print("Missing parameter(s)!", query)
-        return None
+        return []
     elif len(query) > 10:
         print("Too many parameters!", query)
-        return None
+        return []
     query = [parameter.replace('-', '') for parameter in query]
     query = [parameter.replace(' ', '%20') for parameter in query]
     url = "https://api.openarch.nl/1.0/records/search.json?name=%s&archive=%s&number_show=%s&sourcetype=%s" \
@@ -112,7 +126,7 @@ def readRecord(identifier, prof_record):
     data_json = json.load(f)
 
     """
-    Each Erfgoed Leiden record has four head items:
+    Each Erfgoed Leiden/a2a record has four head items:
         1 - a2a_Person
         2 - a2a_Event
         3 - a2a_RelationEP
@@ -121,33 +135,27 @@ def readRecord(identifier, prof_record):
     """
 
     sourceLink = data_json[0]['a2a_Source']['a2a_SourceDigitalOriginal']['a2a_SourceDigitalOriginal']
-    person_dict = {'PersonID': None, 'TypeOfPerson': None, 'a2a_PersonNameFirstName': None, 'a2a_PersonNameLastName': None, 'FamilyName': None,
+    person_dict = {'a2a_PersonNameFirstName': None, 'a2a_PersonNameLastName': None, 'FamilyName': None,
                    'a2a_PersonNamePrefixLastName': None, 'a2a_PersonNameNickName': None, 'a2a_Gender': None,
-                   'a2a_Origin': None, 'a2a_BirthPlace': None, 'a2a_Religion': None, 'a2a_Status': None, 'a2a_Profession': None,
-                   'a2a_PersonRemark': None}
+                   'a2a_Origin': None, 'a2a_BirthPlace': None, 'a2a_Religion': None, 'a2a_Status': None,
+                   'a2a_Profession': None, 'a2a_PersonRemark': None}
     relation_dict = {'a2a_PersonKeyRef': None, 'a2a_RelationType': None}
     event_dict = {'a2a_EventType': None, 'a2a_Date': None, 'a2a_EventPlace': None}
 
     # Maybe include a2a_Source if deemed necessary
     person_dicts = parseHeadItem(data_json[0]['a2a_Person'], person_dict)
     relation_dicts = parseHeadItem(data_json[0]['a2a_RelationEP'], relation_dict)
-    for relation in relation_dicts:  # connect 'pid' to type of relation
-        for person in person_dicts:
-            if relation['a2a_PersonKeyRef'] == person['pid']:
-                person['TypeOfRelation'] = relation['a2a_RelationType']
+    for relation_d in relation_dicts:  # connect 'pid' to type of relation
+        for person_d in person_dicts:
+            if relation_d['a2a_PersonKeyRef'] == person_d['pid']:
+                person_d['TypeOfRelation'] = relation_d['a2a_RelationType']
+                print(person_d, "\n ++++")
                 continue
     event_dict['a2a_EventType'] = data_json[0]['a2a_Event']['a2a_EventType']['a2a_EventType']
     event_dicts = parseEventItem(data_json[0]['a2a_Event'], event_dict)
     print(event_dicts)
+
     classifyRecordLink(prof_record, person_dicts, event_dicts)
-
-    # relation_df = pd.DataFrame(data, columns=['RelationID', 'TypeOfRelation', 'FromPersonID', 'ToPersonID', 'Event', 'EventDate', 'EventPlace', 'SourceName', 'SourceWebLink', 'SourceRating', 'LinkClass', 'Remark'])
-    # person_df = pd.DataFrame(list(person_dicts), columns=['PersonID', 'TypeOfPerson', 'PersonNameFirstName', 'PersonNameLastName',
-    #                                            'PersonNamePrefixLastName', 'PersonNameNickName', 'Gender', 'Origin',
-    #                                            'Religion', 'Status', 'Profession'])
-    # print(person_df.head(5))
-
-    # return df
 
 
 # TODO: parse 'date' item
@@ -224,36 +232,75 @@ def linkProfessors():
     conn = database.Connection()
     profIDs = conn.getProfIDs()
 
+    count = 0
     trouwen = "DTB Trouwen"  # Doop-, Trouw- en Begraafregister, 106 matches
     huwelijk = "BS Huwelijk"  # Burgerlijke Stand, 272 matches
     for p in profIDs:
         # TODO alter names for more matches, i.e. select only first- and lastname instead of full (multiple) names
-        prof = conn.getProfInfo(p[0])[0]
-        if prof[1] is None:
-            name = prof[0] + ' ' + prof[2]
+        prof_info = conn.getProfInfo(p)  # [{person: ()}, {location: (), (), etc.}]
+        prof_person = prof_info[0]['person'][0]  # (person tuple)
+        firstname, affix, lastname = prof_person[0], prof_person[1], prof_person[2]
+        if affix is None:
+            name = firstname + ' ' + lastname
         else:
-            name = prof[0] + ' ' + prof[1] + ' ' + prof[2]
+            name = firstname + ' ' + affix + ' ' + lastname
         # name = name.replace(',', '')
         name = '~' + name
-        parameter_string = name + ", elo, 100, " + huwelijk + ", -, -, 1, nl, -, 0"
+        parameter_string = name + ", elo, 100, " + trouwen + ", -, -, 1, nl, -, 0"
         try:
             identifier_list = getIdentifiers(parameter_string)
         except UnicodeEncodeError:
+            # TODO: convert unreadable characters
             print("Cannot process name:", name)
             continue
         # Duplicate identifiers are possible as the same (last)name can occur multiple times in one record
         # So we remove the duplicates as we only need to look up the record once
         identifier_list = list(dict.fromkeys(identifier_list))
-        processRecords(identifier_list, prof)
+        # if len(identifier_list) > 0:
+        #     count += 1
+        processRecords(identifier_list, prof_info)
     del conn
+    print('Occurrences of profs:', count)
 
 
-# Main
-if __name__ == "__main__":
-    # linkProfessors()
+def testSuite():
+    person_dict = {'a2a_PersonNameFirstName': None, 'a2a_PersonNameLastName': None, 'FamilyName': None,
+                   'a2a_PersonNamePrefixLastName': None, 'a2a_PersonNameNickName': None, 'a2a_Gender': None,
+                   'a2a_Origin': None, 'a2a_BirthPlace': None, 'a2a_Religion': None, 'a2a_Status': None,
+                   'a2a_Profession': None, 'a2a_PersonRemark': None}
+    boerhaaveID = 128
+
     conn = database.Connection()
     profIDs = conn.getProfIDs()
+    prof_info = conn.getProfInfo(profIDs[boerhaaveID - 1])
+    readRecord(None, prof_info)
+    # print(prof_info)
+    # for p in profIDs:
+    #     prof_info = conn.getProfInfo(p)
+    #     prof_person = prof_info[0]
+    #     break
+    del conn
+
+    # Herman Boerhaave PersonID = 128
+    # readRecord(0, ())
+
+
+# def hello():
+#     li1 = [0, 4, 1, 2, 6]
+#     li2 = [{"Hello": 0}, {"Hello": 4}, {"Hello": 1}, {"Hello": 2}, {"Hello": 6}]
+#     zipped = list(zip(li2, li1))
+#     res = sorted(zipped, key=lambda x: x[1])
+#     print(res)
+
+
+# TODO: update for new API version, 1.0 -> 1.1
+# Main
+if __name__ == "__main__":
+    testSuite()
+    # linkProfessors()
+    # conn = database.Connection()
+    # profIDs = conn.getProfIDs()
     # prof = conn.getProfInfo(profIDs[36][0])[0]
     # print(conn.getProfInfo(profIDs[0][0]))
     # readRecord("d344d58d-c1cd-5db7-7e88-5dcfb0de9334", conn.getProfInfo(profIDs[0][0]))
-    del conn
+    # del conn

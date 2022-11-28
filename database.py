@@ -97,6 +97,7 @@ class Connection:
                 print("Invalid type table!")
                 return None
 
+    # TODO: also find "gaps" in available IDs (as a result of deletion)
     def getPersonMaxID(self):
         cursor = self.mydb.cursor()
         cursor.execute("SELECT max(PersonID) FROM person")
@@ -107,25 +108,39 @@ class Connection:
     # def getRelationMaxID(self):
     #     return
 
-    def getProfessors(self):
-        cursor = self.mydb.cursor()
-        cursor.execute("SELECT * FROM person WHERE TypeOfPerson = 1")
-        result = cursor.fetchall()
-        cursor.close()
-        return result
+    # Deprecated
+    # def getProfessors(self):
+    #     cursor = self.mydb.cursor()
+    #     cursor.execute("SELECT * FROM person WHERE TypeOfPerson = 1")
+    #     result = cursor.fetchall()
+    #     cursor.close()
+    #     return result
 
     def getProfIDs(self):
+        """
+        :return: List containing PersonIDs of all professors
+        """
         cursor = self.mydb.cursor()
         cursor.execute("SELECT PersonID FROM person WHERE TypeOfPerson = 1")
         result = cursor.fetchall()
         cursor.close()
         return result
 
+    # TODO: add relations and profession (and source)
     def getProfInfo(self, prof_id):
+        """
+        Function for fetching info from person/professor for linking
+        :param prof_id: PersonID of professors
+        :return: List of tuples with person and location info
+        """
         cursor = self.mydb.cursor()
-        query = """SELECT FirstName, Affix, LastName, Gender, Nationality, Job, Country, City, Street, StartDate, TypeOfLocation FROM person inner join location on PersonID = PersonID_location WHERE PersonID = %s"""
-        cursor.execute(query % prof_id)
-        result = cursor.fetchall()
+        result = []
+        queryPerson = """SELECT FirstName, Affix, LastName, Gender, Nationality FROM person WHERE PersonID = %s"""
+        cursor.execute(queryPerson % prof_id)
+        result.append({"person": cursor.fetchall()})
+        queryLocation = """SELECT Country, City, Street, StartDate, TypeOfLocation FROM location WHERE PersonID_location = %s"""
+        cursor.execute(queryLocation % prof_id)
+        result.append({"locations": cursor.fetchall()})
         cursor.close()
         return result
 
