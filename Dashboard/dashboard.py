@@ -1,8 +1,8 @@
-############################################################################################## LOCAL
+# ****************************************************************************************** LOCAL
 # added for local server
 # extra regel om environmental variable te bepalen
 import Add_environment_variable
-########################################################################################### end local
+# ******************************************************************************************  end local
 # import modules
 import dash_bootstrap_components as dbc
 import pandas as pd
@@ -17,29 +17,31 @@ from pages import professorvisuals, rectorvisuals, studentvisuals
 # Parameters and constants
 YEAR_STEP = 5
 MARK_SPACING = 10
-################################################################################################ LOCAL
+# ******************************************************************************************  LOCAL
 # Configurate dash application voor DASH
 app = Dash(__name__, suppress_callback_exceptions=True,
            routes_pathname_prefix='/',
            external_stylesheets=[dbc.themes.BOOTSTRAP],
            #  uitgeschakeld  #      requests_pathname_prefix='/dashboard/'
            )
-           
-################################################################################################ SERVER
+
+# ****************************************************************************************** SERVER
 # Configurate dash application voor server
 # server = app.server
 
-########################################################################################################### TODO
+# ******************************************************************************************  TODO
 
-# TODO: implement store functions to allow users to save their changes made to the dashboard TODO: connect database to dashboard
-# TODO: create joined page for all persons TODO: link city/country coordinates to city/country dataframes, preferably through function that reads coordinates from a file: countries.geojson and cities1-2-3.csv
+# TODO: implement store functions to allow users to save their changes made to the dashboard TODO:
+#  connect database to dashboard
+# TODO: create joined page for all persons TODO: link city/country coordinates to city/country dataframes, preferably
+#  through function that reads coordinates from a file: countries.geojson and cities1-2-3.csv
 
-########################################################################################################### START
+# ******************************************************************************************  START
 app.layout = dbc.Container(children=[
-                                     html.Div(id='page_top', children=[
-                                            # html.A(id="logoA", children=[html.Img(id="logo", src="assets/Leiden_zegel.png")]),
-                                            html.Img(id="logo", src="assets/Leiden_zegel.png", n_clicks=0),
-                                            html.H1('Leiden Univercity Project', id="page_title")]),
+    html.Div(id='page_top', children=[
+        # html.A(id="logoA", children=[html.Img(id="logo", src="assets/Leiden_zegel.png")]),
+        html.Img(id="logo", src="assets/Leiden_zegel.png", n_clicks=0),
+        html.H1('Leiden Univercity Project', id="page_title")]),
     # dcc.Tabs(id='tab_bar', className='header_tab_bar', children=[
     #     dcc.Tab(label='Home', className='child_tab', selected_className='child_tab_selected'),
     #     # dcc.Tab(label='Professors', value='tab-1', className='child_tab', selected_className='child_tab_selected'),
@@ -50,10 +52,10 @@ app.layout = dbc.Container(children=[
     #     #         selected_className='child_tab_selected'),
     #     ]),
     # html.Div(home_content, id="home"),
-                                    dbc.Button("Home", id="btn-home", class_name="me-1", n_clicks=0),
-                                    html.Div(introfigures.home_content, id='page_content'),
-                                    html.Div(id='page-handler', hidden=True),
-                                    ], fluid=True)
+    dbc.Button("Home", id="btn-home", class_name="me-1", n_clicks=0),
+    html.Div(introfigures.home_content, id='page_content'),
+    html.Div(id='page-handler', hidden=True),
+], fluid=True)
 
 
 # Card button callbacks
@@ -78,22 +80,6 @@ def render_content(btn1, btn2, btn3, btn4):
         return 0
 
 
-# # Logo home callback
-# @app.callback(
-#     Output('page_content', 'children'),
-#     Input('logoA', 'n_clicks'),
-#     Input('page-handler', 'children'),
-#     prevent_initial_call=True
-# )
-# def pagehandler1(btn, pagenr):
-#    if 'btn-home' == ctx.triggered_id:
-#        pagenr = 0
-#    return [introfigures.home_content,
-#            introfigures.profs_content,
-#            introfigures.students_content, introfigures.
-#            rector_content, introfigures.
-#            sources_content][pagenr]
-
 # Home button callback
 @app.callback(
     Output('page_content', 'children'),
@@ -102,33 +88,13 @@ def render_content(btn1, btn2, btn3, btn4):
     prevent_initial_call=True
 )
 def pagehandler(btn, pagenr):
-   if 'btn-home' == ctx.triggered_id:
-       pagenr = 0
-   return [introfigures.home_content,
-           introfigures.profs_content,
-           introfigures.students_content, introfigures.
-           rector_content, introfigures.
-           sources_content][pagenr]
-
-
-# Home button callbacks
-# @app.callback(
-#     Output('page_content', 'children'),
-#     Input('btn-home', 'n_clicks'),
-#     Input('btn-professor', 'n_clicks'),
-#     prevent_initial_call=True
-# )
-# def do_some(btn1, btn2):
-#     try:
-#         w = 'btn-professor' == ctx.triggered_id
-#     except ReferenceError:
-#         w = False
-#     if 'btn-home' == ctx.triggered_id:
-#         return home_content
-#     elif w:
-#         return profs_content
-#     else:
-#         pass
+    if 'btn-home' == ctx.triggered_id:
+        pagenr = 0
+    return [introfigures.home_content,
+            introfigures.profs_content,
+            introfigures.students_content, introfigures.
+            rector_content, introfigures.
+            sources_content][pagenr]
 
 
 # Professor tabs
@@ -184,10 +150,10 @@ def render_content(tab):
     else:
         return 404
 
-###################################################################### 
-# Professor callbacks
-###################################################################### 
 
+# ******************************************************************************************
+# Professor callbacks
+# ******************************************************************************************
 
 # Year slider
 @app.callback(
@@ -203,13 +169,12 @@ def update_year_slider(century):
     for y in current_century['year'][0::YEAR_STEP]:
         years.append(y)
     years.append(current_century['year'].max())
-    min = current_century['year'].min()
-    max = current_century['year'].max()
+    min_year = current_century['year'].min()
+    max_year = current_century['year'].max()
     value = [current_century['year'].min(), current_century['year'].max()]
-    marks: dict = {str(year): str(year) for year in 
-                   range(current_century['year'].min(), current_century['year'].max(),
-                   int((current_century['year'].max() - current_century['year'].min()) / MARK_SPACING))}
-    return min, max, value, marks
+    marks: dict = {str(year): str(year) for year in
+                   range(min_year, max_year, int((max_year - min_year) / MARK_SPACING))}
+    return min_year, max_year, value, marks
 
 
 # year-century graph
@@ -220,15 +185,15 @@ def update_year_slider(century):
     Input('p-year-slider', 'value'),
     Input('p-year-century-dropdown', 'value'),
     running=[
-             (Output('p-year-century-subject-dropdown', 'disabled'), True, False),
-            ],
+        (Output('p-year-century-subject-dropdown', 'disabled'), True, False),
+    ],
 )
 def update_year_century_output(selected_subject, selected_century, selected_year, selected_dropdown):
     figure = professorfigures.create_year_cent_figure(
-                 selected_subject,
-                 selected_century,
-                 selected_year,
-                 selected_dropdown)
+        selected_subject,
+        selected_century,
+        selected_year,
+        selected_dropdown)
     return figure
 
 
@@ -257,6 +222,8 @@ def update_timeline_information(selected_subject, hover_data, figure):
         year = int(y)
     else:
         text = None
+        if not 'customdata' in figure['data'][0].keys():
+            return
         year = figure['data'][0]['x'][0]
     df, subject, name = professorfigures.get_variables(selected_subject)
     century = df.loc[df['year'] == year, 'century'].values[0]
@@ -302,7 +269,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].max()),
             ]),
             html.Tr(children=[
-                html.Td('Highest Year'),
+                html.Td('Year with highest value'),
                 html.Td(df.loc[df['count'] == df['count'].max(), 'year']),
             ]),
             html.Tr(children=[
@@ -310,7 +277,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].min()),
             ]),
             html.Tr(children=[
-                html.Td('Lowest Year'),
+                html.Td('Year with lowest value'),
                 html.Td(df.loc[df['count'].min(), 'year']),
             ]),
             html.Tr(children=[
@@ -357,7 +324,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].max()),
             ]),
             html.Tr(children=[
-                html.Td('Highest Year'),
+                html.Td('Year with highest value'),
                 html.Td(df.loc[df['count'] == df['count'].max(), 'year']),
             ]),
             html.Tr(children=[
@@ -365,7 +332,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].min()),
             ]),
             html.Tr(children=[
-                html.Td('Lowest Year'),
+                html.Td('Year with lowest value'),
                 html.Td(df.loc[df['count'].min(), 'year']),
             ]),
             html.Tr(children=[
@@ -393,7 +360,7 @@ def update_subject_output(selected_subject):
 @app.callback(
     Output('p-subject-table-container', 'children'),
     Input('p-subject-dropdown', 'value'),
-    )
+)
 def update_timeline_table(selected_subject):
     df, subject, name = professorfigures.get_variables(selected_subject)
     df = df.rename(columns={subject: name, 'year': 'Year', 'count': 'Appointments', 'century': 'Century'})
@@ -419,7 +386,7 @@ def update_timeline_table(selected_subject):
         #       export_headers='display',
         merge_duplicate_headers=True,
         id='p-subject-table'
-        )
+    )
 
 
 # Subject information
@@ -427,7 +394,7 @@ def update_timeline_table(selected_subject):
     Output('p-subject-information', 'children'),
     Input('p-subject-dropdown', 'value'),
     Input('p-subject-graph', 'hoverData'),
-    )
+)
 def update_timeline_information(selected_subject, hover_data):
     if hover_data is not None:
         text = hover_data['points'][0]['hovertext']
@@ -560,7 +527,7 @@ def update_timeline_table(selected_subject):
             }],
         virtualization=True,
         id='p-subject-information-table',
-        )
+    )
 
 
 # Geographical information callbacks
@@ -662,11 +629,11 @@ def create_map(min_year, max_year, map_choice):
     Input('p-individual-subjectarea-dropdown', 'value'),
     Input('p-individual-faculty-dropdown', 'value'),
     prevent_initial_call=True,
-    )
+)
 def update_professor_table(search_button, selected_name, search_option, min_enrol, max_enrol, min_birth, max_birth,
-                         include_missing, selected_gender, selected_birthplace, selected_birthcountry,
-                         selected_deathplace, selected_deathcountry, selected_promotion, selected_promotionplace,
-                         selected_thesis, selected_job, selected_subjectarea, selected_faculty):
+                           include_missing, selected_gender, selected_birthplace, selected_birthcountry,
+                           selected_deathplace, selected_deathcountry, selected_promotion, selected_promotionplace,
+                           selected_thesis, selected_job, selected_subjectarea, selected_faculty):
     df = data.individual_profs_df[['First name', 'Last name', 'Gender', 'Appointment date', 'Appointment year',
                                    'Birth date', 'Birth year', 'Birth place', 'Birth country', 'Death date',
                                    'Death year', 'Death place', 'Death country', 'Promotion', 'Promotion place',
@@ -694,18 +661,22 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
                 # filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
             else:  # No results, filtered_df is empty df 
                 # filtered_df = pd.DataFrame()
-                filtered_df = pd.DataFrame(columns=['First name', 'Last name', 'Gender', 'Appointment date', 'Appointment year', 'Birth date',
-                                   'Birth year', 'Birth place', 'Birth country', 'Death date', 'Death year', 'Death place', 'Death country', 
-                                   'Promotion', 'Promotion place', 'Promotion date','Promotion year', 'Thesis', 'Job', 'Subject area', 'Faculty', 'Rating'])
+                filtered_df = pd.DataFrame(
+                    columns=['First name', 'Last name', 'Gender', 'Appointment date', 'Appointment year', 'Birth date',
+                             'Birth year', 'Birth place', 'Birth country', 'Death date', 'Death year', 'Death place',
+                             'Death country',
+                             'Promotion', 'Promotion place', 'Promotion date', 'Promotion year', 'Thesis', 'Job',
+                             'Subject area', 'Faculty', 'Rating'])
 
         if min_enrol is not None and max_enrol is not None:
             filtered_df = select_range(filtered_df, min_enrol, max_enrol, 'Appointment year', include_missing)
-            
+
         if min_birth is not None and max_enrol is not None:
             filtered_df = select_range(filtered_df, min_birth, max_birth, 'Birth year', include_missing)
 
-        # selected_non_ranges = [selected_gender, selected_birthplace, selected_birthcountry, selected_deathplace, selected_deathcountry, selected_promotion, 
-        #                 selected_promotionplace, selected_thesis, selected_job, selected_subjectarea, selected_faculty]
+        # selected_non_ranges = [selected_gender, selected_birthplace, selected_birthcountry, selected_deathplace,
+        # selected_deathcountry, selected_promotion,
+        #               selected_promotionplace, selected_thesis, selected_job, selected_subjectarea, selected_faculty]
 
         # for selected_non_range in selected_non_ranges:
         #     if selected_non_ranges is not None and select_non_range !=[]:
@@ -780,7 +751,8 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
             merge_duplicate_headers=True,
             id='p-individual-table'
         )
-    else: return None, None, None
+    else:
+        return None, None, None
 
 
 def select_non_range(filtered_df, selected_field, column_name):
@@ -811,7 +783,7 @@ def select_range(filtered_df, range_min, range_max, column_name, include_missing
     Input('p-individual-table', "derived_virtual_selected_rows"),
     Input({'type': 'p-person-table', 'index': ALL}, 'id'),
     State('p-chosen-individual-information', 'children'),
-    )
+)
 def create_individual_information(rows, selected_rows, value, children):
     if rows is None:
         persons = 'No person selected'
@@ -932,7 +904,8 @@ def create_individual_information(rows, selected_rows, value, children):
                                               html.Td(person.get('Death country')),
                                           ]),
                                       ]),
-                                      # html.A('Go to globe', href='assets/mapboxLeiden.html', target='_blank', rel='noreferrer noopener'),
+                                      # html.A('Go to globe', href='assets/mapboxLeiden.html', target='_blank',
+                                      # rel='noreferrer noopener'),
                                       # TODO: Implement family tree, not yet chosen which
                                       #  tree fits best: choices: 1. fisher_crawford (r implementation) 2. graphviz
                                       #  3. igraph
@@ -948,7 +921,7 @@ def create_individual_information(rows, selected_rows, value, children):
     Output('appointment-max-input', 'value'),
     Input('appointment-min-input', 'value'),
     Input('appointment-max-input', 'value'),
-    )
+)
 def synchronise_dates(min_year, max_year):
     trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
     if trigger_id == 'appointment-min-input' and min_year >= max_year:
@@ -970,7 +943,7 @@ def synchronise_dates(min_year, max_year):
     Output('p-birthyear-max-input', 'value'),
     Input('p-birthyear-min-input', 'value'),
     Input('p-birthyear-max-input', 'value'),
-    )
+)
 def synchronise_dates(min_year, max_year):
     trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
     if trigger_id == 'p-birthyear-min-input' and min_year >= max_year:
@@ -985,9 +958,10 @@ def synchronise_dates(min_year, max_year):
             max_year += 1
     return min_year, max_year
 
-###################################################################### 
+
+# ******************************************************************************************
 # Students callbacks
-###################################################################### 
+# ******************************************************************************************
 # Year slider
 
 
@@ -1004,14 +978,13 @@ def update_year_slider(century):
     for y in current_century['year'][0::YEAR_STEP]:
         years.append(y)
     years.append(current_century['year'].max())
-    min = current_century['year'].min()
-    max = current_century['year'].max()
+    min_year = current_century['year'].min()
+    max_year = current_century['year'].max()
     value = [current_century['year'].min(), current_century['year'].max()]
-    marks = {str(year): str(year) for year in 
-              range(current_century['year'].min(), current_century['year'].max(),
-              int((current_century['year'].max() - current_century['year'].min()) / MARK_SPACING )) }
+    marks = {str(year): str(year) for year in
+             range(min_year, max_year, int((max_year - min_year) / MARK_SPACING))}
     id = 'year-slider'
-    return min, max, value, marks
+    return min_year, max_year, value, marks
 
 
 # year-century graph
@@ -1024,7 +997,7 @@ def update_year_slider(century):
     Input('year-century-dropdown', 'value'),
     running=[
         (Output('year-century-subject-dropdown', 'disabled'), True, False),
-            ],
+    ],
 )
 def update_year_century_output(selected_subject, selected_century, selected_year, selected_age, selected_dropdown):
     figure = studentfigures.create_year_cent_figure(selected_subject, selected_century, selected_year,
@@ -1057,6 +1030,8 @@ def update_timeline_information(selected_subject, hover_data, figure):
         year = int(y)
     else:
         text = None
+        if not 'customdata' in figure['data'][0].keys():
+            return
         year = figure['data'][0]['x'][0]
     df, subject, name = studentfigures.get_variables(selected_subject)
     century = df.loc[df['year'] == year, 'century'].values[0]
@@ -1102,7 +1077,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].max()),
             ]),
             html.Tr(children=[
-                html.Td('Highest Year'),
+                html.Td('Year with highest value'),
                 html.Td(df.loc[df['count'] == df['count'].max(), 'year']),
             ]),
             html.Tr(children=[
@@ -1110,12 +1085,12 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].min()),
             ]),
             html.Tr(children=[
-                html.Td('Lowest Year'),
+                html.Td('Year with lowest value'),
                 html.Td(df.loc[df['count'].min(), 'year']),
             ]),
             html.Tr(children=[
                 html.Td('Average Enrollments'),
-                html.Td(round(df['count'].mean(),0)),
+                html.Td(round(df['count'].mean(), 0)),
             ]),
         ]),
     else:
@@ -1157,7 +1132,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].max()),
             ]),
             html.Tr(children=[
-                html.Td('Highest Year'),
+                html.Td('Year with highest value'),
                 html.Td(df.loc[df['count'] == df['count'].max(), 'year']),
             ]),
             html.Tr(children=[
@@ -1165,12 +1140,12 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].min()),
             ]),
             html.Tr(children=[
-                html.Td('Lowest Year'),
+                html.Td('Year with lowest value'),
                 html.Td(df.loc[df['count'].min(), 'year']),
             ]),
             html.Tr(children=[
                 html.Td('Average Enrollments'),
-                html.Td(round(df['count'].mean(),0)),
+                html.Td(round(df['count'].mean(), 0)),
             ]),
         ]),
 
@@ -1214,8 +1189,8 @@ def update_timeline_table(selected_subject):
         style_header={'backgroundColor': '#001158', 'color': 'white'},
         style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
         virtualization=True,
-#        export_format='xlsx',
-#        export_headers='display',
+        #        export_format='xlsx',
+        #        export_headers='display',
         merge_duplicate_headers=True,
         id='subject-table'
     )
@@ -1463,8 +1438,8 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
                          selected_age, selected_city, selected_country, selected_region, selected_faculty,
                          selected_royal, selected_job, selected_religion):
     df = data.individual_student_df[['First name', 'Last name', 'Enrollment year', 'City', 'Country', 'Region',
-                             'Enrollment age', 'Birth year', 'Faculty', 'Royal title', 'Job', 'Religion',
-                             'Enrollments', 'Rating']]
+                                     'Enrollment age', 'Birth year', 'Faculty', 'Royal title', 'Job', 'Religion',
+                                     'Enrollments', 'Rating']]
     search_results_number = 0
     if ctx.triggered_id == 'search-individual':
         filtered_df = df.copy()
@@ -1484,7 +1459,7 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             if len(selected_df) > 0:
                 filtered_df = temp_total_df.copy()
                 # filtered_df = pd.merge(filtered_df, selected_df, how='inner')
-            else: 
+            else:
                 # filtered_df = pd.DataFrame()
                 filtered_df = pd.DataFrame(columns=['First name', 'Last name', 'Enrollment year', 'City', 'Country',
                                                     'Region', 'Enrollment age', 'Birth year', 'Faculty', 'Royal title',
@@ -1519,7 +1494,7 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
 
         if selected_religion is not None and selected_religion != []:
             filtered_df = select_non_range(filtered_df, selected_religion, 'Religion')
-                    
+
         filtered_df = filtered_df.rename(columns={'Enrollment year': 'Year', 'Enrollment age': 'Age'})
         search_results_number = len(filtered_df)
         if search_results_number == 1:
@@ -1576,12 +1551,13 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             style_header={'backgroundColor': '#001158', 'color': 'white'},
             style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
             virtualization=True,
-#            export_format='xlsx',
-#            export_headers='display',
+            #            export_format='xlsx',
+            #            export_headers='display',
             merge_duplicate_headers=True,
             id='individual-table'
         )
-    else: return None, None, None
+    else:
+        return None, None, None
 
 
 # Chosen person information
@@ -1707,7 +1683,8 @@ def create_individual_information(rows, selected_rows, value, children):
                                               html.Td(person.get('Region')),
                                           ]),
                                       ]),
-                                      # html.A('Go to globe', href='assets/mapboxLeiden.html', target='_blank', rel='noreferrer noopener'),
+                                      # html.A('Go to globe', href='assets/mapboxLeiden.html', target='_blank',
+                                      # rel='noreferrer noopener'),
                                       # TODO: Implement family tree, not yet chosen which
                                       #  tree fits best: choices: 1. fisher_crawford (r implementation) 2. graphviz
                                       #  3. igraph
@@ -1760,9 +1737,10 @@ def synchronise_dates(min_year, max_year):
             max_year += 1
     return min_year, max_year
 
-###################################################################### 
+
+# ******************************************************************************************
 # Rector callbacks
-###################################################################### 
+# ******************************************************************************************
 # Year slider
 @app.callback(
     Output('r-year-slider', 'min'),
@@ -1777,14 +1755,13 @@ def update_year_slider(century):
     for y in current_century['year'][0::YEAR_STEP]:
         years.append(y)
     years.append(current_century['year'].max())
-    min = current_century['year'].min()
-    max = current_century['year'].max()
-    value = [current_century['year'].min(), current_century['year'].max()]
-    marks = {str(year): str(year) for year in 
-              range(current_century['year'].min(), current_century['year'].max(),
-              int((current_century['year'].max() - current_century['year'].min()) / MARK_SPACING )) }
+    min_year = current_century['year'].min()
+    max_year = current_century['year'].max()
+    value = [current_century['year'].min(), max_year]
+    marks = {str(year): str(year) for year in
+             range(min_year, max_year, int((max_year - min_year) / MARK_SPACING))}
     id = 'r-year-slider'
-    return min, max, value, marks
+    return min_year, max_year, value, marks
 
 
 # year-century graph
@@ -1800,7 +1777,7 @@ def update_year_slider(century):
 )
 def r_update_year_century_output(selected_subject, selected_century, selected_year, selected_dropdown):
     figure = rectorfigures.create_year_cent_figure(selected_subject, selected_century, selected_year,
-                                                                  selected_dropdown)
+                                                   selected_dropdown)
     return figure
 
 
@@ -1828,6 +1805,8 @@ def r_update_timeline_information(selected_subject, hover_data, figure):
         y = hover_data['points'][0]['x']
         year = int(y)
     else:
+        if not 'customdata' in figure['data'][0].keys():
+            return
         text = None
         year = figure['data'][0]['x'][0]
     df, subject, name = rectorfigures.get_variables(selected_subject)
@@ -1877,7 +1856,7 @@ def r_update_timeline_information(selected_subject, hover_data, figure):
             html.Td(df['count'].max()),
         ]),
         html.Tr(children=[
-            html.Td('Highest Year'),
+            html.Td('Year with highest value'),
             html.Td(df.loc[df['count'].max(), 'year']),
         ]),
         html.Tr(children=[
@@ -1885,12 +1864,12 @@ def r_update_timeline_information(selected_subject, hover_data, figure):
             html.Td(df['count'].min()),
         ]),
         html.Tr(children=[
-            html.Td('Lowest Year'),
+            html.Td('Year with lowest value'),
             html.Td(df.loc[df['count'].min(), 'year']),
         ]),
         html.Tr(children=[
             html.Td('Average Rectors'),
-            html.Td(round(df['count'].mean(),0)),
+            html.Td(round(df['count'].mean(), 0)),
         ]),
     ]),
 
@@ -1934,8 +1913,8 @@ def r_update_timeline_table(selected_subject):
         style_header={'backgroundColor': '#001158', 'color': 'white'},
         style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
         virtualization=True,
- #       export_format='xlsx',
- #       export_headers='display',
+        #       export_format='xlsx',
+        #       export_headers='display',
         merge_duplicate_headers=True,
         id='r-subject-table'
     )
@@ -1955,7 +1934,7 @@ def r_update_timeline_information(selected_subject, hover_data):
     df, subject, name = rectorfigures.get_variables(selected_subject)
     total = df['count'].sum()
     fraction = df.loc[df[subject] == text, 'count'].sum()
-    percentage = round(fraction / total * 100,2)
+    percentage = round(fraction / total * 100, 2)
     return html.Div(id='r-subject-hover-info', children=[
         html.Table(id='r-subject-table', children=[
             html.Tr(children=[
@@ -1972,7 +1951,7 @@ def r_update_timeline_information(selected_subject, hover_data):
             ]),
             html.Tr(children=[
                 html.Td('Average rectors per year'),
-                html.Td(html.Td(round(df['count'].mean(),0))),
+                html.Td(html.Td(round(df['count'].mean(), 0))),
             ]),
             html.Tr(children=[
                 html.Td('Year with most rectors'),
@@ -2079,7 +2058,7 @@ def update_recmag_table(search_button, selected_name, search_option, min_term, m
 
         filtered_df = filtered_df.rename(
             columns={'Period_start': 'Period start', 'Period_end': 'Period end', 'Picture_saved': 'Picture'})
-        
+
         search_results_number = len(filtered_df)
         if search_results_number == 1:
             text = "rector was found"
@@ -2117,12 +2096,13 @@ def update_recmag_table(search_button, selected_name, search_option, min_term, m
             style_header={'backgroundColor': '#001158', 'color': 'white'},
             style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
             virtualization=True,
-#           export_format='xlsx', tijdelijk uitgeschakeld
-#           export_headers='display',
+            #           export_format='xlsx', tijdelijk uitgeschakeld
+            #           export_headers='display',
             merge_duplicate_headers=True,
             id='r-individual-table'
         )
-    else: return None, None, None
+    else:
+        return None, None, None
 
 
 # Chosen person information
@@ -2206,12 +2186,13 @@ def synchronise_dates(min_year, max_year):
             max_year += 1
     return min_year, max_year
 
-################################################################################################ LOCAL
+
+# ******************************************************************************************  LOCAL
 if __name__ == '__main__':
     app.run_server(port=8050, debug=False)
 #
-################################################################################################ SERVER
-#if __name__ == '__main__':
-#    app.run_server(debug=True)
+# ******************************************************************************************  SERVER
+# if __name__ == '__main__':
+#    app.run_server(debug=False)
 #
-################################################################################################# END
+# ******************************************************************************************  END

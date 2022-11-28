@@ -1,5 +1,3 @@
-
-
 # Creating dataframe
 import plotly.express as px
 import plotly.graph_objects as go
@@ -89,23 +87,36 @@ def create_year_cent_figure(subject, century, year, age, mode):
     filtered_df = filtered_df[filtered_df['century'] >= century[0]]
     filtered_df = filtered_df[filtered_df['year'] <= year[1]]
     filtered_df = filtered_df[filtered_df['year'] >= year[0]]
+    if filtered_df.empty:
+        fig = px.bar()
+        fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
+                          plot_bgcolor='rgba(223,223,218,0.7)',
+                          title="No data in this selection")
+        return fig
+    if filtered_df.iloc[0][subjectx] == filtered_df.iloc[0]['year']:
+        barcolor = None
+    else:
+        barcolor = subjectx
     if subjectx == 'age':
         filtered_df = filtered_df[filtered_df['age'] <= int(age[1])]
         filtered_df = filtered_df[filtered_df['age'] >= int(age[0])]
         filtered_df = filtered_df.sort_values(by=['year', subjectx, 'century'], ascending=True)
-    if mode == 'Scatter graph':
-        fig = px.line(filtered_df, x='year', y='count', color=subjectx, markers=True,
+    if mode == 'Line graph':
+        fig = px.line(filtered_df, x='year', y='count', color=barcolor, markers=True,
                       labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'},
                       hover_name=subjectx, hover_data=['year', 'century'])
-    elif mode == 'Line graph':
-        fig = px.scatter(filtered_df, x='year', y='count', size='count',
-                         color=subjectx, color_continuous_scale='blues',
+    elif mode == 'Scatter graph':
+        fig = px.scatter(filtered_df, x='year', y=subjectx,
+                         size='count',
+                         color=barcolor,
+                         # color_continuous_scale='blues',
                          log_x=True, labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year',
                                              'century': 'Century'},
                          hover_name=subjectx, hover_data=['year', 'century'])
     elif mode == 'Bar graph':
         fig = px.bar(filtered_df, x='year', y='count',
-                     color=subjectx, color_continuous_scale='blues',
+                     color=barcolor,
+                     # color_continuous_scale='blues',
                      labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'},
                      hover_name=subjectx, hover_data=['year', 'century'])
     if subjectx == 'year':
@@ -120,13 +131,13 @@ def create_year_cent_figure(subject, century, year, age, mode):
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
                           title=title_cent)
-       #fig.update_traces(marker_color='#001158')
+    # fig.update_traces(marker_color='#001158')
     else:
-        fig.update_traces(mode='markers+lines')
+        # fig.update_traces(mode='markers+lines')
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
                           title=title_cent)
-    fig.update_xaxes(type='category')
+    # fig.update_xaxes(type='date')
     return fig
 
 
@@ -136,11 +147,19 @@ def create_cent_figure(subject, century):
     merged_df = merge_years(selected_df, subjectx)
     filtered_df = merged_df[merged_df['century'] <= century[1]]
     filtered_df = filtered_df[filtered_df['century'] >= century[0]]
-    if subjectx == 'year' or subjectx == 'age':
+    if filtered_df.empty:
+        fig = px.bar()
+        fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
+                          plot_bgcolor='rgba(223,223,218,0.7)',
+                          title="No data in this selection")
+        return fig
+    if subjectx == 'xyear' or subjectx == 'xage':
         filtered_df = filtered_df.sort_values(by=[subjectx, 'century'], ascending=True)
     else:
         filtered_df = filtered_df.sort_values(by=['count', 'century'], ascending=False)
-    fig = px.bar(filtered_df, x=subjectx, y='count', color=subjectx, color_continuous_scale='blues',
+    fig = px.bar(filtered_df, x=subjectx, y='count',
+                 # color=subjectx,
+                 # color_continuous_scale=None,
                  hover_name=subjectx, hover_data=['century'],
                  labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'})
     if subjectx == 'year':
@@ -176,8 +195,8 @@ def create_century_table(df, name):
     table_df = pd.DataFrame(columns=['Statistic', 'Enrollments'])
     for cent in df['century'].unique():
         table_df.loc[len(table_df)] = ['Century', cent]
-        table_df.loc[len(table_df)] = ['Total enrollments', round(df.loc[df['century'] == cent, 'count'].sum(),0)]
-        table_df.loc[len(table_df)] = ['Average enrollments', round(df.loc[df['century'] == cent, 'count'].mean(),0)]
+        table_df.loc[len(table_df)] = ['Total enrollments', round(df.loc[df['century'] == cent, 'count'].sum(), 0)]
+        table_df.loc[len(table_df)] = ['Average enrollments', round(df.loc[df['century'] == cent, 'count'].mean(), 0)]
         table_df.loc[len(table_df)] = ['Most enrollments',
                                        df.loc[df['century'] == cent].sort_values(by='count', ascending=False).iloc[0][
                                            0]]
@@ -375,10 +394,12 @@ def create_mapbox_scatter_map(min_year, max_year):
 # individual map
 def create_map(city, country, birthyear):
     # TODO: add coordination to cities
-    origin_country = data.country_df.loc[data.country_df['country'] == country, ['country', 'iso_alpha', 'lat', 'lon']].iloc[0]
+    origin_country = data.country_df.loc[data.country_df['country'] == country,
+                                         ['country', 'iso_alpha', 'lat', 'lon']].iloc[0]
     origin = pd.DataFrame(origin_country)
     countries = origin.T
-    countries = countries.append({'country': 'Nederland', 'iso_alpha':'NLD', 'lat':'52.21158', 'lon':'5.600489'}, ignore_index=True)
+    countries = countries.append({'country': 'Nederland', 'iso_alpha': 'NLD', 'lat': '52.21158', 'lon': '5.600489'},
+                                 ignore_index=True)
     places = origin.T
     places = places.rename(columns={'country': 'city'})
     places = places.append({'city': 'Leiden', 'iso_alpha': 'NLD', 'lat': '52.15833', 'lon': '4.49306'},
