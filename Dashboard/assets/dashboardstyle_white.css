@@ -1,11 +1,100 @@
+html {
+    /* font-family: "Arial", sans-serif; */
+    font-family: Georgia, serif;
+    width: 100%;
+    height: 100%;
+    /* background-color: blueviolet; */
+}
+
 body {
+    background-color: #f5f5f5;
+    /* width: 80%;
+    height: 80%;
+    box-shadow: 0 0 5px 1px rgb(120 110 100 / 30%); */
+}
+
+/* #page_content { */
+    /* color: black; */
+    /* width: 100%; */
+    /* margin: 0 auto; */
+    /* background-color: white; */
+    /* background-color: yellow; */
+    /* border: none; */
+    /* border: solid red 2px; */
+/* } */
+
+#page_content {
+    width: 90%;
+    height: 95%;
+    /* padding-left: 5%; */
     background-color: white;
+    box-shadow: 0 0 5px 1px rgb(120 110 100 / 30%);
+    margin-left: 5%;
+    margin-bottom: 10%;
+}
+
+.card-btn{
+    background-color: #001158 !important;
+    /* width: 100px;
+    height: 190px; */
+}
+
+.cardImg{
+    box-shadow: 0 0 10px 2px rgb(120 110 100 / 30%);
 }
 
 #page_title {
     text-align: center;
     color: black;
     margin-bottom: 0;
+    padding-right: 10%;
+}
+
+.header_tab_bar {
+    width: 100%;
+    height: 10%;
+    margin: 0 auto;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    background-color: #001158 !important;
+    border: 1px solid black !important;
+}
+
+.child_tab {
+    color: white;
+    background-color: #001158 !important;
+    border: none !important;
+}
+.child_tab_selected {
+    border-top: 0px solid transparent;
+    color: white;
+    background-color: white !important;
+}
+
+.child_tab:hover {
+    background-color: white !important;
+    color: black;
+    border: none;
+}
+
+.container {
+    width: 100%;
+    /* margin-top: 10vh; */
+    margin: auto;
+    /* padding-right: 10%; */
+    /* background-color: rgba(223,223,218,0.7); */
+    /* border: 1px solid black; */
+    display: inline-block;
+}
+
+.page_header {
+    width: 98%;
+    margin-top: 1%;
+    margin-left: 1%;
+}
+
+.center_object {
+    text-align: center;
 }
 
 h1 {
@@ -16,19 +105,47 @@ h2 {
     text-align: center;
 }
 
-h3 {
-    margin-left: 1%;
-}
-
-p {
-    margin-left: 1%;
-    padding-left: 1%;
-}
-
 .inline {
     display: inline-block;
+}
+
+.dash-dropdown{
+    display: inline-block;
+    vertical-align: middle;
+    width: 50%;
     margin-left: 1%;
-    margin-right: 1%;
+}
+
+.Select--single{
+    background-color: rgba(223,223,218,0.7);
+}
+
+.Select-control{
+    background-color: rgba(223,223,218,0.7) !important;
+}
+
+.Select-multi-value-wrapper{
+    background-color: rgba(223,223,218,0.7);
+}
+
+.Select-value{
+    background-color: rgba(223,223,218,0.7);
+}
+
+.Select-placeholder {
+    color: black;
+}
+
+.Select-input{
+    background-color: rgba(223,223,218,0.7);
+}
+
+.Select-arrow-zone{
+    background-color: rgba(223,223,218,0.7);
+}
+
+.Select-menu-outer{
+    background-color: rgba(223,223,218,1);
 }
 
 .bigblock{
@@ -51,66 +168,67 @@ p {
     width: 49%;
 }
 
-#page_content {
-    color: black;
-    width: 100%;
-    margin: 0 auto;
-    background-color: white;
-    border: none;
-}
-
-.header_tab_bar {
-    width: 100%;
-    height: 10%;
-    margin: 0 auto;
-    margin-top: 1%;
-    margin-bottom: 1%;
-    background-color: #001158;
-    border: 1px solid black !important;
-}
-
-.child_tab {
-    color: white;
-    background-color: #001158 !important;
-    border: none !important;
-}
-.child_tab_selected {
-    border-top: 0px solid transparent;
-    color: white;
-    background-color: white !important;
-}
-
-.child_tab:hover {
-    background-color: white !important;
-    color: black;
-    border: none;
-}
-
-.container {
-    width: 98%;
-    margin-top: 1%;
-    margin-left: 1%;
-    background-color: rgba(223,223,218,0.7);
-    border: 1px solid black;
-    display: inline-block;
-}
-
-.page_header {
-    width: 98%;
-    margin-top: 1%;
-    margin-left: 1%;
-}
-
-.left_container {
+.right_container {
     width: 68%;
     display: inline-block;
     margin-left: 1%;
     margin-right: 1%;
 }
 
-.right_container {
+.middle_container {
+    width: 98%;
+    display: inline-block;
+    margin-left: 1%;
+    margin-right: 1%;
+}
+
+.middle_small_container {
+    width: 45%;
+    display: inline-block;
+    margin-left: 1%;
+    margin-right: 1%;
+    vertical-align: top;
+}
+
+.left_container {
     width: 29%;
     display: inline-block;
     vertical-align: top;
 }
-*/
+
+#logo{
+    float: left;
+    /* padding-right: 10%; */
+    width: 151px;
+    height: 64px;
+}
+
+#btn-home{
+    color: white;
+    background-color: #001158 !important;
+    float: right;
+    margin-top: -3.5rem;
+}
+
+#page_top{
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
+
+#p_tab_bar, #s_tab_bar, #r_tab_bar{
+    margin-top: 0;
+}
+
+button { 
+    color: white;
+    background-color: #001158 !important;
+}
+
+/* #h_content{
+    width: 100%;
+    padding-top: 5%;
+} */
+
+/* #header {
+    border: yellow solid 2px;
+} */
