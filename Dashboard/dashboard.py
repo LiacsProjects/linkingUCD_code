@@ -17,6 +17,8 @@ from pages import professorvisuals, rectorvisuals, studentvisuals
 # Parameters and constants
 YEAR_STEP = 5
 MARK_SPACING = 10
+THESIS_COLUMN_NAME = 'Thesis'
+SUBJECT_AREA_COLUMN_NAME = 'Subject area'
 # ******************************************************************************************  LOCAL
 # Configurate dash application voor DASH
 app = Dash(__name__, suppress_callback_exceptions=True,
@@ -720,6 +722,7 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
             text = "professor was found"
         else:
             text = "professors were found"
+        text = text + " (make selection for individual information placed under the search table)"
         return search_results_number, text, dash_table.DataTable(
             data=filtered_df.to_dict('records'),
             columns=[{'id': i, 'name': i, 'hideable': 'last'} for i in filtered_df.columns],
@@ -732,20 +735,39 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
             selected_rows=[],
             page_size=100,
             fixed_rows={'headers': True},
-            style_cell={
-                'width': '7%',
-                'textOverflow': 'ellipsis',
-                'overflow': 'hidden'
-            },
-            style_cell_conditional=[
-                {'if': {'column_id': 'First name'},
-                 'width': '10%'},
-                {'if': {'column_id': 'Last name'},
-                 'width': '10%'},
+
+            css=[{
+                'selector': '.dash-table-tooltip',
+                'rule': 'background-color: #001158; font-family: monospace; color: white'
+            }],
+            tooltip_header={i: i for i in filtered_df.columns},
+            tooltip_data=[{
+                           THESIS_COLUMN_NAME: {'value': str(row[THESIS_COLUMN_NAME]), 'type': 'markdown'},
+                           SUBJECT_AREA_COLUMN_NAME: {'value': str(row[SUBJECT_AREA_COLUMN_NAME ]), 'type': 'markdown'},
+                          } for row in filtered_df.to_dict('records')
             ],
-            style_header={'backgroundColor': '#001158', 'color': 'white'},
-            style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
-            virtualization=True,
+            tooltip_duration=None,
+            tooltip_delay=0,
+
+            style_table={'overflowX': 'auto'},
+            style_cell={
+                'textAlign': 'left',
+                'line-height': '15px'
+            },
+            style_header={'backgroundColor': '#001158', 'color': 'white', 'fontWeight': 'bold'},
+            style_data={
+                       # 'whiteSpace': 'normal',
+                        'backgroundColor': 'white',
+                        'color': 'black',
+                       },
+            style_cell_conditional=[
+                {'if': {'column_id': THESIS_COLUMN_NAME},
+                  'maxWidth': '240px', 'textOverflow': 'ellipsis', 'overflow': 'hidden', },
+                {'if': {'column_id': SUBJECT_AREA_COLUMN_NAME },
+                 'maxWidth': '180px', 'textOverflow': 'ellipsis', 'overflow': 'hidden', },
+            ],
+
+            #virtualization=True,
             #            export_format='xlsx',
             #            export_headers='display',
             merge_duplicate_headers=True,
