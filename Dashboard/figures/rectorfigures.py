@@ -40,19 +40,32 @@ def create_year_cent_figure(subject, century, year, mode):
     filtered_df = filtered_df[filtered_df['century'] >= century[0]]
     filtered_df = filtered_df[filtered_df['year'] <= year[1]]
     filtered_df = filtered_df[filtered_df['year'] >= year[0]]
-    if mode == 'Scatter graph':
-        fig = px.line(filtered_df, x='year', y='count', color=subjectx, markers=True,
+    if filtered_df.empty:
+        fig = px.bar()
+        fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
+                          plot_bgcolor='rgba(223,223,218,0.7)',
+                          title="No data in this selection")
+        return fig
+    if filtered_df.iloc[0][subjectx] == filtered_df.iloc[0]['year']:
+        barcolor = None
+    else:
+        barcolor = subjectx
+    if mode == 'Line graph':
+        fig = px.line(filtered_df, x='year', y='count', color=barcolor, markers=True,
                       labels={subjectx: name, 'count': 'Number of rectors', 'year': 'Year', 'century': 'Century'},
                       hover_name=subjectx, hover_data=['year', 'century'])
-    elif mode == 'Line graph':
-        fig = px.scatter(filtered_df, x='year', y='count', size='count',
-                         #color=subjectx, color_continuous_scale='blues',
+    elif mode == 'Scatter graph':
+        fig = px.scatter(filtered_df, x='year', y=subjectx,
+                         size='count',
+                         color=barcolor,
+                         # color_continuous_scale='blues',
                          log_x=True, labels={subjectx: name, 'count': 'Number of rectors', 'year': 'Year',
                                              'century': 'Century'},
                          hover_name=subjectx, hover_data=['year', 'century'])
     elif mode == 'Bar graph':
         fig = px.bar(filtered_df, x='year', y='count',
-                     #color=subjectx, color_continuous_scale='blues',
+                     color=barcolor,
+                     # color_continuous_scale='blues',
                      labels={subjectx: name, 'count': 'Number of rectors', 'year': 'Year', 'century': 'Century'},
                      hover_name=subjectx, hover_data=['year', 'century'])
     if subjectx == 'year':
@@ -67,12 +80,13 @@ def create_year_cent_figure(subject, century, year, mode):
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
                           title=title_cent)
+        # fig.update_traces(marker_color='#001158')
     else:
-        fig.update_traces(mode='markers+lines')
+        # fig.update_traces(mode='markers+lines')
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
                           title=title_cent)
-    fig.update_xaxes(type='category')
+    # fig.update_xaxes(type='date')
     return fig
 
 
@@ -82,11 +96,17 @@ def create_cent_figure(subject, century):
     merged_df = merge_years(selected_df, subjectx)
     filtered_df = merged_df[merged_df['century'] <= century[1]]
     filtered_df = filtered_df[filtered_df['century'] >= century[0]]
-    if subjectx == 'year':
-        filtered_df = filtered_df.sort_values(by=[subjectx, 'century'], ascending=True)
-    else:
-        filtered_df = filtered_df.sort_values(by=['count', 'century'], ascending=False)
-    fig = px.bar(filtered_df, x=subjectx, y='count', color=subjectx, color_continuous_scale='blues',
+    if filtered_df.empty:
+        fig = px.bar()
+        fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
+                          plot_bgcolor='rgba(223,223,218,0.7)',
+                          title="No data in this selection")
+        return fig
+    filtered_df = filtered_df.sort_values(by=['count', 'century'], ascending=False)
+
+    fig = px.bar(filtered_df, x=subjectx, y='count',
+                 # color=subjectx,
+                 # color_continuous_scale='Blues'
                  hover_name=subjectx, hover_data=['century'],
                  labels={subjectx: name, 'count': 'Number of rectors', 'year': 'Year', 'century': 'Century'})
     if subjectx == 'year':
@@ -136,10 +156,12 @@ def create_century_table(df, name):
 # individual map
 def create_map(city, country, birthyear):
     # TODO: add coordination to cities
-    origin_country = data.country_df.loc[data.country_df['country'] == country, ['country', 'iso_alpha', 'lat', 'lon']].iloc[0]
+    origin_country = \
+     data.country_df.loc[data.country_df['country'] == country, ['country', 'iso_alpha', 'lat', 'lon']].iloc[0]
     origin = pd.DataFrame(origin_country)
     countries = origin.T
-    countries = countries.append({'country': 'Nederland', 'iso_alpha':'NLD', 'lat':'52.21158', 'lon':'5.600489'}, ignore_index=True)
+    countries = countries.append({'country': 'Nederland', 'iso_alpha': 'NLD', 'lat': '52.21158', 'lon': '5.600489'},
+                                 ignore_index=True)
     places = origin.T
     places = places.rename(columns={'country': 'city'})
     places = places.append({'city': 'Leiden', 'iso_alpha': 'NLD', 'lat': '52.15833', 'lon': '4.49306'},
@@ -176,7 +198,7 @@ def create_map(city, country, birthyear):
 
 # Individual chart information
 def get_unique_values(subject):
-    unique_values = data.individual_df[subject].unique()
+    unique_values = data.individual_df[subject].dropna().sort_values().unique()
     unique_values = unique_values.tolist()
     return unique_values
 
