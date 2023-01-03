@@ -81,6 +81,7 @@ df_beroepen = pd.read_csv(beroepenfile, skipinitialspace=False, delimiter=";", e
 # ******************************************************************** define application
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
+
 # ******************************************************************** define layout
 app.layout = html.Div([
     html.Div([
@@ -470,4 +471,4 @@ def show_figure(thema, category, measure):
 
 # *******************************************************************************application
 if __name__ == '__main__':
-    app.run_server(port=8051, debug=True)
+    app.run_server(port=8051, debug=False)
