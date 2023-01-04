@@ -3,8 +3,13 @@
 import dash_bootstrap_components as dbc
 import dash
 from dash import dcc, html
+import os
+from pathlib import Path
 import data
 
+base_path = Path(os.environ['DASHBOARD_BASEPATH'])
+base_path_name = os.environ['DASHBOARD_BASEPATH']
+image_file = base_path_name + "assets/professors_780x400.jpeg"
 
 card_professor = dbc.Card([
     dbc.CardImg(

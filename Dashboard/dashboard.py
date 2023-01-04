@@ -1,6 +1,7 @@
 # ****************************************************************************************** LOCAL
 # added for local server
 # extra regel om environmental variable te bepalen
+# voor server draaien dashboard.wsgi ?
 import Add_environment_variable
 # ******************************************************************************************  end local
 # import modules
@@ -24,12 +25,12 @@ SUBJECT_AREA_COLUMN_NAME = 'Subject area'
 app = Dash(__name__, suppress_callback_exceptions=True,
            routes_pathname_prefix='/',
            external_stylesheets=[dbc.themes.BOOTSTRAP],
-           #  uitgeschakeld  #      requests_pathname_prefix='/dashboard/'
+           # uitgeschakeld # requests_pathname_prefix='/dashboard/'
            )
 
 # ****************************************************************************************** SERVER
 # Configurate dash application for server
-# server = app.server
+server = app.server
 
 # ******************************************************************************************  TODO
 
@@ -2210,11 +2211,11 @@ def synchronise_dates(min_year, max_year):
 
 
 # ******************************************************************************************  LOCAL
-if __name__ == '__main__':
-    app.run_server(port=8050, debug=False)
+# if __name__ == '__main__':
+#    app.run_server(port=8050, debug=False)
 #
 # ******************************************************************************************  SERVER
-# if __name__ == '__main__':
-#    app.run_server(debug=False)
-#
+if __name__ == '__main__':
+    app.run_server(debug=False)
+
 # ******************************************************************************************  END
