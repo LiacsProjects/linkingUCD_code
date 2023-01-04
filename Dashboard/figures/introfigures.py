@@ -5,9 +5,10 @@ import dash
 from dash import dcc, html
 import data
 
+
 card_professor = dbc.Card([
     dbc.CardImg(
-        src="/assets/professors_780x400.jpeg",
+        src="../assets/professors_780x400.jpeg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -26,7 +27,7 @@ card_professor = dbc.Card([
 
 card_student = dbc.Card([
     dbc.CardImg(
-        src="/assets/Student_400x267.jpg",
+        src="../assets/Student_400x267.jpg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -45,7 +46,7 @@ card_student = dbc.Card([
 
 card_rectores = dbc.Card([
     dbc.CardImg(
-        src="/assets/alumni.jpeg",
+        src="../assets/alumni.jpeg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -64,7 +65,7 @@ card_rectores = dbc.Card([
 
 card_colofon = dbc.Card([
     dbc.CardImg(
-        src="/assets/LEI001013879.jpg",
+        src="../assets/LEI001013879.jpg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg",
@@ -202,8 +203,10 @@ sources_content = html.Div(id='src_content', className='parent_content', childre
         html.Li('Additional information on rectors magnifici is retrieved from Wikipedia'),
         html.H2('Student projects', style={"text-align":"left"}),
         html.Li('Liam van Dreumel, ‘Visualisation tools to support historical research on a linked dataset about Leiden University’ BA thesis Computer Science, Leiden University.'),
-        html.Li('Rick Schreuder, ‘Design of a database supporting the exploration of historical documents and linked register data’ BA thesis Computer Science, Leiden University.'),
-        html.Li('Michael de Koning ‘Extraction, transformation, linking and loading of cultural heritage data’ BA thesis Computer Science, Leiden University.'),
+        html.Li(children=['Rick Schreuder, ‘Design of a database supporting the exploration of historical documents and linked register data’ ',
+                          html.A("(BA thesis Computer Science, Leiden University).", href="https://theses.liacs.nl/pdf/2021-2022-SchreuderRRJ.pdf")]),
+        html.Li(children=['Michael de Koning ‘Extraction, transformation, linking and loading of cultural heritage data’ ',
+                          html.A("(BA thesis Computer Science, Leiden University).", href="https://theses.liacs.nl/pdf/2021-2022-KoningMde.pdf")]),
         html.H2('Credits', style={"text-align":"left"}),
         html.P('We like to thank Martine Zoeteman, Saskia van Bergen, Stelios Paraschiakos, Antonis Somorakis, Wout Lamers, '
                'Leida van Hees and Carel Stolker for their contributions to this project. '),

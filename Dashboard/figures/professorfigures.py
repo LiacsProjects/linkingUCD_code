@@ -14,6 +14,9 @@ mapbox_token = config['mapbox']['token']
 
 # Create figures
 def get_variables(subject):
+    selected_df = data.appointment_df
+    subjectx = 'appointment'
+    name = 'Appointment year'
     if subject == 'Gender':
         selected_df = data.gender_df
         subjectx = 'gender'
@@ -61,7 +64,7 @@ def get_variables(subject):
     if subject == 'Appointment':
         selected_df = data.appointment_df
         subjectx = 'appointment'
-        name = 'Appointment'
+        name = 'Appointment year'
     if subject == 'Job':
         selected_df = data.professor_job_df
         subjectx = 'job'
@@ -131,10 +134,16 @@ def create_year_cent_figure(subject, century, year, mode):
                      labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year',
                              'century': 'Century'},
                      hover_name=subjectx, hover_data=['year', 'century'])
+    else:
+        fig = px.bar()
+
     if subjectx == 'year':
         title_cent = name + ' per year in the '
     else:
-        title_cent = 'Number of appointments per ' + name + ' per year in the '
+        if name == 'Appointment year':
+            title_cent = 'Number of appointments per ' + name + ' in the '
+        else:
+            title_cent = 'Number of appointments per ' + name + ' per year in the '
     if century[0] == century[1]:
         title_cent += (str(century[0]) + 'th century ')
     else:
@@ -168,13 +177,15 @@ def create_cent_figure(subject, century):
         filtered_df = filtered_df.sort_values(by=[subjectx, 'century'], ascending=True)
     else:
         filtered_df = filtered_df.sort_values(by=['count', 'century'], ascending=False)
-    fig = px.bar(filtered_df, x=subjectx, y='count',
+    fig = px.bar(filtered_df, x=subjectx, hover_name=subjectx,
                  # color=subjectx,
                  # color_continuous_scale='Blues',
-                 hover_name=subjectx, hover_data=['century'],
+                 y='count', hover_data=['century'],
                  labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year', 'century': 'Century'})
     if subjectx == 'year':
         title_cent = name + ' in the '
+    elif subjectx == 'appointment':
+        title_cent = 'Number of appointments per ' + name + ' in the '
     else:
         title_cent = 'Number of appointments per ' + name + ' in the '
     if century[0] == century[1]:
@@ -224,9 +235,10 @@ def create_country_map(min_year, max_year):
     merged_df = merged_df[['country', 'count', 'iso_alpha', 'lat', 'lon']]
     filtered_df = merged_df.groupby(merged_df['country']).aggregate({'count': 'sum', 'iso_alpha': 'first'})
     filtered_df = filtered_df.reset_index()
-    filtered_df = filtered_df.sort_values(by=['count', 'country'], ascending=False)
+    filtered_df: object = filtered_df.sort_values(by=['count', 'country'], ascending=False)
     fig = px.choropleth(filtered_df, locations='iso_alpha', color='count', hover_name='country',
-                        color_continuous_scale='plasma', labels={'count': 'Number of appointments'})
+                        color_continuous_scale='plasma', labels={'count': 'Number of appointments'},
+                        )
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
                       margin=dict(l=0, r=0, t=0, b=0))
     fig.update_geos(
@@ -264,7 +276,7 @@ def create_country_line_map(min_year, max_year):
         go.Scattergeo(
             lat=lats,
             lon=lons,
-            mode='line',
+            mode='lines',
             line=dict(width=1, color='blue'),
             name='Place of birth'
         )
@@ -285,15 +297,15 @@ def create_animated_country_map(min_year, max_year):
 
 # Country mapbox heat map
 def create_mapbox_heat_map(min_year, max_year):
-    from urllib.request import urlopen
+    # from urllib.request import urlopen
     import json
-    with open('../assets/countries.geojson') as response:
+    with open('assets/countries.geojson') as response:
         countries = json.load(response)
     merged_df = data.birthcountry_df[data.birthcountry_df['year'] <= max_year]
     merged_df = merged_df[merged_df['year'] >= min_year]
     max_value = merged_df['count'].max()
     fig = px.choropleth_mapbox(
-        merged_df,
+        data_frame=merged_df,
         geojson=countries,
         locations='iso_alpha',
         color='count',
@@ -303,8 +315,8 @@ def create_mapbox_heat_map(min_year, max_year):
         mapbox_style='carto-positron',
         center={"lat": 52, "lon": -5},
         zoom=1,
-        animation_frame='year',
-        labels={'count': 'Number of appointments'}
+        animation_frame='century',
+        labels={'count': 'Number of appointments'},
     )
 
     fig.update_layout(

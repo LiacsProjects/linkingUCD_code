@@ -274,7 +274,7 @@ def create_animated_country_map(min_year, max_year):
 
 # Country mapbox heat map
 def create_mapbox_heat_map(min_year, max_year):
-    from urllib.request import urlopen
+    #from urllib.request import urlopen
     import json
     with open('assets/countries.geojson') as response:
         countries = json.load(response)
@@ -282,7 +282,7 @@ def create_mapbox_heat_map(min_year, max_year):
     merged_df = merged_df[merged_df['year'] >= min_year]
     max_value = merged_df['count'].max()
     fig = px.choropleth_mapbox(
-        merged_df,
+        data_frame=merged_df,
         geojson=countries,
         locations='iso_alpha',
         color='count',

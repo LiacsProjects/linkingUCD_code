@@ -28,7 +28,7 @@ app = Dash(__name__, suppress_callback_exceptions=True,
            )
 
 # ****************************************************************************************** SERVER
-# Configurate dash application voor server
+# Configurate dash application for server
 # server = app.server
 
 # ******************************************************************************************  TODO
@@ -742,9 +742,9 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
             }],
             tooltip_header={i: i for i in filtered_df.columns},
             tooltip_data=[{
-                           THESIS_COLUMN_NAME: {'value': str(row[THESIS_COLUMN_NAME]), 'type': 'markdown'},
-                           SUBJECT_AREA_COLUMN_NAME: {'value': str(row[SUBJECT_AREA_COLUMN_NAME ]), 'type': 'markdown'},
-                          } for row in filtered_df.to_dict('records')
+                THESIS_COLUMN_NAME: {'value': str(row[THESIS_COLUMN_NAME]), 'type': 'markdown'},
+                SUBJECT_AREA_COLUMN_NAME: {'value': str(row[SUBJECT_AREA_COLUMN_NAME]), 'type': 'markdown'},
+            } for row in filtered_df.to_dict('records')
             ],
             tooltip_duration=None,
             tooltip_delay=0,
@@ -756,18 +756,18 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
             },
             style_header={'backgroundColor': '#001158', 'color': 'white', 'fontWeight': 'bold'},
             style_data={
-                       # 'whiteSpace': 'normal',
-                        'backgroundColor': 'white',
-                        'color': 'black',
-                       },
+                # 'whiteSpace': 'normal',
+                'backgroundColor': 'white',
+                'color': 'black',
+            },
             style_cell_conditional=[
                 {'if': {'column_id': THESIS_COLUMN_NAME},
-                  'maxWidth': '240px', 'textOverflow': 'ellipsis', 'overflow': 'hidden', },
-                {'if': {'column_id': SUBJECT_AREA_COLUMN_NAME },
+                 'maxWidth': '240px', 'textOverflow': 'ellipsis', 'overflow': 'hidden', },
+                {'if': {'column_id': SUBJECT_AREA_COLUMN_NAME},
                  'maxWidth': '180px', 'textOverflow': 'ellipsis', 'overflow': 'hidden', },
             ],
 
-            #virtualization=True,
+            # virtualization=True,
             #            export_format='xlsx',
             #            export_headers='display',
             merge_duplicate_headers=True,
