@@ -5,9 +5,14 @@ import dash
 from dash import dcc, html
 import data
 
+from pathlib import Path
+import os
+
+base_path = Path(os.environ['DASHBOARD_BASEPATH'])
+
 card_professor = dbc.Card([
     dbc.CardImg(
-        src="/assets/professors_780x400.jpeg",
+        src= base_path / "assets/professors_780x400.jpeg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -26,7 +31,7 @@ card_professor = dbc.Card([
 
 card_student = dbc.Card([
     dbc.CardImg(
-        src="/assets/Student_400x267.jpg",
+        src= base_path / "assets/Student_400x267.jpg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -45,7 +50,7 @@ card_student = dbc.Card([
 
 card_rectores = dbc.Card([
     dbc.CardImg(
-        src="/assets/alumni.jpeg",
+        src= base_path / "assets/alumni.jpeg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -64,7 +69,7 @@ card_rectores = dbc.Card([
 
 card_colofon = dbc.Card([
     dbc.CardImg(
-        src="/assets/LEI001013879.jpg",
+        src= base_path / "assets/LEI001013879.jpg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg",
