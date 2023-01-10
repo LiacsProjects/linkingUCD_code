@@ -10,6 +10,7 @@ import plotly.express as px
 from pyproj import Transformer
 import pandas as pd
 import numpy as np
+import os
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -80,8 +81,16 @@ measures = {"Bewoond": ["Aantal", "Personen", "Gem. huurwaarde (fl.)"],
 df_beroepen = pd.read_csv(beroepenfile, skipinitialspace=False, delimiter=";", encoding="ISO-8859-1")
 
 # ******************************************************************** define application
-app = dash.Dash(__name__, external_stylesheets=[external_stylesheets],
-                 requests_pathname_prefix='/dashboardleiden1848/')
+if os.name == "nt":
+    app = dash.Dash(__name__,
+                external_stylesheets=[external_stylesheets],
+                )
+else:
+    app = dash.Dash(__name__,
+                external_stylesheets=[external_stylesheets],
+                requests_pathname_prefix='/dashboardleiden1848/dashboard/'
+                )
+
 server = app.server
 # ******************************************************************** define layout
 app.layout = dash.html.Div([
@@ -472,4 +481,7 @@ def show_figure(thema, category, measure):
 
 # *******************************************************************************application
 if __name__ == '__main__':
-    app.run_server(port=8051, debug=False)
+         if os.name == "nt":
+             app.run_server(port=8051, debug=False) # local
+         else:
+             app.run_server(debug=False)  # server
