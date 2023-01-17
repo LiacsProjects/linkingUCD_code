@@ -4,16 +4,16 @@ import dash_bootstrap_components as dbc
 import dash
 from dash import dcc, html
 import os
-from pathlib import Path
+#from pathlib import Path
 import data
 
-base_path = Path(os.environ['DASHBOARD_BASEPATH'])
-base_path_name = os.environ['DASHBOARD_BASEPATH']
-image_file = base_path_name + "assets/professors_780x400.jpeg"
+#base_path = Path(os.environ['DASHBOARD_BASEPATH'])
+#base_path_name = os.environ['DASHBOARD_BASEPATH']
+image_file = "/assets/professors_780x400.jpeg"
 
 card_professor = dbc.Card([
     dbc.CardImg(
-        src="../assets/professors_780x400.jpeg",
+        src="/assets/professors_780x400.jpeg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -32,7 +32,7 @@ card_professor = dbc.Card([
 
 card_student = dbc.Card([
     dbc.CardImg(
-        src="../assets/Student_400x267.jpg",
+        src="/assets/Student_400x267.jpg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -51,7 +51,7 @@ card_student = dbc.Card([
 
 card_rectores = dbc.Card([
     dbc.CardImg(
-        src="../assets/alumni.jpeg",
+        src="/assets/alumni.jpeg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -70,7 +70,7 @@ card_rectores = dbc.Card([
 
 card_colofon = dbc.Card([
     dbc.CardImg(
-        src="../assets/LEI001013879.jpg",
+        src="/assets/LEI001013879.jpg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg",
@@ -111,7 +111,7 @@ home_content = dbc.Container(id='h_content', className='parent_content',
                'You can search for information on students and on academic staff.'),
         html.P('NB. This project is a work-in-progress. The data and functionalities of this website will be regularly updated and improved.'),
         # html.Div(className='center_object', children=[
-        #     html.Embed(src='assets/LEI001013879.jpg', width='40%', height='40%',
+        #     html.Embed(src='/assets/LEI001013879.jpg', width='40%', height='40%',
         #                title=('Academiegebouw, Rapenburg 73. '
         #                       'Academie met op de voorgrond ijsvermaak op het Rapenburg.'
         #                       'Foto van een tekening in het album Amicorum van Johannes van Amstel '

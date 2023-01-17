@@ -5,10 +5,9 @@
 import Add_environment_variable
 # ******************************************************************************************  end local
 # import modules
-import dash_bootstrap_components as dbc
 import pandas as pd
-import numpy as np
 from dash import Dash, dcc, html, Input, Output, ctx, dash_table, State, ALL
+import dash_bootstrap_components as dbc
 
 # import data, page lay-outs and functions
 import data
@@ -20,9 +19,12 @@ YEAR_STEP = 5
 MARK_SPACING = 10
 THESIS_COLUMN_NAME = 'Thesis'
 SUBJECT_AREA_COLUMN_NAME = 'Subject area'
+JOB_COLUMN_NAME = 'Job'
 # ******************************************************************************************  LOCAL
 # Configurate dash application voor DASH
-app = Dash(__name__, suppress_callback_exceptions=True,
+app = Dash(__name__,
+           title="Leiden Univercity Dashboard",
+           suppress_callback_exceptions=True,
            routes_pathname_prefix='/',
            external_stylesheets=[dbc.themes.BOOTSTRAP],
            # uitgeschakeld # requests_pathname_prefix='/dashboard/'
@@ -42,8 +44,8 @@ server = app.server
 # ******************************************************************************************  START
 app.layout = dbc.Container(children=[
     html.Div(id='page_top', children=[
-        # html.A(id="logoA", children=[html.Img(id="logo", src="assets/Leiden_zegel.png")]),
-        html.Img(id="logo", src="assets/Leiden_zegel.png", n_clicks=0),
+        # html.A(id="logoA", children=[html.Img(id="logo", src="/assets/Leiden_zegel.png")]),
+        html.Img(id="logo", src="/assets/Leiden_zegel.png", n_clicks=0),
         html.H1('Leiden Univercity Project', id="page_title")]),
     # dcc.Tabs(id='tab_bar', className='header_tab_bar', children=[
     #     dcc.Tab(label='Home', className='child_tab', selected_className='child_tab_selected'),
@@ -927,7 +929,7 @@ def create_individual_information(rows, selected_rows, value, children):
                                               html.Td(person.get('Death country')),
                                           ]),
                                       ]),
-                                      # html.A('Go to globe', href='assets/mapboxLeiden.html', target='_blank',
+                                      # html.A('Go to globe', href='/assets/mapboxLeiden.html', target='_blank',
                                       # rel='noreferrer noopener'),
                                       # TODO: Implement family tree, not yet chosen which
                                       #  tree fits best: choices: 1. fisher_crawford (r implementation) 2. graphviz
@@ -1468,7 +1470,7 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
         filtered_df = df.copy()
         if selected_name is not None and selected_name != '':
             words = selected_name.split(' ')
-            selected_df = pd.DataFrame()
+            temp_total_df = pd.DataFrame()
             for word in words:
                 if search_option == 'Contains':
                     contains_df = df.loc[df['First name'].str.contains(str(word))]
@@ -1479,7 +1481,7 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
                     equals_df1 = df.loc[df['Last name'] == str(word)]
                     temp_total_df = pd.concat([equals_df, equals_df1], ignore_index=True)
 
-            if len(selected_df) > 0:
+            if len(temp_total_df) > 0:
                 filtered_df = temp_total_df.copy()
                 # filtered_df = pd.merge(filtered_df, selected_df, how='inner')
             else:
@@ -1536,8 +1538,24 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             selected_rows=[],
             page_size=100,
             fixed_rows={'headers': True},
+
+            css=[{
+                'selector': '.dash-table-tooltip',
+                'rule': 'background-color: #001158; font-family: monospace; color: white'
+            }],
+            tooltip_header={i: i for i in filtered_df.columns},
+            tooltip_data=[{
+                           'Job': {'value': str(row['Job']), 'type': 'markdown'},
+                          } for row in filtered_df.to_dict('records')
+            ],
+            tooltip_duration=None,
+            tooltip_delay=0,
+
+            style_table={'overflowX': 'auto'},
             style_cell={
                 'width': '7%',
+                'textAlign': 'left',
+                'line-height': '15px',
                 'textOverflow': 'ellipsis',
                 'overflow': 'hidden'
             },
@@ -1563,7 +1581,7 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
                 {'if': {'column_id': 'Royal title'},
                  'width': '9%'},
                 {'if': {'column_id': 'Job'},
-                 'width': '5%'},
+                 'maxWidth': '4%', 'textOverflow': 'ellipsis', 'overflow': 'hidden', },
                 {'if': {'column_id': 'Religion'},
                  'width': '9%'},
                 {'if': {'column_id': 'Enrollments'},
@@ -1571,8 +1589,12 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
                 {'if': {'column_id': 'Rating'},
                  'width': '5%'}
             ],
-            style_header={'backgroundColor': '#001158', 'color': 'white'},
-            style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
+            style_header={'backgroundColor': '#001158', 'color': 'white', 'fontWeight': 'bold'},
+            style_data={
+                #'whiteSpace': 'normal',
+                #'height': 'auto',
+                'backgroundColor': 'white',
+                'color': 'black'},
             virtualization=True,
             #            export_format='xlsx',
             #            export_headers='display',
@@ -1706,7 +1728,7 @@ def create_individual_information(rows, selected_rows, value, children):
                                               html.Td(person.get('Region')),
                                           ]),
                                       ]),
-                                      # html.A('Go to globe', href='assets/mapboxLeiden.html', target='_blank',
+                                      # html.A('Go to globe', href='/assets/mapboxLeiden.html', target='_blank',
                                       # rel='noreferrer noopener'),
                                       # TODO: Implement family tree, not yet chosen which
                                       #  tree fits best: choices: 1. fisher_crawford (r implementation) 2. graphviz
@@ -2057,7 +2079,7 @@ def update_recmag_table(search_button, selected_name, search_option, min_term, m
         filtered_df = df.copy()
         if selected_name is not None and selected_name != '':
             words = selected_name.split(' ')
-            selected_df = pd.DataFrame()
+            temp_total_df = pd.DataFrame()
             for word in words:
                 if search_option == 'Contains':
                     contains_df = df.loc[df['First name'].str.contains(str(word))]
@@ -2068,7 +2090,7 @@ def update_recmag_table(search_button, selected_name, search_option, min_term, m
                     equals_df1 = df.loc[df['Last name'] == str(word)]
                     temp_total_df = pd.concat([equals_df, equals_df1], ignore_index=True)
 
-            if len(selected_df) > 0:
+            if len(temp_total_df) > 0:
                 filtered_df = temp_total_df.copy()
                 # filtered_df = pd.merge(filtered_df, selected_df, how='inner')
             else:
