@@ -51,15 +51,16 @@ def hoogleraren():
         df['Geboorteland'] = df['Geboorteland'].where(~df['Geboorteland'].isin(c[1:]), c[0])
         df['Land van overlijden'] = df['Land van overlijden'].where(~df['Land van overlijden'].isin(c[1:]), c[0])
 
+    # TODO: inaccurate (1990-01/02 -> 1990-0102, 1909--02?)
     # Strip unwanted characters from dates
-    df['geboortedatum'].replace(regex=True, inplace=True, to_replace=r'[^0-9/\-]', value=r'')
-    df['Sterfdatum'].replace(regex=True, inplace=True, to_replace=r'[^0-9/\-]', value=r'')
+    # df['geboortedatum'].replace(regex=True, inplace=True, to_replace=r'[^0-9/\-]', value=r'')
+    # df['Sterfdatum'].replace(regex=True, inplace=True, to_replace=r'[^0-9/\-]', value=r'')
 
     # Remove '?' and values between parentheses "()" from places
     df['Geboorteplaats'] = df['Geboorteplaats'].str.replace(r"\([^()]*\)", "", regex=True).str.strip('? ')
     df['Sterfplaats'] = df['Sterfplaats'].str.replace(r"\([^()]*\)", "", regex=True).str.strip('? ')
 
-    # Check age, if invalid (i.e. > 113 year) remove date of death
+    # Check age, if invalid (age > 113 years) remove date of death
     df['geboortedatum'] = df['geboortedatum'].apply(exad.is_date)
     df['Sterfdatum'] = df['Sterfdatum'].apply(exad.is_date)
     max_age = 401778
