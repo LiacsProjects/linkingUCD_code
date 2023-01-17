@@ -1,128 +1,109 @@
-from dash import Dash, dcc, html, Input, Output, ctx, dash_table, State, ALL
+# ****************************************************************************************** LOCAL
+# added for local server
+# extra regel om environmental variable te bepalen
+# import Add_environment_variable
+# ******************************************************************************************  end local
+# import modules
+import dash_bootstrap_components as dbc
 import pandas as pd
-import data
-from figures import studentfigures
-from pages import professorvisuals, rectorvisuals, studentvisuals
-from figures import professorfigures, studentfigures, rectorfigures
+import numpy as np
+from dash import Dash, dcc, html, Input, Output, ctx, dash_table, State, ALL
 
-# Configurate dash application
+# import data, page lay-outs and functions
+import data
+from figures import professorfigures, studentfigures, rectorfigures, introfigures
+from pages import professorvisuals, rectorvisuals, studentvisuals
+
+# Parameters and constants
+YEAR_STEP = 5
+MARK_SPACING = 10
+THESIS_COLUMN_NAME = 'Thesis'
+SUBJECT_AREA_COLUMN_NAME = 'Subject area'
+# ******************************************************************************************  LOCAL
+# Configurate dash application voor DASH
 app = Dash(__name__, suppress_callback_exceptions=True,
            routes_pathname_prefix='/',
-           requests_pathname_prefix='/dashboard/')
+           external_stylesheets=[dbc.themes.BOOTSTRAP],
+           requests_pathname_prefix='/dashboard/'
+           )
 
+# ****************************************************************************************** SERVER
+# Configurate dash application voor server
+#
 server = app.server
 
-# TODO: implement store functions to allow users to save their changes made to the dashboard TODO: connect database to dashboard
-# TODO: create joined page for all persons TODO: link city/country coordinates to city/country dataframes, preferably through function that reads coordinates from a file: countries.geojson and cities1-2-3.csv
+# ******************************************************************************************  TODO
 
-app.layout = html.Div([
-    html.H1('The history of Leiden and Leiden University', id='page_title'),
-    dcc.Tabs(id='tab_bar', value='tab-0', className='header_tab_bar', children=[
-        dcc.Tab(label='Home', value='tab-0', className='child_tab', selected_className='child_tab_selected'),
-        dcc.Tab(label='Professors', value='tab-1', className='child_tab', selected_className='child_tab_selected'),
-        dcc.Tab(label='Students', value='tab-2', className='child_tab', selected_className='child_tab_selected'),
-        dcc.Tab(label='Rectores Magnifici', value='tab-3', className='child_tab',
-                selected_className='child_tab_selected'),
-        dcc.Tab(label='Sources', value='tab-4', className='child_tab', selected_className='child_tab_selected'),
-    ]),
-    html.Div(id='page_content'),
-])
+# TODO: implement store functions to allow users to save their changes made to the dashboard TODO:
+#  connect database to dashboard
+# TODO: create joined page for all persons TODO: link city/country coordinates to city/country dataframes, preferably
+#  through function that reads coordinates from a file: countries.geojson and cities1-2-3.csv
 
-home_content = html.Div(id='h_content', className='parent_content', children=[
-    html.Div(id='h_info', className='container', children=[
-        html.H2('Welcome'),
-        html.P('This dashboard is created for the Linking University, City and Diversity project by the university of '
-               'Leiden as part of a bachelor project. To get started, select one of the three options in the navigation'
-               ' bar at the top of the page. This brings you to the corresponding page that gives detailed information '
-               'about the chosen subject.'),
-        html.Div(className='center_object', children=[
-            html.Embed(src='assets/mapbox.html', width='50%', height='300px')
-        ]),
-    ]),
-])
-
-profs_content = html.Div(id='p_content', className='parent_content', children=[
-    html.H2('Information'),
-    html.P('This pages shows the information about professors previously working at the university of Leiden.'
-           ' Choose one of the following options to see more information.'),
-    dcc.Tabs(id='p_tab_bar', value='p_tab-1', className='header_tab_bar', children=[
-        dcc.Tab(label='Timeline', value='p_tab-1', className='child_tab', selected_className='child_tab_selected'),
-        dcc.Tab(label='Subject information', value='p_tab-2', className='child_tab',
-                selected_className='child_tab_selected'),
-        dcc.Tab(label='Geographical information', value='p_tab-3', className='child_tab',
-                selected_className='child_tab_selected'),
-        dcc.Tab(label='Individual information', value='p_tab-4', className='child_tab',
-                selected_className='child_tab_selected'),
-    ]),
-    html.Div(id='professor_page_content'),
-])
-
-students_content = html.Div(id='s_content', className='parent_content', children=[
-    html.Div(id='s_info', className='container', children=[
-        html.H2('Information'),
-        html.P('This pages shows the information about student enrollments from the period 1575 to 1812. Choose one of '
-               'the following options to see details about the enrollments of students at the university of Leiden.'),
-        dcc.Tabs(id='s_tab_bar', value='s_tab-1', className='header_tab_bar', children=[
-            dcc.Tab(label='Timeline', value='s_tab-1', className='child_tab', selected_className='child_tab_selected'),
-            dcc.Tab(label='Subject information', value='s_tab-2', className='child_tab',
-                    selected_className='child_tab_selected'),
-            dcc.Tab(label='Geographical information', value='s_tab-3', className='child_tab',
-                    selected_className='child_tab_selected'),
-            dcc.Tab(label='Individual information', value='s_tab-4', className='child_tab',
-                    selected_className='child_tab_selected'),
-        ]),
-    ]),
-    html.Div(id='student_page_content'),
-])
-
-rector_content = html.Div(id='r_content', className='parent_content', children=[
-    html.H2('Information'),
-    html.P('This pages shows the information about all the rectores magnifici the university of Leiden has had.'
-           ' Choose one of the following options to see more information.'),
-    dcc.Tabs(id='r_tab_bar', value='r_tab-1', className='header_tab_bar', children=[
-        dcc.Tab(label='Timeline', value='r_tab-1', className='child_tab', selected_className='child_tab_selected'),
-        dcc.Tab(label='Subject information', value='r_tab-2', className='child_tab',
-                selected_className='child_tab_selected'),
-        dcc.Tab(label='Geographical information', value='r_tab-3', className='child_tab',
-                selected_className='child_tab_selected'),
-        dcc.Tab(label='Individual information', value='r_tab-4', className='child_tab',
-                selected_className='child_tab_selected'),
-    ]),
-    html.Div(id='rector_page_content'),
-])
-
-sources_content = html.Div(id='src_content', className='parent_content', children=[
-    html.Div(id='src_info', className='container', children=[
-        html.H2('Sources'),
-        html.P('The following sources are being used for this dashboard:')
-    ]),
-])
+# ******************************************************************************************  START
+app.layout = dbc.Container(children=[
+    html.Div(id='page_top', children=[
+        # html.A(id="logoA", children=[html.Img(id="logo", src="assets/Leiden_zegel.png")]),
+        html.Img(id="logo", src="assets/Leiden_zegel.png", n_clicks=0),
+        html.H1('Leiden Univercity Project', id="page_title")]),
+    # dcc.Tabs(id='tab_bar', className='header_tab_bar', children=[
+    #     dcc.Tab(label='Home', className='child_tab', selected_className='child_tab_selected'),
+    #     # dcc.Tab(label='Professors', value='tab-1', className='child_tab', selected_className='child_tab_selected'),
+    #     # dcc.Tab(label='Students', value='tab-2', className='child_tab', selected_className='child_tab_selected'),
+    #     # dcc.Tab(label='Rectores Magnifici', value='tab-3', className='child_tab',
+    #     #         selected_className='child_tab_selected'),
+    #     # dcc.Tab(label='Colofon', value='tab-4', className='child_tab',
+    #     #         selected_className='child_tab_selected'),
+    #     ]),
+    # html.Div(home_content, id="home"),
+    dbc.Button("Home", id="btn-home", class_name="me-1", n_clicks=0),
+    html.Div(introfigures.home_content, id='page_content'),
+    html.Div(id='page-handler', hidden=True),
+], fluid=True)
 
 
-# Index callbacks
+# Card button callbacks
+@app.callback(
+    Output('page-handler', 'children'),
+    Input('btn-professor', 'n_clicks'),
+    Input('btn-student', 'n_clicks'),
+    Input('btn-rectores', 'n_clicks'),
+    Input('btn-colofon', 'n_clicks'),
+    prevent_initial_call=True,
+)
+def render_content(btn1, btn2, btn3, btn4):
+    if 'btn-professor' == ctx.triggered_id:
+        return 1
+    elif 'btn-student' == ctx.triggered_id:
+        return 2
+    elif 'btn-rectores' == ctx.triggered_id:
+        return 3
+    elif 'btn-colofon' == ctx.triggered_id:
+        return 4
+    else:
+        return 0
+
+
+# Home button callback
 @app.callback(
     Output('page_content', 'children'),
-    Input('tab_bar', 'value')
+    Input('btn-home', 'n_clicks'),
+    Input('page-handler', 'children'),
+    prevent_initial_call=True
 )
-def render_content(tab):
-    if tab == 'tab-0':
-        return home_content
-    if tab == 'tab-1':
-        return profs_content
-    if tab == 'tab-2':
-        return students_content
-    if tab == 'tab-3':
-        return rector_content
-    if tab == 'tab-4':
-        return sources_content
-    else:
-        return 404
+def pagehandler(btn, pagenr):
+    if 'btn-home' == ctx.triggered_id:
+        pagenr = 0
+    return [introfigures.home_content,
+            introfigures.profs_content,
+            introfigures.students_content, introfigures.
+            rector_content, introfigures.
+            sources_content][pagenr]
 
 
 # Professor tabs
 @app.callback(
     Output('professor_page_content', 'children'),
-    Input('p_tab_bar', 'value')
+    Input('p_tab_bar', 'value'),
 )
 def render_content(tab):
     if tab == 'p_tab-1':
@@ -173,31 +154,35 @@ def render_content(tab):
         return 404
 
 
+# ******************************************************************************************
 # Professor callbacks
+# ******************************************************************************************
+
 # Year slider
 @app.callback(
-    Output('p-year-slider-container', 'children'),
-    Input('p-year-century-slider', 'value'),
+    Output('p-year-slider', 'min'),
+    Output('p-year-slider', 'max'),
+    Output('p-year-slider', 'value'),
+    Output('p-year-slider', 'marks'),
+    Input('p-year-century-slider', 'value')
 )
 def update_year_slider(century):
     current_century = data.all_dates_df[(data.all_dates_df['century'] <= century[-1])]
     years = []
-    for y in current_century['year'][0::5]:
+    for y in current_century['year'][0::YEAR_STEP]:
         years.append(y)
-        years.append(current_century['year'].max())
-    return (dcc.RangeSlider(
-        current_century['year'].min(),
-        current_century['year'].max(),
-        10,
-        value=[current_century['year'].min(), current_century['year'].max()],
-        marks={str(year): str(year) for year in years},
-        id='p-year-slider'
-    ))
+    years.append(current_century['year'].max())
+    min_year = current_century['year'].min()
+    max_year = current_century['year'].max()
+    value = [current_century['year'].min(), current_century['year'].max()]
+    marks: dict = {str(year): str(year) for year in
+                   range(min_year, max_year, int((max_year - min_year) / MARK_SPACING))}
+    return min_year, max_year, value, marks
 
 
 # year-century graph
 @app.callback(
-    Output('p-year-century-dropdown-container', 'children'),
+    Output('p-year-century-graph', 'figure'),
     Input('p-year-century-subject-dropdown', 'value'),
     Input('p-year-century-slider', 'value'),
     Input('p-year-slider', 'value'),
@@ -207,19 +192,23 @@ def update_year_slider(century):
     ],
 )
 def update_year_century_output(selected_subject, selected_century, selected_year, selected_dropdown):
-    return dcc.Graph(figure=professorfigures.create_year_cent_figure(selected_subject, selected_century, selected_year,
-                                                                     selected_dropdown),
-                     id='p-year-century-graph')
+    figure = professorfigures.create_year_cent_figure(
+        selected_subject,
+        selected_century,
+        selected_year,
+        selected_dropdown)
+    return figure
 
 
 # century-graph
 @app.callback(
-    Output('p-century-dropdown-container', 'children'),
+    Output('p-century-graph', 'figure'),
     Input('p-year-century-subject-dropdown', 'value'),
     Input('p-year-century-slider', 'value'),
 )
 def update_century_output(selected_subject, selected_century):
-    return dcc.Graph(figure=professorfigures.create_cent_figure(selected_subject, selected_century), id='century-graph')
+    figure = professorfigures.create_cent_figure(selected_subject, selected_century)
+    return figure
 
 
 # Timeline information
@@ -236,6 +225,8 @@ def update_timeline_information(selected_subject, hover_data, figure):
         year = int(y)
     else:
         text = None
+        if not 'customdata' in figure['data'][0].keys():
+            return
         year = figure['data'][0]['x'][0]
     df, subject, name = professorfigures.get_variables(selected_subject)
     century = df.loc[df['year'] == year, 'century'].values[0]
@@ -281,7 +272,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].max()),
             ]),
             html.Tr(children=[
-                html.Td('Highest Year'),
+                html.Td('Year with highest value'),
                 html.Td(df.loc[df['count'] == df['count'].max(), 'year']),
             ]),
             html.Tr(children=[
@@ -289,12 +280,12 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].min()),
             ]),
             html.Tr(children=[
-                html.Td('Lowest Year'),
+                html.Td('Year with lowest value'),
                 html.Td(df.loc[df['count'].min(), 'year']),
             ]),
             html.Tr(children=[
                 html.Td('Average appointments'),
-                html.Td(df['count'].mean().round(0)),
+                html.Td(round(df['count'].mean(), 0)),
             ]),
         ]),
     else:
@@ -336,7 +327,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].max()),
             ]),
             html.Tr(children=[
-                html.Td('Highest Year'),
+                html.Td('Year with highest value'),
                 html.Td(df.loc[df['count'] == df['count'].max(), 'year']),
             ]),
             html.Tr(children=[
@@ -344,12 +335,12 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].min()),
             ]),
             html.Tr(children=[
-                html.Td('Lowest Year'),
+                html.Td('Year with lowest value'),
                 html.Td(df.loc[df['count'].min(), 'year']),
             ]),
             html.Tr(children=[
                 html.Td('Average appointments'),
-                html.Td(df['count'].mean().round(0)),
+                html.Td(round(df['count'].mean(), 0)),
             ]),
         ]),
 
@@ -357,14 +348,15 @@ def update_timeline_information(selected_subject, hover_data, figure):
 # Subject information callbacks
 # Subject-graph
 @app.callback(
-    Output('p-subject-dropdown-container', 'children'),
+    Output('p-subject-graph', 'figure'),
     Input('p-subject-dropdown', 'value'),
     running=[
         (Output('p-subject-dropdown', 'disabled'), True, False),
     ],
 )
 def update_subject_output(selected_subject):
-    return dcc.Graph(figure=professorfigures.create_subject_info_graph(selected_subject), id='p-subject-graph')
+    figure = professorfigures.create_subject_info_graph(selected_subject)
+    return figure
 
 
 # Subject table
@@ -392,8 +384,9 @@ def update_timeline_table(selected_subject):
         style_header={'backgroundColor': '#001158', 'color': 'white'},
         style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
         virtualization=True,
-        export_format='xlsx',
-        export_headers='display',
+        #       export/download optie uitgeschakeld
+        #       export_format='xlsx',
+        #       export_headers='display',
         merge_duplicate_headers=True,
         id='p-subject-table'
     )
@@ -413,7 +406,7 @@ def update_timeline_information(selected_subject, hover_data):
     df, subject, name = professorfigures.get_variables(selected_subject)
     total = df['count'].sum()
     fraction = df.loc[df[subject] == text, 'count'].sum()
-    percentage = (fraction / total * 100).round(2)
+    percentage = round(fraction / total * 100, 2)
     if subject == 'year':
         return html.Div(id='p-subject-hover-info', children=[
             html.Table(id='p-subject-table', children=[
@@ -431,7 +424,7 @@ def update_timeline_information(selected_subject, hover_data):
                 ]),
                 html.Tr(children=[
                     html.Td('Average appointments per year'),
-                    html.Td(html.Td(df['count'].mean().round(0))),
+                    html.Td(html.Td(round(df['count'].mean(), 0))),
                 ]),
                 html.Tr(children=[
                     html.Td('Year with most appointments'),
@@ -477,7 +470,7 @@ def update_timeline_information(selected_subject, hover_data):
                 ]),
                 html.Tr(children=[
                     html.Td('Average yearly appointments per ' + str(subject)),
-                    html.Td(html.Td(df['count'].mean().round(0))),
+                    html.Td(html.Td(round(df['count'].mean(), 0))),
                 ]),
                 html.Tr(children=[
                     html.Td(str(name) + ' with most appointments in one year'),
@@ -536,7 +529,7 @@ def update_timeline_table(selected_subject):
                 'color': 'black',
             }],
         virtualization=True,
-        id='p-subject-information-table'
+        id='p-subject-information-table',
     )
 
 
@@ -638,176 +631,99 @@ def create_map(min_year, max_year, map_choice):
     Input('p-individual-job-dropdown', 'value'),
     Input('p-individual-subjectarea-dropdown', 'value'),
     Input('p-individual-faculty-dropdown', 'value'),
+    prevent_initial_call=True,
 )
-def update_student_table(search_button, selected_name, search_option, min_enrol, max_enrol, min_birth, max_birth,
-                         include_missing, selected_gender, selected_birthplace, selected_birthcountry,
-                         selected_deathplace, selected_deathcountry, selected_promotion, selected_promotionplace,
-                         selected_thesis, selected_job, selected_subjectarea, selected_faculty):
-    df = data.individual_profs_df[['First name', 'Last name', 'Gender', 'Appointment date', 'Appointment year', 'Birth date',
-                                   'Birth year', 'Birth place', 'Birth country', 'Death date', 'Death year',
-                                   'Death place', 'Death country', 'Promotion', 'Promotion place', 'Promotion date',
-                                   'Promotion year', 'Thesis', 'Job', 'Subject area', 'Faculty', 'Rating']]
-    text = 'professors were found'
+def update_professor_table(search_button, selected_name, search_option, min_enrol, max_enrol, min_birth, max_birth,
+                           include_missing, selected_gender, selected_birthplace, selected_birthcountry,
+                           selected_deathplace, selected_deathcountry, selected_promotion, selected_promotionplace,
+                           selected_thesis, selected_job, selected_subjectarea, selected_faculty):
+    df = data.individual_profs_df[['First name', 'Last name', 'Gender', 'Appointment date', 'Appointment year',
+                                   'Birth date', 'Birth year', 'Birth place', 'Birth country', 'Death date',
+                                   'Death year', 'Death place', 'Death country', 'Promotion', 'Promotion place',
+                                   'Promotion date', 'Promotion year', 'Thesis', 'Job', 'Subject area', 'Faculty',
+                                   'Rating']]
     search_results_number = 0
     if ctx.triggered_id == 'p-search-individual':
-        filtered_df = df
+        filtered_df = df.copy()  # deep=False?
         if selected_name is not None and selected_name != '':
             words = selected_name.split(' ')
             temp_total_df = pd.DataFrame()
             for word in words:
+                # TODO: sort on relevance
                 if search_option == 'Contains':
-                    temp_df = df[df['First name'].str.contains(word)]
-                    if len(temp_df) > 0:
-                        temp_total_df = pd.concat((temp_total_df, temp_df), axis=0).drop_duplicates()
-                    temp_df = df[df['Last name'].str.contains(word)]
-                    if len(temp_df) > 0:
-                        temp_total_df = pd.concat((temp_total_df, temp_df), axis=0).drop_duplicates()
+                    contains_df = df.loc[df['First name'].str.contains(str(word))]
+                    contains_df1 = df.loc[df['Last name'].str.contains(str(word))]
+                    temp_total_df = pd.concat([contains_df, contains_df1], ignore_index=True)
                 elif search_option == 'Equals':
-                    temp_df = df.loc[df['First name'] == word]
-                    if len(temp_df) > 0:
-                        temp_total_df = pd.concat((temp_total_df, temp_df), axis=0).drop_duplicates()
-                    temp_df = df.loc[df['Last name'] == word]
-                    if len(temp_df) > 0:
-                        temp_total_df = pd.concat((temp_total_df, temp_df), axis=0).drop_duplicates()
-            if len(temp_total_df) > 0:
-                filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            else:
+                    equals_df = df.loc[df['First name'] == str(word)]
+                    equals_df1 = df.loc[df['Last name'] == str(word)]
+                    temp_total_df = pd.concat([equals_df, equals_df1], ignore_index=True)
+
+            if len(temp_total_df) > 0:  # If there are hits found, copy to filtered_df
+                filtered_df = temp_total_df.copy()
+                # filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
+            else:  # No results, filtered_df is empty df 
+                # filtered_df = pd.DataFrame()
                 filtered_df = pd.DataFrame(
                     columns=['First name', 'Last name', 'Gender', 'Appointment date', 'Appointment year', 'Birth date',
-                                   'Birth year', 'Birth place', 'Birth country', 'Death date', 'Death year',
-                                   'Death place', 'Death country', 'Promotion', 'Promotion place', 'Promotion date',
-                                   'Promotion year', 'Thesis', 'Job', 'Subject area', 'Faculty', 'Rating'])
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['First name'].isnull()]
-                temp_missing_df = pd.concat((temp_missing_df, df.loc[df['Last name'].isnull()]),
-                                            axis=0).drop_duplicates()
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+                             'Birth year', 'Birth place', 'Birth country', 'Death date', 'Death year', 'Death place',
+                             'Death country',
+                             'Promotion', 'Promotion place', 'Promotion date', 'Promotion year', 'Thesis', 'Job',
+                             'Subject area', 'Faculty', 'Rating'])
+
         if min_enrol is not None and max_enrol is not None:
-            filtered_df = filtered_df.loc[filtered_df['Appointment year'] <= int(max_enrol)]
-            filtered_df = filtered_df[filtered_df['Appointment year'] >= int(min_enrol)]
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Appointment year'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_range(filtered_df, min_enrol, max_enrol, 'Appointment year', include_missing)
+
         if min_birth is not None and max_enrol is not None:
-            filtered_df = filtered_df.loc[filtered_df['Birth year'] <= int(max_birth)]
-            filtered_df = filtered_df[filtered_df['Birth year'] >= int(min_birth)]
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Birth year'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_range(filtered_df, min_birth, max_birth, 'Birth year', include_missing)
+
+        # selected_non_ranges = [selected_gender, selected_birthplace, selected_birthcountry, selected_deathplace,
+        # selected_deathcountry, selected_promotion,
+        #               selected_promotionplace, selected_thesis, selected_job, selected_subjectarea, selected_faculty]
+
+        # for selected_non_range in selected_non_ranges:
+        #     if selected_non_ranges is not None and select_non_range !=[]:
+        #         filtered_df = select_non_range(filtered_df, selected_gender, ?)
+
         if selected_gender is not None and selected_gender != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_gender:
-                temp_df = df.loc[df['Gender'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Gender'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_gender, 'Gender')
+
         if selected_birthplace is not None and selected_birthplace != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_birthplace:
-                temp_df = df.loc[df['Birth place'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Birth place'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_birthplace, 'Birth place')
+
         if selected_birthcountry is not None and selected_birthcountry != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_birthcountry:
-                temp_df = df.loc[df['Birth country'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Birth country'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_birthcountry, 'Birth country')
+
         if selected_deathplace is not None and selected_deathplace != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_deathplace:
-                temp_df = df.loc[df['Death place'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Death place'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_deathplace, 'Death place')
+
         if selected_deathcountry is not None and selected_deathcountry != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_deathcountry:
-                temp_df = df.loc[df['Death country'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Death country'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_deathcountry, 'Death country')
+
         if selected_promotion is not None and selected_promotion != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_promotion:
-                temp_df = df.loc[df['Promotion'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Promotion'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_promotion, 'Promotion')
+
         if selected_promotionplace is not None and selected_promotionplace != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_promotionplace:
-                temp_df = df.loc[df['Promotion place'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Promotion place'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_promotionplace, 'Promotion place')
+
         if selected_thesis is not None and selected_thesis != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_thesis:
-                temp_df = df.loc[df['Thesis'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Thesis'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_thesis, 'Thesis')
+
         if selected_job is not None and selected_job != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_job:
-                temp_df = df.loc[df['Job'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Job'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_job, 'Job')
+
         if selected_subjectarea is not None and selected_subjectarea != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_subjectarea:
-                temp_df = df.loc[df['Subject area'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Subject area'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_subjectarea, 'Subject area')
+
         if selected_faculty is not None and selected_faculty != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_faculty:
-                temp_df = df.loc[df['Faculty'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Faculty'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_faculty, 'Faculty')
+
         search_results_number = len(filtered_df)
+        if search_results_number == 1:
+            text = "professor was found"
+        else:
+            text = "professors were found"
+        text = text + " (make selection for individual information placed under the search table)"
         return search_results_number, text, dash_table.DataTable(
             data=filtered_df.to_dict('records'),
             columns=[{'id': i, 'name': i, 'hideable': 'last'} for i in filtered_df.columns],
@@ -820,26 +736,67 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             selected_rows=[],
             page_size=100,
             fixed_rows={'headers': True},
-            style_cell={
-                'width': '7%',
-                'textOverflow': 'ellipsis',
-                'overflow': 'hidden'
-            },
-            style_cell_conditional=[
-                {'if': {'column_id': 'First name'},
-                 'width': '10%'},
-                {'if': {'column_id': 'Last name'},
-                 'width': '10%'},
+
+            css=[{
+                'selector': '.dash-table-tooltip',
+                'rule': 'background-color: #001158; font-family: monospace; color: white'
+            }],
+            tooltip_header={i: i for i in filtered_df.columns},
+            tooltip_data=[{
+                           THESIS_COLUMN_NAME: {'value': str(row[THESIS_COLUMN_NAME]), 'type': 'markdown'},
+                           SUBJECT_AREA_COLUMN_NAME: {'value': str(row[SUBJECT_AREA_COLUMN_NAME ]), 'type': 'markdown'},
+                          } for row in filtered_df.to_dict('records')
             ],
-            style_header={'backgroundColor': '#001158', 'color': 'white'},
-            style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
-            virtualization=True,
-            export_format='xlsx',
-            export_headers='display',
+            tooltip_duration=None,
+            tooltip_delay=0,
+
+            style_table={'overflowX': 'auto'},
+            style_cell={
+                'textAlign': 'left',
+                'line-height': '15px'
+            },
+            style_header={'backgroundColor': '#001158', 'color': 'white', 'fontWeight': 'bold'},
+            style_data={
+                       # 'whiteSpace': 'normal',
+                        'backgroundColor': 'white',
+                        'color': 'black',
+                       },
+            style_cell_conditional=[
+                {'if': {'column_id': THESIS_COLUMN_NAME},
+                  'maxWidth': '240px', 'textOverflow': 'ellipsis', 'overflow': 'hidden', },
+                {'if': {'column_id': SUBJECT_AREA_COLUMN_NAME },
+                 'maxWidth': '180px', 'textOverflow': 'ellipsis', 'overflow': 'hidden', },
+            ],
+
+            #virtualization=True,
+            #            export_format='xlsx',
+            #            export_headers='display',
             merge_duplicate_headers=True,
             id='p-individual-table'
         )
-    # else: return None, None, None
+    else:
+        return None, None, None
+
+
+def select_non_range(filtered_df, selected_field, column_name):
+    temp_df = pd.DataFrame()
+    for field in selected_field:  # append all selected
+        temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df[column_name] == field]], axis=0)
+    # if include_missing == 'Yes':  # append rows where field is empty
+    #     temp_df = pd.concat([temp_df, filtered_df.loc[filtered_df['Gender'].isna()]], axis=0)
+    filtered_df = temp_df.copy()
+    return filtered_df
+
+
+def select_range(filtered_df, range_min, range_max, column_name, include_missing):
+    # Get NaN entries
+    temp_missing_df = filtered_df.loc[filtered_df[column_name].isna()]
+    # Ranges automatically excludes None values
+    filtered_df = filtered_df.loc[filtered_df[column_name] <= int(range_max)]
+    filtered_df = filtered_df[filtered_df[column_name] >= int(range_min)]
+    if include_missing == 'Yes':  # Reappend temp_missing_df as it was excluded by the ranges
+        filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0)
+    return filtered_df
 
 
 # Chosen person information
@@ -865,6 +822,10 @@ def create_individual_information(rows, selected_rows, value, children):
                 counter += 1
         else:
             in_list.append(v['index'])
+
+    # None type causes error, return "children" instead
+    if selected_rows is None:
+        return children
     for number in selected_rows:
         if number not in in_list:
             person = persons.iloc[number].to_frame().T
@@ -966,7 +927,8 @@ def create_individual_information(rows, selected_rows, value, children):
                                               html.Td(person.get('Death country')),
                                           ]),
                                       ]),
-                                      # html.A('Go to globe', href='assets/mapboxLeiden.html', target='_blank', rel='noreferrer noopener'),
+                                      # html.A('Go to globe', href='assets/mapboxLeiden.html', target='_blank',
+                                      # rel='noreferrer noopener'),
                                       # TODO: Implement family tree, not yet chosen which
                                       #  tree fits best: choices: 1. fisher_crawford (r implementation) 2. graphviz
                                       #  3. igraph
@@ -1019,31 +981,38 @@ def synchronise_dates(min_year, max_year):
             max_year += 1
     return min_year, max_year
 
+
+# ******************************************************************************************
 # Students callbacks
+# ******************************************************************************************
 # Year slider
+
+
 @app.callback(
-    Output('year-slider-container', 'children'),
-    Input('year-century-slider', 'value'),
+    Output('year-slider', 'min'),
+    Output('year-slider', 'max'),
+    Output('year-slider', 'value'),
+    Output('year-slider', 'marks'),
+    Input('year-century-slider', 'value')
 )
 def update_year_slider(century):
-    current_century = data.year_df[(data.year_df['century'] <= century[-1])]
+    current_century = data.all_dates_df[(data.all_dates_df['century'] <= century[-1])]
     years = []
-    for y in current_century['year'][0::5]:
+    for y in current_century['year'][0::YEAR_STEP]:
         years.append(y)
-        years.append(current_century['year'].max())
-    return (dcc.RangeSlider(
-        current_century['year'].min(),
-        current_century['year'].max(),
-        10,
-        value=[current_century['year'].min(), current_century['year'].max()],
-        marks={str(year): str(year) for year in years},
-        id='year-slider'
-    ))
+    years.append(current_century['year'].max())
+    min_year = current_century['year'].min()
+    max_year = current_century['year'].max()
+    value = [current_century['year'].min(), current_century['year'].max()]
+    marks = {str(year): str(year) for year in
+             range(min_year, max_year, int((max_year - min_year) / MARK_SPACING))}
+    id = 'year-slider'
+    return min_year, max_year, value, marks
 
 
 # year-century graph
 @app.callback(
-    Output('year-century-dropdown-container', 'children'),
+    Output('year-century-graph', 'figure'),
     Input('year-century-subject-dropdown', 'value'),
     Input('year-century-slider', 'value'),
     Input('year-slider', 'value'),
@@ -1054,19 +1023,20 @@ def update_year_slider(century):
     ],
 )
 def update_year_century_output(selected_subject, selected_century, selected_year, selected_age, selected_dropdown):
-    return dcc.Graph(figure=studentfigures.create_year_cent_figure(selected_subject, selected_century, selected_year,
-                                                                   selected_age, selected_dropdown),
-                     id='year-century-graph')
+    figure = studentfigures.create_year_cent_figure(selected_subject, selected_century, selected_year,
+                                                    selected_age, selected_dropdown)
+    return figure
 
 
 # century-graph
 @app.callback(
-    Output('century-dropdown-container', 'children'),
+    Output('century-graph', 'figure'),
     Input('year-century-subject-dropdown', 'value'),
     Input('year-century-slider', 'value'),
 )
 def update_century_output(selected_subject, selected_century):
-    return dcc.Graph(figure=studentfigures.create_cent_figure(selected_subject, selected_century), id='century-graph')
+    figure = studentfigures.create_cent_figure(selected_subject, selected_century)
+    return figure
 
 
 # Timeline information
@@ -1083,6 +1053,8 @@ def update_timeline_information(selected_subject, hover_data, figure):
         year = int(y)
     else:
         text = None
+        if not 'customdata' in figure['data'][0].keys():
+            return
         year = figure['data'][0]['x'][0]
     df, subject, name = studentfigures.get_variables(selected_subject)
     century = df.loc[df['year'] == year, 'century'].values[0]
@@ -1128,7 +1100,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].max()),
             ]),
             html.Tr(children=[
-                html.Td('Highest Year'),
+                html.Td('Year with highest value'),
                 html.Td(df.loc[df['count'] == df['count'].max(), 'year']),
             ]),
             html.Tr(children=[
@@ -1136,12 +1108,12 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].min()),
             ]),
             html.Tr(children=[
-                html.Td('Lowest Year'),
+                html.Td('Year with lowest value'),
                 html.Td(df.loc[df['count'].min(), 'year']),
             ]),
             html.Tr(children=[
                 html.Td('Average Enrollments'),
-                html.Td(df['count'].mean().round(0)),
+                html.Td(round(df['count'].mean(), 0)),
             ]),
         ]),
     else:
@@ -1183,7 +1155,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].max()),
             ]),
             html.Tr(children=[
-                html.Td('Highest Year'),
+                html.Td('Year with highest value'),
                 html.Td(df.loc[df['count'] == df['count'].max(), 'year']),
             ]),
             html.Tr(children=[
@@ -1191,12 +1163,12 @@ def update_timeline_information(selected_subject, hover_data, figure):
                 html.Td(df['count'].min()),
             ]),
             html.Tr(children=[
-                html.Td('Lowest Year'),
+                html.Td('Year with lowest value'),
                 html.Td(df.loc[df['count'].min(), 'year']),
             ]),
             html.Tr(children=[
                 html.Td('Average Enrollments'),
-                html.Td(df['count'].mean().round(0)),
+                html.Td(round(df['count'].mean(), 0)),
             ]),
         ]),
 
@@ -1204,14 +1176,15 @@ def update_timeline_information(selected_subject, hover_data, figure):
 # Subject information callbacks
 # Subject-graph
 @app.callback(
-    Output('subject-dropdown-container', 'children'),
+    Output('subject-graph', 'figure'),
     Input('subject-dropdown', 'value'),
     running=[
         (Output('subject-dropdown', 'disabled'), True, False),
     ],
 )
 def update_subject_output(selected_subject):
-    return dcc.Graph(figure=studentfigures.create_subject_info_graph(selected_subject), id='subject-graph')
+    figure = studentfigures.create_subject_info_graph(selected_subject)
+    return figure
 
 
 # Subject table
@@ -1239,8 +1212,8 @@ def update_timeline_table(selected_subject):
         style_header={'backgroundColor': '#001158', 'color': 'white'},
         style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
         virtualization=True,
-        export_format='xlsx',
-        export_headers='display',
+        #        export_format='xlsx',
+        #        export_headers='display',
         merge_duplicate_headers=True,
         id='subject-table'
     )
@@ -1260,7 +1233,7 @@ def update_timeline_information(selected_subject, hover_data):
     df, subject, name = studentfigures.get_variables(selected_subject)
     total = df['count'].sum()
     fraction = df.loc[df[subject] == text, 'count'].sum()
-    percentage = (fraction / total * 100).round(2)
+    percentage = round(fraction / total * 100, 2)
     if subject == 'year':
         return html.Div(id='subject-hover-info', children=[
             html.Table(id='subject-table', children=[
@@ -1278,7 +1251,7 @@ def update_timeline_information(selected_subject, hover_data):
                 ]),
                 html.Tr(children=[
                     html.Td('Average enrollments per year'),
-                    html.Td(html.Td(df['count'].mean().round(0))),
+                    html.Td(html.Td(round(df['count'].mean(), 0))),
                 ]),
                 html.Tr(children=[
                     html.Td('Year with most enrollments'),
@@ -1324,7 +1297,7 @@ def update_timeline_information(selected_subject, hover_data):
                 ]),
                 html.Tr(children=[
                     html.Td('Average yearly enrollments per ' + str(subject)),
-                    html.Td(html.Td(df['count'].mean().round(0))),
+                    html.Td(html.Td(round(df['count'].mean(), 0))),
                 ]),
                 html.Tr(children=[
                     html.Td(str(name) + ' with most enrollments in one year'),
@@ -1487,136 +1460,70 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
                          include_missing,
                          selected_age, selected_city, selected_country, selected_region, selected_faculty,
                          selected_royal, selected_job, selected_religion):
-    df = data.individual_df[['First name', 'Last name', 'Enrollment year', 'City', 'Country', 'Region',
-                             'Enrollment age', 'Birth year', 'Faculty', 'Royal title', 'Job', 'Religion',
-                             'Enrollments', 'Rating']]
-    text = 'students were found'
+    df = data.individual_student_df[['First name', 'Last name', 'Enrollment year', 'City', 'Country', 'Region',
+                                     'Enrollment age', 'Birth year', 'Faculty', 'Royal title', 'Job', 'Religion',
+                                     'Enrollments', 'Rating']]
     search_results_number = 0
     if ctx.triggered_id == 'search-individual':
-        filtered_df = df
+        filtered_df = df.copy()
         if selected_name is not None and selected_name != '':
             words = selected_name.split(' ')
-            temp_total_df = pd.DataFrame()
+            selected_df = pd.DataFrame()
             for word in words:
                 if search_option == 'Contains':
-                    temp_df = df[df['First name'].str.contains(word)]
-                    if len(temp_df) > 0:
-                        temp_total_df = pd.concat((temp_total_df, temp_df), axis=0).drop_duplicates()
-                    temp_df = df[df['Last name'].str.contains(word)]
-                    if len(temp_df) > 0:
-                        temp_total_df = pd.concat((temp_total_df, temp_df), axis=0).drop_duplicates()
+                    contains_df = df.loc[df['First name'].str.contains(str(word))]
+                    contains_df1 = df.loc[df['Last name'].str.contains(str(word))]
+                    temp_total_df = pd.concat([contains_df, contains_df1], ignore_index=True)
                 elif search_option == 'Equals':
-                    temp_df = df.loc[df['First name'] == word]
-                    if len(temp_df) > 0:
-                        temp_total_df = pd.concat((temp_total_df, temp_df), axis=0).drop_duplicates()
-                    temp_df = df.loc[df['Last name'] == word]
-                    if len(temp_df) > 0:
-                        temp_total_df = pd.concat((temp_total_df, temp_df), axis=0).drop_duplicates()
-            if len(temp_total_df) > 0:
-                filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
+                    equals_df = df.loc[df['First name'] == str(word)]
+                    equals_df1 = df.loc[df['Last name'] == str(word)]
+                    temp_total_df = pd.concat([equals_df, equals_df1], ignore_index=True)
+
+            if len(selected_df) > 0:
+                filtered_df = temp_total_df.copy()
+                # filtered_df = pd.merge(filtered_df, selected_df, how='inner')
             else:
+                # filtered_df = pd.DataFrame()
                 filtered_df = pd.DataFrame(columns=['First name', 'Last name', 'Enrollment year', 'City', 'Country',
                                                     'Region', 'Enrollment age', 'Birth year', 'Faculty', 'Royal title',
                                                     'Job', 'Religion', 'Enrollments', 'Rating'])
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['First name'].isnull()]
-                temp_missing_df = pd.concat((temp_missing_df, df.loc[df['Last name'].isnull()]),
-                                            axis=0).drop_duplicates()
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+
         if min_enrol is not None and max_enrol is not None:
-            filtered_df = filtered_df.loc[filtered_df['Enrollment year'] <= int(max_enrol)]
-            filtered_df = filtered_df[filtered_df['Enrollment year'] >= int(min_enrol)]
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Enrollment year'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
-        if min_birth is not None and max_enrol is not None:
-            filtered_df = filtered_df.loc[filtered_df['Birth year'] <= int(max_birth)]
-            filtered_df = filtered_df[filtered_df['Birth year'] >= int(min_birth)]
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Birth year'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_range(filtered_df, min_enrol, max_enrol, 'Enrollment year', include_missing)
+
+        if min_birth is not None and max_birth is not None:
+            filtered_df = select_range(filtered_df, min_birth, max_birth, 'Birth year', include_missing)
+
         if selected_age is not None:
-            filtered_df = filtered_df.loc[filtered_df['Enrollment age'] <= int(selected_age[1])]
-            filtered_df = filtered_df[filtered_df['Enrollment age'] >= int(selected_age[0])]
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Enrollment age'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_range(filtered_df, selected_age[0], selected_age[1], 'Enrollment age', include_missing)
+
         if selected_city is not None and selected_city != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_city:
-                temp_df = df.loc[df['City'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['City'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_city, 'City')
+
         if selected_country is not None and selected_country != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_country:
-                temp_df = df.loc[df['Country'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Country'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_country, 'Country')
+
         if selected_region is not None and selected_region != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_region:
-                temp_df = df.loc[df['Region'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Region'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_region, 'Region')
+
         if selected_faculty is not None and selected_faculty != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_faculty:
-                temp_df = df.loc[df['Faculty'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Faculty'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_faculty, 'Faculty')
+
         if selected_royal is not None and selected_royal != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_royal:
-                temp_df = df.loc[df['Royal title'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Royal title'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_royal, 'Royal title')
+
         if selected_job is not None and selected_job != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_job:
-                temp_df = df.loc[df['Job'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Job'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_job, 'Job')
+
         if selected_religion is not None and selected_religion != []:
-            temp_total_df = pd.DataFrame()
-            for c in selected_religion:
-                temp_df = df.loc[df['Religion'] == c]
-                temp_total_df = pd.concat([temp_total_df, temp_df], axis=0).drop_duplicates()
-            filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Religion'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_non_range(filtered_df, selected_religion, 'Religion')
+
         filtered_df = filtered_df.rename(columns={'Enrollment year': 'Year', 'Enrollment age': 'Age'})
         search_results_number = len(filtered_df)
+        if search_results_number == 1:
+            text = "student was found"
+        else:
+            text = "students were found"
         return search_results_number, text, dash_table.DataTable(
             data=filtered_df.to_dict('records'),
             columns=[{'id': i, 'name': i, 'hideable': 'last'} for i in filtered_df.columns],
@@ -1667,12 +1574,13 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             style_header={'backgroundColor': '#001158', 'color': 'white'},
             style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
             virtualization=True,
-            export_format='xlsx',
-            export_headers='display',
+            #            export_format='xlsx',
+            #            export_headers='display',
             merge_duplicate_headers=True,
             id='individual-table'
         )
-    # else: return None, None, None
+    else:
+        return None, None, None
 
 
 # Chosen person information
@@ -1698,6 +1606,9 @@ def create_individual_information(rows, selected_rows, value, children):
                 counter += 1
         else:
             in_list.append(v['index'])
+            # None type causes error, return "children" instead
+    if selected_rows is None:
+        return children
     for number in selected_rows:
         if number not in in_list:
             person = persons.iloc[number].to_frame().T
@@ -1795,7 +1706,8 @@ def create_individual_information(rows, selected_rows, value, children):
                                               html.Td(person.get('Region')),
                                           ]),
                                       ]),
-                                      # html.A('Go to globe', href='assets/mapboxLeiden.html', target='_blank', rel='noreferrer noopener'),
+                                      # html.A('Go to globe', href='assets/mapboxLeiden.html', target='_blank',
+                                      # rel='noreferrer noopener'),
                                       # TODO: Implement family tree, not yet chosen which
                                       #  tree fits best: choices: 1. fisher_crawford (r implementation) 2. graphviz
                                       #  3. igraph
@@ -1849,31 +1761,35 @@ def synchronise_dates(min_year, max_year):
     return min_year, max_year
 
 
+# ******************************************************************************************
 # Rector callbacks
+# ******************************************************************************************
 # Year slider
 @app.callback(
-    Output('r-year-slider-container', 'children'),
-    Input('r-year-century-slider', 'value'),
+    Output('r-year-slider', 'min'),
+    Output('r-year-slider', 'max'),
+    Output('r-year-slider', 'value'),
+    Output('r-year-slider', 'marks'),
+    Input('r-year-century-slider', 'value')
 )
-def r_update_year_slider(century):
-    current_century = data.rector_years[(data.rector_years['century'] <= century[-1])]
+def update_year_slider(century):
+    current_century = data.all_dates_df[(data.all_dates_df['century'] <= century[-1])]
     years = []
-    for y in current_century['year'][0::5]:
+    for y in current_century['year'][0::YEAR_STEP]:
         years.append(y)
-        years.append(current_century['year'].max())
-    return (dcc.RangeSlider(
-        current_century['year'].min(),
-        current_century['year'].max(),
-        10,
-        value=[current_century['year'].min(), current_century['year'].max()],
-        marks={str(year): str(year) for year in years},
-        id='r-year-slider'
-    ))
+    years.append(current_century['year'].max())
+    min_year = current_century['year'].min()
+    max_year = current_century['year'].max()
+    value = [current_century['year'].min(), max_year]
+    marks = {str(year): str(year) for year in
+             range(min_year, max_year, int((max_year - min_year) / MARK_SPACING))}
+    id = 'r-year-slider'
+    return min_year, max_year, value, marks
 
 
 # year-century graph
 @app.callback(
-    Output('r-year-century-dropdown-container', 'children'),
+    Output('r-year-century-graph', 'figure'),
     Input('r-year-century-subject-dropdown', 'value'),
     Input('r-year-century-slider', 'value'),
     Input('r-year-slider', 'value'),
@@ -1883,19 +1799,20 @@ def r_update_year_slider(century):
     ],
 )
 def r_update_year_century_output(selected_subject, selected_century, selected_year, selected_dropdown):
-    return dcc.Graph(figure=rectorfigures.create_year_cent_figure(selected_subject, selected_century, selected_year,
-                                                                  selected_dropdown),
-                     id='r-year-century-graph')
+    figure = rectorfigures.create_year_cent_figure(selected_subject, selected_century, selected_year,
+                                                   selected_dropdown)
+    return figure
 
 
 # century-graph
 @app.callback(
-    Output('r-century-dropdown-container', 'children'),
+    Output('r-century-graph', 'figure'),
     Input('r-year-century-subject-dropdown', 'value'),
     Input('r-year-century-slider', 'value'),
 )
 def r_update_century_output(selected_subject, selected_century):
-    return dcc.Graph(figure=rectorfigures.create_cent_figure(selected_subject, selected_century), id='century-graph')
+    figure = rectorfigures.create_cent_figure(selected_subject, selected_century)
+    return figure
 
 
 # Timeline information
@@ -1911,6 +1828,8 @@ def r_update_timeline_information(selected_subject, hover_data, figure):
         y = hover_data['points'][0]['x']
         year = int(y)
     else:
+        if not 'customdata' in figure['data'][0].keys():
+            return
         text = None
         year = figure['data'][0]['x'][0]
     df, subject, name = rectorfigures.get_variables(selected_subject)
@@ -1960,7 +1879,7 @@ def r_update_timeline_information(selected_subject, hover_data, figure):
             html.Td(df['count'].max()),
         ]),
         html.Tr(children=[
-            html.Td('Highest Year'),
+            html.Td('Year with highest value'),
             html.Td(df.loc[df['count'].max(), 'year']),
         ]),
         html.Tr(children=[
@@ -1968,12 +1887,12 @@ def r_update_timeline_information(selected_subject, hover_data, figure):
             html.Td(df['count'].min()),
         ]),
         html.Tr(children=[
-            html.Td('Lowest Year'),
+            html.Td('Year with lowest value'),
             html.Td(df.loc[df['count'].min(), 'year']),
         ]),
         html.Tr(children=[
             html.Td('Average Rectors'),
-            html.Td(df['count'].mean().round(0)),
+            html.Td(round(df['count'].mean(), 0)),
         ]),
     ]),
 
@@ -1981,14 +1900,15 @@ def r_update_timeline_information(selected_subject, hover_data, figure):
 # Subject information callbacks
 # Subject-graph
 @app.callback(
-    Output('r-subject-dropdown-container', 'children'),
+    Output('r-subject-graph', 'figure'),
     Input('r-subject-dropdown', 'value'),
     running=[
         (Output('r-subject-dropdown', 'disabled'), True, False),
     ],
 )
 def r_update_subject_output(selected_subject):
-    return dcc.Graph(figure=rectorfigures.create_subject_info_graph(selected_subject), id='r-subject-graph')
+    figure = rectorfigures.create_subject_info_graph(selected_subject)
+    return figure
 
 
 # Subject table
@@ -2016,8 +1936,8 @@ def r_update_timeline_table(selected_subject):
         style_header={'backgroundColor': '#001158', 'color': 'white'},
         style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
         virtualization=True,
-        export_format='xlsx',
-        export_headers='display',
+        #       export_format='xlsx',
+        #       export_headers='display',
         merge_duplicate_headers=True,
         id='r-subject-table'
     )
@@ -2037,7 +1957,7 @@ def r_update_timeline_information(selected_subject, hover_data):
     df, subject, name = rectorfigures.get_variables(selected_subject)
     total = df['count'].sum()
     fraction = df.loc[df[subject] == text, 'count'].sum()
-    percentage = (fraction / total * 100).round(2)
+    percentage = round(fraction / total * 100, 2)
     return html.Div(id='r-subject-hover-info', children=[
         html.Table(id='r-subject-table', children=[
             html.Tr(children=[
@@ -2054,7 +1974,7 @@ def r_update_timeline_information(selected_subject, hover_data):
             ]),
             html.Tr(children=[
                 html.Td('Average rectors per year'),
-                html.Td(html.Td(df['count'].mean().round(0))),
+                html.Td(html.Td(round(df['count'].mean(), 0))),
             ]),
             html.Tr(children=[
                 html.Td('Year with most rectors'),
@@ -2130,43 +2050,43 @@ def r_update_timeline_table(selected_subject):
     Input('term-max-input', 'value'),
     Input('r-include-missing-dates', 'value')
 )
-def update_student_table(search_button, selected_name, search_option, min_term, max_term, include_missing):
+def update_recmag_table(search_button, selected_name, search_option, min_term, max_term, include_missing):
     df = data.recmag_df[['Period_start', 'Period_end', 'Name', 'Picture_saved', 'Term/Details']]
-    text = 'rectors were found'
     search_results_number = 0
     if ctx.triggered_id == 'r-search-individual':
-        filtered_df = df
+        filtered_df = df.copy()
         if selected_name is not None and selected_name != '':
             words = selected_name.split(' ')
-            temp_total_df = pd.DataFrame()
+            selected_df = pd.DataFrame()
             for word in words:
                 if search_option == 'Contains':
-                    temp_df = df[df['Name'].str.contains(word)]
-                    if len(temp_df) > 0:
-                        temp_total_df = pd.concat((temp_total_df, temp_df), axis=0).drop_duplicates()
+                    contains_df = df.loc[df['First name'].str.contains(str(word))]
+                    contains_df1 = df.loc[df['Last name'].str.contains(str(word))]
+                    temp_total_df = pd.concat([contains_df, contains_df1], ignore_index=True)
                 elif search_option == 'Equals':
-                    temp_df = df.loc[df['Name'] == word]
-                    if len(temp_df) > 0:
-                        temp_total_df = pd.concat((temp_total_df, temp_df), axis=0).drop_duplicates()
-            if len(temp_total_df) > 0:
-                filtered_df = pd.merge(filtered_df, temp_total_df, how='inner')
+                    equals_df = df.loc[df['First name'] == str(word)]
+                    equals_df1 = df.loc[df['Last name'] == str(word)]
+                    temp_total_df = pd.concat([equals_df, equals_df1], ignore_index=True)
+
+            if len(selected_df) > 0:
+                filtered_df = temp_total_df.copy()
+                # filtered_df = pd.merge(filtered_df, selected_df, how='inner')
             else:
+                # filtered_df = pd.DataFrame()
                 filtered_df = pd.DataFrame(
                     columns=['Period_start', 'Period_end', 'Name', 'Picture_saved', 'Term/Details'])
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Name'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+
         if min_term is not None and max_term is not None:
-            filtered_df = filtered_df.loc[filtered_df['Period_start'] <= int(max_term)]
-            filtered_df = filtered_df[filtered_df['Period_start'] >= int(min_term)]
-            if include_missing == 'Yes':
-                temp_missing_df = df.loc[df['Period_start'].isnull()]
-                if len(temp_missing_df) > 0:
-                    filtered_df = pd.concat([filtered_df, temp_missing_df], axis=0).drop_duplicates()
+            filtered_df = select_range(filtered_df, min_term, max_term, 'Period_start', include_missing)
+
         filtered_df = filtered_df.rename(
             columns={'Period_start': 'Period start', 'Period_end': 'Period end', 'Picture_saved': 'Picture'})
+
         search_results_number = len(filtered_df)
+        if search_results_number == 1:
+            text = "rector was found"
+        else:
+            text = "rectors were found"
         return search_results_number, text, dash_table.DataTable(
             data=filtered_df.to_dict('records'),
             columns=[{'id': i, 'name': i, 'hideable': 'last'} for i in filtered_df.columns],
@@ -2199,12 +2119,13 @@ def update_student_table(search_button, selected_name, search_option, min_term, 
             style_header={'backgroundColor': '#001158', 'color': 'white'},
             style_data={'whiteSpace': 'normal', 'height': 'auto', 'backgroundColor': 'white', 'color': 'black'},
             virtualization=True,
-            export_format='xlsx',
-            export_headers='display',
+            #           export_format='xlsx', tijdelijk uitgeschakeld
+            #           export_headers='display',
             merge_duplicate_headers=True,
             id='r-individual-table'
         )
-    # else: return None, None, None
+    else:
+        return None, None, None
 
 
 # Chosen person information
@@ -2230,6 +2151,9 @@ def create_individual_information(rows, selected_rows, value, children):
                 counter += 1
         else:
             in_list.append(v['index'])
+            # None type causes error, return "children" instead
+    if selected_rows is None:
+        return children
     for number in selected_rows:
         if number not in in_list:
             person = persons.iloc[number].to_frame().T
@@ -2286,6 +2210,12 @@ def synchronise_dates(min_year, max_year):
     return min_year, max_year
 
 
+# ******************************************************************************************  LOCAL
+# if __name__ == '__main__':
+#    app.run_server(port=8050, debug=False)
+#
+# ******************************************************************************************  SERVER
 if __name__ == '__main__':
-    #app.run_server(debug=True)
-    app.run_server()
+    app.run_server(debug=False)
+#
+# ******************************************************************************************  END

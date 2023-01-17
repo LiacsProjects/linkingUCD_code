@@ -92,6 +92,7 @@ else:
                 )
 
 server = app.server
+
 # ******************************************************************** define layout
 app.layout = dash.html.Div([
     dash.html.Div([

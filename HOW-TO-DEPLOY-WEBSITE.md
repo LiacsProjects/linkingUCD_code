@@ -1,11 +1,40 @@
-## Tools for windows 10
+# Deployment websites #
+
+There are a number of tools to transfer files from local to remote servers.
+
+In case of LIACS you can log into https://ssh.liacs.nl server with your university name credentials.
+
+This server is reachable by internet and acts like a proxy file server where the webserver is gettings its files from.
+
+If you like command line tools you can choose PuTTY.
+
+If you like windows tools you can choose WinSCP.
+
+# Deployment with WinSCP for Windows #
+
+Install WinSCP from 
+
+```
+https://winscp.net/eng/index.php
+```
+
+For login choose SFTP protocol port 22, and as host ssh.liacs.nl
+
+Enter your university credentials in corresponding fields.
+
+Say YES to the encryption key as to-be-trusted.
+
+The webserver files can be found in /webhome/csuniversity/
+
+![image](https://user-images.githubusercontent.com/37830964/210339057-197e13af-d0cc-48c4-a6bd-b1831ca669a1.png)
+
+# Deployment with PuTTY for windows #
 
 Use PuTTY to connect to the https://ssh.liacs.nl server.
 
+This server is reachable via the WLAN3 network inside LIACS, sometimes outside LIACS (internet).
 
-This one is reachable via the WLAN3 network, pw: ?, inside LIACS, sometimes outside LIACS reachable (internet).
-
-Or, set up a VPN LIACS connection with IKEv2, see VPN Access (IKEv2)_LIACS REL.pdf
+Or, set up a VPN LIACS connection with IKEv2 if outside LIACS, see VPN Access (IKEv2)_LIACS REL.pdf (see docs.liacs.nl inside LIACS).
 
 PuTTY comes with a number of tools among them the PSFTP-tool. 
 
@@ -79,7 +108,15 @@ pscp ubuntu@10.0.0.3:/home/ubuntu/Music/music.mp3 c:/
 
 See, https://community.nxp.com/t5/i-MX-Processors/Copying-Files-Between-Windows-and-Linux-using-PuTTY/m-p/145880
 
-## Login with your UL-name and pw.
+## Login with your UL-name credentials ##
+
+To login use your university name and password.
+
+There is a webhome directory placed under the root directory where you can deploy your web related files.
+
+In our case this is /webhome/csuniversity/
+
+Set the local and remote directory to transfer files.
 
 ```
 psftp: no hostname specified; use "open host.name" to connect
@@ -95,11 +132,6 @@ psftp> lcd c:/liacsprojects/lucd/front-end/liacsserver
 New local directory is c:\liacsprojects\lucd\front-end\liacsserver
 psftp> cd /webhome/csunivercity
 Remote directory is now /webhome/csunivercity
-```
-
-There is a webhome directory under root were you can place web-pages and related files under a url name, for example csunivercity.
-
-```
 psftp> pwd
 Remote directory is /webhome/csunivercity
 psftp> ls
@@ -119,7 +151,7 @@ drwxrws---    1 510035   cswwwdata        3 Aug  3 16:58 ..
 -rw-rw----    1 rietveldkfd cswwwdata      809 Aug  4 07:07 test.py
 ```
 
-Use the following commands to transfer the files local->host and reverse:
+Use the following commands to transfer the files from local to remote server:
 
 ```
 psftp> mput -r dashboard *    Put file on the server
@@ -130,7 +162,7 @@ psftp> lcd                    Change directory local host
 psftp> cd                     Change directory server
 ```
 
-## Example for linking_UCD to update a new landing page index.html
+Here follows an example for linking_UCD to update a new landing page index.html:
 
 Start PSFTP.exe  
 
