@@ -189,9 +189,9 @@ sources_content = html.Div(id='src_content', className='parent_content', childre
                'may -vice versa- have had impact on the university. The question is how.'  
                'This project will examine the interaction between university and city through data science methods.'),
         html.H2('Projectteam', style={"text-align":"left"}),
-        html.P('Wessel Kraaij (Data Science), Ariadne Schmidt (Humanities), '
+        html.P('Wessel Kraaij (Data Science), Ariadne Schmidt (History), '
                'Joost Visser (Data Science), Richard van Dijk (Data Science), '
-               'Michael de Koning (Computer Science), Ben van Yperen (Humanities).'),
+               'Michael de Koning (Computer Science), Ben van Yperen (History).'),
         html.H2('Datasources', style={"text-align":"left"}),
         html.P('The following sources are being used for this dashboard:'),
         html.Li('Dataset Martine Zoeteman, Student Population Leiden University 1575-1812 (2011), based upon Album Studiosorum. '

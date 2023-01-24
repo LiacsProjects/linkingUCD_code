@@ -1,9 +1,12 @@
-# ****************************************************************************************** LOCAL
-# added for local server
-# extra regel om environmental variable te bepalen
-# voor server draaien dashboard.wsgi ?
-import Add_environment_variable
-# ******************************************************************************************  end local
+# ****************************************************************************************** START
+# Parameter for program on server or local
+ON_SERVER = False
+if not ON_SERVER:
+    # added for local server
+    # extra regel om environmental variable te bepalen
+    # voor server draaien dashboard.wsgi ?
+    import Add_environment_variable
+
 # import modules
 import pandas as pd
 from dash import Dash, dcc, html, Input, Output, ctx, dash_table, State, ALL
@@ -14,23 +17,26 @@ import data
 from figures import professorfigures, studentfigures, rectorfigures, introfigures
 from pages import professorvisuals, rectorvisuals, studentvisuals
 
-# Parameters and constants
-YEAR_STEP = 5
-MARK_SPACING = 10
-THESIS_COLUMN_NAME = 'Thesis'
-SUBJECT_AREA_COLUMN_NAME = 'Subject area'
-JOB_COLUMN_NAME = 'Job'
-# ******************************************************************************************  LOCAL
+
 # Configurate dash application voor DASH
-app = Dash(__name__,
+if ON_SERVER:
+    # SERVER
+    app = Dash(__name__,
+               suppress_callback_exceptions=True,
+               title="Leiden Univercity Dashboard",
+               routes_pathname_prefix='/',
+               external_stylesheets=[dbc.themes.BOOTSTRAP],
+               requests_pathname_prefix='/dashboard/'
+               )
+else:
+    # LOCAL
+    app = Dash(__name__,
+           suppress_callback_exceptions=False,
            title="Leiden Univercity Dashboard",
-           suppress_callback_exceptions=True,
            routes_pathname_prefix='/',
            external_stylesheets=[dbc.themes.BOOTSTRAP],
-           # uitgeschakeld # requests_pathname_prefix='/dashboard/'
            )
 
-# ****************************************************************************************** SERVER
 # Configurate dash application for server
 server = app.server
 
@@ -42,6 +48,14 @@ server = app.server
 #  through function that reads coordinates from a file: countries.geojson and cities1-2-3.csv
 
 # ******************************************************************************************  START
+
+# Parameters and constants
+YEAR_STEP = 5
+MARK_SPACING = 10
+THESIS_COLUMN_NAME = 'Thesis'
+SUBJECT_AREA_COLUMN_NAME = 'Subject area'
+JOB_COLUMN_NAME = 'Job'
+
 app.layout = dbc.Container(children=[
     html.Div(id='page_top', children=[
         # html.A(id="logoA", children=[html.Img(id="logo", src="/assets/Leiden_zegel.png")]),
@@ -110,11 +124,11 @@ def pagehandler(btn, pagenr):
 def render_content(tab):
     if tab == 'p_tab-1':
         return professorvisuals.timeline
-    if tab == 'p_tab-2':
+    elif tab == 'p_tab-2':
         return professorvisuals.subject_information
-    if tab == 'p_tab-3':
+    elif tab == 'p_tab-3':
         return professorvisuals.geographical_information
-    if tab == 'p_tab-4':
+    elif tab == 'p_tab-4':
         return professorvisuals.individual_information
     else:
         return 404
@@ -128,11 +142,11 @@ def render_content(tab):
 def render_content(tab):
     if tab == 's_tab-1':
         return studentvisuals.timeline
-    if tab == 's_tab-2':
+    elif tab == 's_tab-2':
         return studentvisuals.subject_information
-    if tab == 's_tab-3':
+    elif tab == 's_tab-3':
         return studentvisuals.geographical_information
-    if tab == 's_tab-4':
+    elif tab == 's_tab-4':
         return studentvisuals.individual_information
     else:
         return 404
@@ -146,11 +160,11 @@ def render_content(tab):
 def render_content(tab):
     if tab == 'r_tab-1':
         return rectorvisuals.timeline
-    if tab == 'r_tab-2':
+    elif tab == 'r_tab-2':
         return rectorvisuals.subject_information
-    if tab == 'r_tab-3':
+    elif tab == 'r_tab-3':
         return rectorvisuals.geographical_information
-    if tab == 'r_tab-4':
+    elif tab == 'r_tab-4':
         return rectorvisuals.individual_information
     else:
         return 404
@@ -170,13 +184,14 @@ def render_content(tab):
 )
 def update_year_slider(century):
     current_century = data.all_dates_df[(data.all_dates_df['century'] <= century[-1])]
+    current_century = current_century[(current_century['century'] >= century[0])]
     years = []
     for y in current_century['year'][0::YEAR_STEP]:
         years.append(y)
     years.append(current_century['year'].max())
     min_year = current_century['year'].min()
     max_year = current_century['year'].max()
-    value = [current_century['year'].min(), current_century['year'].max()]
+    value = [min_year, max_year]
     marks: dict = {str(year): str(year) for year in
                    range(min_year, max_year, int((max_year - min_year) / MARK_SPACING))}
     return min_year, max_year, value, marks
@@ -653,8 +668,8 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
             for word in words:
                 # TODO: sort on relevance
                 if search_option == 'Contains':
-                    contains_df = df.loc[df['First name'].str.contains(str(word))]
-                    contains_df1 = df.loc[df['Last name'].str.contains(str(word))]
+                    contains_df = df.loc[df['First name'].str.contains(str(word), case=False)]
+                    contains_df1 = df.loc[df['Last name'].str.contains(str(word), case=False)]
                     temp_total_df = pd.concat([contains_df, contains_df1], ignore_index=True)
                 elif search_option == 'Equals':
                     equals_df = df.loc[df['First name'] == str(word)]
@@ -999,6 +1014,7 @@ def synchronise_dates(min_year, max_year):
 )
 def update_year_slider(century):
     current_century = data.all_dates_df[(data.all_dates_df['century'] <= century[-1])]
+    current_century = current_century[(current_century['century'] >= century[0])]
     years = []
     for y in current_century['year'][0::YEAR_STEP]:
         years.append(y)
@@ -1473,8 +1489,8 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             temp_total_df = pd.DataFrame()
             for word in words:
                 if search_option == 'Contains':
-                    contains_df = df.loc[df['First name'].str.contains(str(word))]
-                    contains_df1 = df.loc[df['Last name'].str.contains(str(word))]
+                    contains_df = df.loc[df['First name'].str.contains(str(word), case=False)]
+                    contains_df1 = df.loc[df['Last name'].str.contains(str(word), case=False)]
                     temp_total_df = pd.concat([contains_df, contains_df1], ignore_index=True)
                 elif search_option == 'Equals':
                     equals_df = df.loc[df['First name'] == str(word)]
@@ -1769,18 +1785,23 @@ def synchronise_dates(min_year, max_year):
     Input('birthyear-max-input', 'value'),
 )
 def synchronise_dates(min_year, max_year):
-    trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
-    if trigger_id == 'birthyear-min-input' and min_year >= max_year:
-        if max_year < data.year_df['year'].max():
-            max_year = min_year + 1
-        else:
-            min_year -= 1
-    elif trigger_id == 'birthyear-max-input' and max_year <= min_year:
-        if min_year > data.year_df['year'].min():
-            min_year = max_year - 1
-        else:
-            max_year += 1
+    if min_year == None: min_year = data.year_df['year'].min()
+    if max_year == None: max_year = data.year_df['year'].max()
+    if min_year > max_year: min_year, max_year = max_year, min_year
     return min_year, max_year
+
+    #trigger_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    #if trigger_id == 'birthyear-min-input' and min_year >= max_year:
+    #    if max_year < data.year_df['year'].max():
+    #        max_year = min_year + 1
+    #    else:
+    #        min_year -= 1
+    #elif trigger_id == 'birthyear-max-input' and max_year <= min_year:
+    #    if min_year > data.year_df['year'].min():
+    #        min_year = max_year - 1
+    #    else:
+    #        max_year += 1
+    #return min_year, max_year
 
 
 # ******************************************************************************************
@@ -1796,6 +1817,7 @@ def synchronise_dates(min_year, max_year):
 )
 def update_year_slider(century):
     current_century = data.all_dates_df[(data.all_dates_df['century'] <= century[-1])]
+    current_century = current_century[(current_century['century'] >= century[0])]
     years = []
     for y in current_century['year'][0::YEAR_STEP]:
         years.append(y)
@@ -2082,8 +2104,8 @@ def update_recmag_table(search_button, selected_name, search_option, min_term, m
             temp_total_df = pd.DataFrame()
             for word in words:
                 if search_option == 'Contains':
-                    contains_df = df.loc[df['First name'].str.contains(str(word))]
-                    contains_df1 = df.loc[df['Last name'].str.contains(str(word))]
+                    contains_df = df.loc[df['First name'].str.contains(str(word), case=False)]
+                    contains_df1 = df.loc[df['Last name'].str.contains(str(word), case=False)]
                     temp_total_df = pd.concat([contains_df, contains_df1], ignore_index=True)
                 elif search_option == 'Equals':
                     equals_df = df.loc[df['First name'] == str(word)]
@@ -2231,13 +2253,13 @@ def synchronise_dates(min_year, max_year):
             max_year += 1
     return min_year, max_year
 
-
-# ******************************************************************************************  LOCAL
-# if __name__ == '__main__':
-#    app.run_server(port=8050, debug=False)
-#
-# ******************************************************************************************  SERVER
-if __name__ == '__main__':
-    app.run_server(debug=False)
+if ON_SERVER:
+    # SERVER
+    if __name__ == '__main__':
+        app.run_server(debug=False)
+else:
+    # LOCAL
+    if __name__ == '__main__':
+        app.run_server(port=8050, debug=False)
 
 # ******************************************************************************************  END

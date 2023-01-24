@@ -13,6 +13,7 @@ SUBJECT_DROPDOWN = ['Rectors']
 DEFAULT_SUBJECT = 'Rectors'
 GRAPH_DROPDOWN = ['Bar graph', 'Line graph', 'Scatter graph']
 DEFAULT_GRAPH = 'Bar graph'
+GRAPH_CONFIG = {'modeBarButtonsToRemove': ['toImage'], 'displayModeBar': True,}
 
 # Data year calculaionss
 current_century = data.all_dates_df[(data.all_dates_df['century'] <= START_CENTURY)]
@@ -72,7 +73,9 @@ timeline = html.Div(id='r_timeline', className='container',
                         html.Div(id='r-year-century-container', className='right_container',
                                  children=[
                                      html.H4('Graph:'),
-                                     dcc.Graph(id='r-year-century-graph', )
+                                     dcc.Graph(id='r-year-century-graph',
+                                               config=GRAPH_CONFIG,
+                                               )
                                  ],
                                  ),
                         html.Div(id='r-timeline-information-container', className='left_container',
@@ -84,7 +87,9 @@ timeline = html.Div(id='r_timeline', className='container',
                         html.Div(id='r-century-graph-container', className='right_container',
                                  children=[
                                      html.H4('Sorted bar graph:'),
-                                     dcc.Graph(id='r-century-graph')
+                                     dcc.Graph(id='r-century-graph',
+                                               config=GRAPH_CONFIG,
+                                               )
                                  ],
                                  ),
                     ]),
@@ -117,7 +122,9 @@ subject_information = html.Div(id='r_subject_info', className='container',
                                    html.Div(id='r-subject-dropdown-container', className='right_container',
                                             children=[
                                                 html.H3('Graph:'),
-                                                dcc.Graph(id='r-subject-graph'),
+                                                dcc.Graph(id='r-subject-graph',
+                                                          config=GRAPH_CONFIG,
+                                                          ),
                                                 html.Div(id='r-subject-container',
                                                          children=[
                                                              html.H3('Subject data:'),
