@@ -149,13 +149,6 @@ individual_information = html.Div(id='r_individual', className='container', chil
     ]),
     html.Div(id='r_inputs_left', className='middle_small_container ', children=[
         html.H3('Search settings:', className='inline'),
-        html.Button(
-            'Search',
-            id='r-search-individual',
-            className='inline',
-            style={'margin-left': '1%'}
-        ),
-        html.Br(),
         html.P('Search for a name:', className='inline'),
         dcc.Input(
             id='r-search-name',
@@ -199,9 +192,19 @@ individual_information = html.Div(id='r_individual', className='container', chil
             id='r-include-missing-dates',
             className='inline',
         ),
+        html.Br(),
+        html.Br(),
+        html.Button(
+            'START SEARCH',
+            id='r-search-individual',
+            className='inline',
+            style={'font-weight': 'bold', 'margin-left': '20%', 'height': '75px', 'width': '200px'},
+        ),
+        html.Br(),
+        html.Br(),
     ]),
     html.Div(id='r-individual-information', className='middle_container', children=[
-        html.H3('Rector search data:'),
+        html.H3(id='r-individual-search-results-header',),
         html.Div(id='r-individual-search-results', children=[
             html.Div(id='r-individual-search-results-number', className='inline', style={"font-weight": "bold"}),
             html.Div(id='r-individual-search-text', className='inline', style={'margin-left': '8px'})

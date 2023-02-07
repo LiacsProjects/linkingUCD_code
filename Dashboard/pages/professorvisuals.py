@@ -192,12 +192,7 @@ individual_information = html.Div(id='p_individual', className='container', chil
     ]),
     html.Div(id='p_i_inputs_left', className='middle_small_container ', children=[
         html.H3('Search settings:', className='inline'),
-        html.Button(
-            'Search',
-            id='p-search-individual',
-            className='inline',
-            style={'margin-left': '1%'}
-        ),
+
         html.Br(),
         html.P('Search for a name:', className='inline'),
         dcc.Input(
@@ -260,6 +255,14 @@ individual_information = html.Div(id='p_individual', className='container', chil
             value='Yes',
             id='p-include-missing-dates',
             className='inline',
+        ),
+        html.Br(),
+        html.Br(),
+        html.Button(
+            'START SEARCH',
+            id='p-search-individual',
+            className='inline',
+            style={'font-weight': 'bold', 'margin-left': '20%', 'height': '75px', 'width': '200px'},
         ),
     ]),
     html.Div(id='p_i_inputs_right', className='middle_small_container ', children=[
@@ -340,7 +343,8 @@ individual_information = html.Div(id='p_individual', className='container', chil
         ]),
     ]),
     html.Div(id='p-individual-information', className='middle_container', children=[
-        html.H3('Professor search data:'),
+        html.A(id='p-search-results'),
+        html.H3(id='p-individual-search-results-header', ),
         html.Div(id='p-individual-search-results', children=[
             html.Div(id='p-individual-search-results-number', className='inline', style={"font-weight": "bold"}),
             html.Div(id='p-individual-search-text', className='inline', style={'margin-left': '8px'})

@@ -207,12 +207,6 @@ individual_information = html.Div(id='s_individual', className='container', chil
     ]),
     html.Div(id='i_inputs_left', className='middle_small_container ', children=[
         html.H3('Search settings:', className='inline'),
-        html.Button(
-            'Search',
-            id='search-individual',
-            className='inline',
-            style={'margin-left': '1%', 'margin-right': '1%'},
-        ),
         html.Br(),
         html.P('Search for a name:', className='inline'),
         dcc.Input(
@@ -288,6 +282,16 @@ individual_information = html.Div(id='s_individual', className='container', chil
                    int(data.individual_student_df['Enrollment age'].max())],
             id='individual-age-slider'
         ),
+        html.Br(),
+        html.Br(),
+        html.Button(
+            'START SEARCH',
+            id='search-individual',
+            className='inline',
+            style={'font-weight': 'bold', 'margin-left': '20%', 'height': '75px', 'width': '200px'},
+        ),
+        html.Br(),
+        html.Br(),
     ]),
     html.Div(id='i_inputs_right', className='middle_small_container ', children=[
         html.Table([
@@ -337,7 +341,7 @@ individual_information = html.Div(id='s_individual', className='container', chil
         ])
     ]),
     html.Div(id='individual-information', className='middle_container', children=[
-        html.H3('Student search data:'),
+        html.H3(id='individual-search-results-header',),
         html.Div(id='individual-search-results', children=[
             html.Div(id='individual-search-results-number', className='inline', style={"font-weight": "bold"}),
             html.Div(id='individual-search-text', className='inline', style={'margin-left': '8px'})

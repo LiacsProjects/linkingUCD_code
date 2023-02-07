@@ -626,6 +626,7 @@ def create_map(min_year, max_year, map_choice):
 # Individual information callbacks
 # Individual table
 @app.callback(
+    Output('p-individual-search-results-header', 'children'),
     Output('p-individual-search-results-number', 'children'),
     Output('p-individual-search-text', 'children'),
     Output('p-individual-table-container', 'children'),
@@ -735,13 +736,14 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
         if selected_faculty is not None and selected_faculty != []:
             filtered_df = select_non_range(filtered_df, selected_faculty, 'Faculty')
 
+        search_results_header = "Professor search data:"
         search_results_number = len(filtered_df)
         if search_results_number == 1:
             text = "professor was found"
         else:
             text = "professors were found"
         text = text + " (make selection for individual information placed under the search table)"
-        return search_results_number, text, dash_table.DataTable(
+        return search_results_header, search_results_number, text, dash_table.DataTable(
             data=filtered_df.to_dict('records'),
             columns=[{'id': i, 'name': i, 'hideable': 'last'} for i in filtered_df.columns],
             filter_action="native",
@@ -792,7 +794,7 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
             id='p-individual-table'
         )
     else:
-        return None, None, None
+        return None, None, None, None
 
 
 def select_non_range(filtered_df, selected_field, column_name):
@@ -1454,6 +1456,7 @@ def create_map(min_year, max_year, map_choice):
 # Individual information callbacks
 # Individual table
 @app.callback(
+    Output('individual-search-results-header', 'children'),
     Output('individual-search-results-number', 'children'),
     Output('individual-search-text', 'children'),
     Output('individual-table-container', 'children'),
@@ -1537,12 +1540,14 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             filtered_df = select_non_range(filtered_df, selected_religion, 'Religion')
 
         filtered_df = filtered_df.rename(columns={'Enrollment year': 'Year', 'Enrollment age': 'Age'})
+
+        search_results_header = "Student search data:"
         search_results_number = len(filtered_df)
         if search_results_number == 1:
             text = "student was found"
         else:
             text = "students were found"
-        return search_results_number, text, dash_table.DataTable(
+        return search_results_header, search_results_number, text, dash_table.DataTable(
             data=filtered_df.to_dict('records'),
             columns=[{'id': i, 'name': i, 'hideable': 'last'} for i in filtered_df.columns],
             filter_action="native",
@@ -1618,7 +1623,7 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             id='individual-table'
         )
     else:
-        return None, None, None
+        return None, None, None, None
 
 
 # Chosen person information
@@ -2084,6 +2089,7 @@ def r_update_timeline_table(selected_subject):
 # Individual information callbacks
 # Individual table
 @app.callback(
+    Output('r-individual-search-results-header', 'children'),
     Output('r-individual-search-results-number', 'children'),
     Output('r-individual-search-text', 'children'),
     Output('r-individual-table-container', 'children'),
@@ -2126,12 +2132,13 @@ def update_recmag_table(search_button, selected_name, search_option, min_term, m
         filtered_df = filtered_df.rename(
             columns={'Period_start': 'Period start', 'Period_end': 'Period end', 'Picture_saved': 'Picture'})
 
+        search_results_header = 'Rector search data:'
         search_results_number = len(filtered_df)
         if search_results_number == 1:
             text = "rector was found"
         else:
             text = "rectors were found"
-        return search_results_number, text, dash_table.DataTable(
+        return search_results_header, search_results_number, text, dash_table.DataTable(
             data=filtered_df.to_dict('records'),
             columns=[{'id': i, 'name': i, 'hideable': 'last'} for i in filtered_df.columns],
             filter_action="native",
@@ -2169,7 +2176,7 @@ def update_recmag_table(search_button, selected_name, search_option, min_term, m
             id='r-individual-table'
         )
     else:
-        return None, None, None
+        return None, None, None, None
 
 
 # Chosen person information
