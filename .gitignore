@@ -1,5 +1,5 @@
 .idea/
-*.mwb*
+#*.mwb*
 data/
 Database/csvs/
 __pycache__/
