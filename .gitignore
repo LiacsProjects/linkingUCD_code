@@ -1,7 +1,6 @@
 .idea/
 *.bak
 *.beforefix
-data/
 Database/csvs/
 __pycache__/
 drafts/
