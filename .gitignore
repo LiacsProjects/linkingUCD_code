@@ -1,5 +1,6 @@
 .idea/
-#*.mwb*
+*.bak
+*.beforefix
 data/
 Database/csvs/
 __pycache__/
