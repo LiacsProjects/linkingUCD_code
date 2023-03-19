@@ -51,34 +51,33 @@ class Connection:
     #         print("Something went wrong! {}".format(error), table_name)
 
     def selectTypeTable(self, table_name):
-        match table_name:
-            case "type_of_profession":
-                return pd.read_sql_query("SELECT ProfessionID, ProfessionType FROM type_of_profession",
-                                         self.mydb).replace({np.nan: None})
-            case "type_of_expertise":
-                return pd.read_sql_query("SELECT ExpertiseID, ExpertiseType FROM type_of_expertise", self.mydb).replace(
-                    {np.nan: None})
-            case "type_of_faculty":
-                return pd.read_sql_query("SELECT FacultyID, FacultyType FROM type_of_faculty", self.mydb).replace(
-                    {np.nan: None})
-            case "type_of_location":
-                return pd.read_sql_query("SELECT LocationID, LocationType FROM type_of_location", self.mydb).replace(
-                    {np.nan: None})
-            case "type_of_person":
-                return pd.read_sql_query("SELECT PersonID, PersonType FROM type_of_person", self.mydb).replace(
-                    {np.nan: None})
-            case "type_of_position":
-                return pd.read_sql_query("SELECT PositionID, PositionType FROM type_of_position", self.mydb).replace(
-                    {np.nan: None})
-            case "type_of_relation":
-                return pd.read_sql_query("SELECT RelationID, RelationType FROM type_of_relation", self.mydb).replace(
-                    {np.nan: None})
-            case "type_of_source":
-                return pd.read_sql_query("SELECT SourceID, SourceType, Rating FROM type_of_source", self.mydb).replace(
-                    {np.nan: None})
-            case _:
-                print("Invalid type table!")
-                return None
+        if table_name == "type_of_profession":
+            return pd.read_sql_query("SELECT ProfessionID, ProfessionType FROM type_of_profession",
+                                     self.mydb).replace({np.nan: None})
+        elif table_name == "type_of_expertise":
+            return pd.read_sql_query("SELECT ExpertiseID, ExpertiseType FROM type_of_expertise", self.mydb).replace(
+                {np.nan: None})
+        elif table_name == "type_of_faculty":
+            return pd.read_sql_query("SELECT FacultyID, FacultyType FROM type_of_faculty", self.mydb).replace(
+                {np.nan: None})
+        elif table_name ==  "type_of_location":
+            return pd.read_sql_query("SELECT LocationID, LocationType FROM type_of_location", self.mydb).replace(
+                {np.nan: None})
+        elif table_name ==  "type_of_person":
+            return pd.read_sql_query("SELECT PersonID, PersonType FROM type_of_person", self.mydb).replace(
+                {np.nan: None})
+        elif table_name ==  "type_of_position":
+            return pd.read_sql_query("SELECT PositionID, PositionType FROM type_of_position", self.mydb).replace(
+                {np.nan: None})
+        elif table_name ==  "type_of_relation":
+            return pd.read_sql_query("SELECT RelationID, RelationType FROM type_of_relation", self.mydb).replace(
+                {np.nan: None})
+        elif table_name ==  "type_of_source":
+            return pd.read_sql_query("SELECT SourceID, SourceType, Rating FROM type_of_source", self.mydb).replace(
+                {np.nan: None})
+        else:
+            print("Invalid type table!")
+            return None
 
     # TODO: find "gaps" in available IDs (as a result of deletion) to reuse
     def getPersonMaxID(self):
