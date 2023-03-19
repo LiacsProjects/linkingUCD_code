@@ -58,4 +58,3 @@ Deze bestanden zijn gebruikt om bepaalde csv bestanden op te delen wanneer deze 
 Dit is het student bestand opgedeeld in kleinere bestanden zodat het naar NodeGoat geupload kon worden. Deze zijn verder niet relevant voor de website en kunnen 
 verwijderd worden. Een overzicht van alle opschoning activiteiten staat in het ‘data_cleaning.py’ bestand. Dit bestand gebruikt de drie hoofd-Excel bestanden 
 (hoogleraren, studenten, rectors), schoont deze op en maakt de extra Excel bestanden aan.
-

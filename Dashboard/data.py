@@ -2,6 +2,8 @@ import pandas as pd
 from pathlib import Path
 import os
 
+# 'C:/Users/micha/Documents/Leiden/Univercity/Database_Connected_Dashboard/Dashboard/'
+bp = 'C:/Users/micha/Documents/Leiden/Univercity/Database_Connected_Dashboard/Liam/excelfiles/'
 base_path = Path(os.environ['DASHBOARD_BASEPATH'])
 
 # Professor data handling
@@ -26,6 +28,24 @@ subject_df = pd.read_excel(base_path / 'excelfiles_L/professors_subject.xlsx', e
 faculty_df = pd.read_excel(base_path / 'excelfiles_L/professors_faculty.xlsx', engine='openpyxl')
 end_df = pd.read_excel(base_path / 'excelfiles_L/professors_end.xlsx', engine='openpyxl')
 individual_profs_df = pd.read_excel(base_path / 'excelfiles_L/professors_individual.xlsx', engine='openpyxl')
+
+# gender_df = pd.read_excel(bp + 'professors_gender.xlsx', engine='openpyxl')
+# title_df = pd.read_excel(bp + 'professors_title.xlsx', engine='openpyxl')
+# birth_df = pd.read_excel(bp + 'professors_birth.xlsx', engine='openpyxl')
+# birthplace_df = pd.read_excel(bp + 'professors_birth_place.xlsx', engine='openpyxl')
+# birthcountry_df = pd.read_excel(bp + 'professors_birth_country.xlsx', engine='openpyxl')
+# death_df = pd.read_excel(bp + 'professors_death.xlsx', engine='openpyxl')
+# deathplace_df = pd.read_excel(bp + 'professors_death_place.xlsx', engine='openpyxl')
+# deathcountry_df = pd.read_excel(bp + 'professors_death_country.xlsx', engine='openpyxl')
+# promotion_df = pd.read_excel(bp + 'professors_promotion.xlsx', engine='openpyxl')
+# promotiontype_df = pd.read_excel(bp + 'professors_promotion_type.xlsx', engine='openpyxl')
+# promotion_place_df = pd.read_excel(bp + 'professors_promotion_place.xlsx', engine='openpyxl')
+# appointment_df = pd.read_excel(bp + 'professors_appointment.xlsx', engine='openpyxl')
+# professor_job_df = pd.read_excel(bp + 'professors_job.xlsx', engine='openpyxl')
+# subject_df = pd.read_excel(bp + 'professors_subject.xlsx', engine='openpyxl')
+# faculty_df = pd.read_excel(bp + 'professors_faculty.xlsx', engine='openpyxl')
+# end_df = pd.read_excel(bp + 'professors_end.xlsx', engine='openpyxl')
+# individual_profs_df = pd.read_excel(bp + 'professors_individual.xlsx', engine='openpyxl')
 
 #######################################################################################################################
 
