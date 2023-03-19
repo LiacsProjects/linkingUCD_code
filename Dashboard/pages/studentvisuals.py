@@ -19,6 +19,7 @@ GRAPH_SUBJECT_DROPDOWN = ['Number of enrollments', 'Origin cities', 'Enrollment 
 GEOMAPS_OPTIONS = ['Heat map', 'Line map', 'MP Heat map', 'MP Scatter map', 'Animated map']
 DEFAULT_GRAPH = 'Bar graph'
 GRAPH_DROPDOWN = ['Bar graph', 'Line graph', 'Scatter graph']
+GRAPH_CONFIG = {'modeBarButtonsToRemove': ['toImage'], 'displayModeBar': True,}
 
 # Data year calculaionss
 current_century = data.all_dates_df[(data.all_dates_df['century'] <= START_CENTURY)]
@@ -83,7 +84,9 @@ timeline = html.Div(id='s_timeline', className='container',
                         html.Div(id='year-century-dropdown-container', className='right_container',
                                  children=[
                                      html.H4('Graph:'),
-                                     dcc.Graph(id='year-century-graph', ),
+                                     dcc.Graph(id='year-century-graph',
+                                               config=GRAPH_CONFIG,
+                                               ),
                                  ],
                                  ),
                         html.Div(id='timeline-information', className='left_container ',
@@ -95,7 +98,9 @@ timeline = html.Div(id='s_timeline', className='container',
                         html.Div(id='century-dropdown-container', className='right_container',
                                  children=[
                                      html.H4('Sorted bar graph'),
-                                     dcc.Graph(id='century-graph')
+                                     dcc.Graph(id='century-graph',
+                                               config=GRAPH_CONFIG,
+                                               )
                                  ]
                                  ),
                     ])
@@ -132,7 +137,9 @@ subject_information = html.Div(id='s_subject_info', className='container',
                                    html.Div(id='subject-dropdown-container', className='right_container',
                                             children=[
                                                 html.H3('Graph:'),
-                                                dcc.Graph(id='subject-graph'),
+                                                dcc.Graph(id='subject-graph',
+                                                          config=GRAPH_CONFIG,
+                                                          ),
                                                 html.H3('Subject data:'),
                                                 html.Div(id='subject-table-container'),
                                             ]
@@ -200,12 +207,6 @@ individual_information = html.Div(id='s_individual', className='container', chil
     ]),
     html.Div(id='i_inputs_left', className='middle_small_container ', children=[
         html.H3('Search settings:', className='inline'),
-        html.Button(
-            'Search',
-            id='search-individual',
-            className='inline',
-            style={'margin-left': '1%'}
-        ),
         html.Br(),
         html.P('Search for a name:', className='inline'),
         dcc.Input(
@@ -247,17 +248,19 @@ individual_information = html.Div(id='s_individual', className='container', chil
         dcc.Input(
             id='birthyear-min-input', className='inline',
             type='number',
-            min=data.year_df['year'].min(),
-            max=data.year_df['year'].max() - 1,
-            value=data.year_df['year'].min(),
+            min=data.individual_student_df['Birth year'].min(),
+            max=data.individual_student_df['Birth year'].max() - 1,
+            value=data.individual_student_df['Birth year'].min(),
+            debounce=True,
             style={'background-color': 'rgba(223,223,218,0.7)', 'color': 'black', 'margin': '1%'},
         ),
         dcc.Input(
             id='birthyear-max-input', className='inline',
             type='number',
-            min=data.year_df['year'].min() + 1,
-            max=data.year_df['year'].max(),
-            value=data.year_df['year'].max(),
+            min=data.individual_student_df['Birth year'].min() + 1,
+            max=data.individual_student_df['Birth year'].max(),
+            value=data.individual_student_df['Birth year'].max(),
+            debounce=True,
             style={'background-color': 'rgba(223,223,218,0.7)', 'color': 'black', 'margin': '1%'},
         ),
         html.Br(),
@@ -279,6 +282,16 @@ individual_information = html.Div(id='s_individual', className='container', chil
                    int(data.individual_student_df['Enrollment age'].max())],
             id='individual-age-slider'
         ),
+        html.Br(),
+        html.Br(),
+        html.Button(
+            'START SEARCH',
+            id='search-individual',
+            className='inline',
+            style={'font-weight': 'bold', 'margin-left': '20%', 'height': '75px', 'width': '200px'},
+        ),
+        html.Br(),
+        html.Br(),
     ]),
     html.Div(id='i_inputs_right', className='middle_small_container ', children=[
         html.Table([
@@ -328,7 +341,7 @@ individual_information = html.Div(id='s_individual', className='container', chil
         ])
     ]),
     html.Div(id='individual-information', className='middle_container', children=[
-        html.H3('Student search data:'),
+        html.H3(id='individual-search-results-header',),
         html.Div(id='individual-search-results', children=[
             html.Div(id='individual-search-results-number', className='inline', style={"font-weight": "bold"}),
             html.Div(id='individual-search-text', className='inline', style={'margin-left': '8px'})
