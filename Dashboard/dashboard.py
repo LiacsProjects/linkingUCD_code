@@ -1,7 +1,9 @@
 # ****************************************************************************************** LOCAL
 # added for local server
 # extra regel om environmental variable te bepalen
+#
 import Add_environment_variable
+#
 # ******************************************************************************************  end local
 # import modules
 import dash_bootstrap_components as dbc
@@ -14,11 +16,12 @@ import data
 from figures import professorfigures, studentfigures, rectorfigures, introfigures
 from pages import professorvisuals, rectorvisuals, studentvisuals
 
-# Parameters and constants
+# Global parameters and constants
 YEAR_STEP = 5
 MARK_SPACING = 10
 THESIS_COLUMN_NAME = 'Thesis'
 SUBJECT_AREA_COLUMN_NAME = 'Subject area'
+
 # ******************************************************************************************  LOCAL
 # Configurate dash application voor DASH
 app = Dash(__name__, suppress_callback_exceptions=True,
