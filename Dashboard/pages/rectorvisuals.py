@@ -13,6 +13,7 @@ SUBJECT_DROPDOWN = ['Rectors']
 DEFAULT_SUBJECT = 'Rectors'
 GRAPH_DROPDOWN = ['Bar graph', 'Line graph', 'Scatter graph']
 DEFAULT_GRAPH = 'Bar graph'
+GRAPH_CONFIG = {'modeBarButtonsToRemove': ['toImage'], 'displayModeBar': True,}
 
 # Data year calculaionss
 current_century = data.all_dates_df[(data.all_dates_df['century'] <= START_CENTURY)]
@@ -72,7 +73,9 @@ timeline = html.Div(id='r_timeline', className='container',
                         html.Div(id='r-year-century-container', className='right_container',
                                  children=[
                                      html.H4('Graph:'),
-                                     dcc.Graph(id='r-year-century-graph', )
+                                     dcc.Graph(id='r-year-century-graph',
+                                               config=GRAPH_CONFIG,
+                                               )
                                  ],
                                  ),
                         html.Div(id='r-timeline-information-container', className='left_container',
@@ -84,7 +87,9 @@ timeline = html.Div(id='r_timeline', className='container',
                         html.Div(id='r-century-graph-container', className='right_container',
                                  children=[
                                      html.H4('Sorted bar graph:'),
-                                     dcc.Graph(id='r-century-graph')
+                                     dcc.Graph(id='r-century-graph',
+                                               config=GRAPH_CONFIG,
+                                               )
                                  ],
                                  ),
                     ]),
@@ -117,7 +122,9 @@ subject_information = html.Div(id='r_subject_info', className='container',
                                    html.Div(id='r-subject-dropdown-container', className='right_container',
                                             children=[
                                                 html.H3('Graph:'),
-                                                dcc.Graph(id='r-subject-graph'),
+                                                dcc.Graph(id='r-subject-graph',
+                                                          config=GRAPH_CONFIG,
+                                                          ),
                                                 html.Div(id='r-subject-container',
                                                          children=[
                                                              html.H3('Subject data:'),
@@ -142,13 +149,6 @@ individual_information = html.Div(id='r_individual', className='container', chil
     ]),
     html.Div(id='r_inputs_left', className='middle_small_container ', children=[
         html.H3('Search settings:', className='inline'),
-        html.Button(
-            'Search',
-            id='r-search-individual',
-            className='inline',
-            style={'margin-left': '1%'}
-        ),
-        html.Br(),
         html.P('Search for a name:', className='inline'),
         dcc.Input(
             id='r-search-name',
@@ -192,9 +192,19 @@ individual_information = html.Div(id='r_individual', className='container', chil
             id='r-include-missing-dates',
             className='inline',
         ),
+        html.Br(),
+        html.Br(),
+        html.Button(
+            'START SEARCH',
+            id='r-search-individual',
+            className='inline',
+            style={'font-weight': 'bold', 'margin-left': '20%', 'height': '75px', 'width': '200px'},
+        ),
+        html.Br(),
+        html.Br(),
     ]),
     html.Div(id='r-individual-information', className='middle_container', children=[
-        html.H3('Rector search data:'),
+        html.H3(id='r-individual-search-results-header',),
         html.Div(id='r-individual-search-results', children=[
             html.Div(id='r-individual-search-results-number', className='inline', style={"font-weight": "bold"}),
             html.Div(id='r-individual-search-text', className='inline', style={'margin-left': '8px'})

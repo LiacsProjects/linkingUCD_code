@@ -91,7 +91,8 @@ def create_year_cent_figure(subject, century, year, age, mode):
         fig = px.bar()
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
-                          title="No data in this selection")
+                          title="No data in this selection",
+                          modebar_orientation='v',)
         return fig
     if filtered_df.iloc[0][subjectx] == filtered_df.iloc[0]['year']:
         barcolor = None
@@ -130,13 +131,15 @@ def create_year_cent_figure(subject, century, year, age, mode):
     if mode == 'Bar graph':
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
-                          title=title_cent)
+                          title=title_cent,
+                          modebar_orientation='v',)
     # fig.update_traces(marker_color='#001158')
     else:
         # fig.update_traces(mode='markers+lines')
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
-                          title=title_cent)
+                          title=title_cent,
+                          modebar_orientation='v',)
     # fig.update_xaxes(type='date')
     return fig
 
@@ -151,7 +154,8 @@ def create_cent_figure(subject, century):
         fig = px.bar()
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
-                          title="No data in this selection")
+                          title="No data in this selection",
+                          modebar_orientation='v',)
         return fig
     if subjectx == 'xyear' or subjectx == 'xage':
         filtered_df = filtered_df.sort_values(by=[subjectx, 'century'], ascending=True)
@@ -171,7 +175,7 @@ def create_cent_figure(subject, century):
     else:
         title_cent += (str(century[0]) + 'th' + '-' + str(century[1]) + 'th century')
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      title=title_cent)
+                      title=title_cent, modebar_orientation='v',)
     fig.update_xaxes(type='category')
     return fig
 
@@ -185,7 +189,7 @@ def create_subject_info_graph(subject):
     fig = px.bar(merged_df, x='century', y='count', color=subjectx, color_continuous_scale='blues',
                  hover_name=subjectx, labels={'century': 'Century', 'count': 'Number of enrollments'})
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      title=name + ' per century')
+                      title=name + ' per century', modebar_orientation='h',)
     fig.update_xaxes(type='category')
     return fig
 
@@ -201,7 +205,7 @@ def create_century_table(df, name):
                                        df.loc[df['century'] == cent].sort_values(by='count', ascending=False).iloc[0][
                                            0]]
         table_df.loc[len(table_df)] = ['Least enrollments',
-                                       df.loc[df['century'] == cent].sort_values(by='count', ascending=False).iloc[0][
+                                       df.loc[df['century'] == cent].sort_values(by='count', ascending=True).iloc[0][
                                            0]]
     return table_df
 
@@ -217,7 +221,7 @@ def create_country_map(min_year, max_year):
     fig = px.choropleth(filtered_df, locations='iso_alpha', color='count', hover_name='country',
                         color_continuous_scale='plasma', labels={'count': 'Number of enrollments'})
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      margin=dict(l=0, r=0, t=0, b=0))
+                      margin=dict(l=0, r=0, t=0, b=0), modebar_orientation='v',)
     fig.update_geos(
         visible=True, resolution=110,
         showcountries=True, countrycolor="black"
@@ -236,7 +240,7 @@ def create_country_line_map(min_year, max_year):
     filtered_df = filtered_df.sort_values(by=['count', 'country'], ascending=False)
     fig = px.scatter_geo(filtered_df, locations='iso_alpha', color='country', size='count')
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      margin=dict(l=0, r=0, t=0, b=0))
+                      margin=dict(l=0, r=0, t=0, b=0), modebar_orientation='v',)
     fig.update_geos(
         visible=True, resolution=110,
         showcountries=True, countrycolor="black"
@@ -268,21 +272,21 @@ def create_animated_country_map(min_year, max_year):
     fig = px.choropleth(merged_df, locations='iso_alpha', color='count', hover_name='country', animation_frame='year',
                         color_continuous_scale='plasma', labels={'count': 'Number of enrollments'})
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      margin=dict(l=0, r=0, t=0, b=0))
+                      margin=dict(l=0, r=0, t=0, b=0), modebar_orientation='v',)
     return fig, merged_df
 
 
 # Country mapbox heat map
 def create_mapbox_heat_map(min_year, max_year):
-    from urllib.request import urlopen
+    #from urllib.request import urlopen
     import json
-    with open('assets/countries.geojson') as response:
+    with open(os.environ['DASHBOARD_BASEPATH']+'assets/countries.geojson') as response:
         countries = json.load(response)
     merged_df = data.country_df[data.country_df['year'] <= max_year]
     merged_df = merged_df[merged_df['year'] >= min_year]
     max_value = merged_df['count'].max()
     fig = px.choropleth_mapbox(
-        merged_df,
+        data_frame=merged_df,
         geojson=countries,
         locations='iso_alpha',
         color='count',
@@ -301,6 +305,7 @@ def create_mapbox_heat_map(min_year, max_year):
         font_color='black',
         margin=dict(l=0, r=0, t=30, b=0),
         hoverlabel_align='right',
+        modebar_orientation='v',
     )
 
     return fig, merged_df
@@ -387,6 +392,7 @@ def create_mapbox_scatter_map(min_year, max_year):
         margin=dict(l=0, r=0, t=0, b=40),
         showlegend=False,
         hoverlabel_align='right',
+        modebar_orientation='v',
     )
     return fig, merged_df
 
@@ -407,7 +413,7 @@ def create_map(city, country, birthyear):
     fig = px.choropleth(countries, locations='iso_alpha', hover_name='country', color='iso_alpha',
                         color_continuous_scale='plasma', labels={'iso_alpha': 'Places'})
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      margin=dict(l=0, r=0, t=0, b=0))
+                      margin=dict(l=0, r=0, t=15, b=0), modebar_orientation='h',)
     fig.add_trace(go.Scattergeo(
         locationmode='ISO-3',
         lat=places['lat'],
