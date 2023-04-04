@@ -130,6 +130,8 @@ def render_content(tab):
         return professorvisuals.geographical_information
     elif tab == 'p_tab-4':
         return professorvisuals.individual_information
+    elif tab == 'p_tab-5':
+        return professorvisuals.pivot_table
     else:
         return 404
 
@@ -999,6 +1001,33 @@ def synchronise_dates(min_year, max_year):
         else:
             max_year += 1
     return min_year, max_year
+
+
+# Pivot table callback
+@app.callback(
+    # # Input('pivot-table-button', 'n_clicks'),
+    # # Input("pivot-values-dropdown", 'value'),
+    # # Input("pivot-columns-dropdown", 'value'),
+    # Output(component_id='pivot-table', component_property='children'),
+    # Input(component_id='pivot-table-button', component_property='n-clicks'),
+    # Input(component_id='pivot-values-dropdown', component_property='value'),
+    # Input(component_id='pivot-columns-dropdown', component_property='value')
+
+    Output('pivot-table', 'children'),
+    Input('pivot-table-button', 'n_clicks'),
+    [Input("pivot_values_dropdown", 'value')],
+    [Input("pivot_columns_dropdown", 'value')],
+    [Input("pivot_index_dropdown", 'value')],
+    Input("pivot_aggfunc_dropdown", 'value'),
+)
+def pivot_table(pivot_button, pivot_table_values, pivot_table_columns, pivot_table_index, pivot_table_aggfunc):
+    if ctx.triggered_id == 'pivot-table-button':
+        dash_pivot_table = professorfigures.create_pivot_table(pivot_table_values, pivot_table_columns, pivot_table_index, pivot_table_aggfunc)
+
+        return dash_pivot_table
+    else:
+        return None
+
 
 
 # ******************************************************************************************

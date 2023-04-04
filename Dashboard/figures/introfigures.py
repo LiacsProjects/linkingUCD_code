@@ -131,6 +131,8 @@ profs_content = html.Div(id='p_content', className='parent_content', children=[
                 selected_className='child_tab_selected'),
         dcc.Tab(label='Individual information', value='p_tab-4', className='child_tab',
                 selected_className='child_tab_selected'),
+        dcc.Tab(label='Pivot Table', value='p_tab-5', className='child_tab',
+                selected_className='child_tab_selected')
     ]),
 #    html.H2('Information'),
     html.P('This page shows the information about professors previously working at the university of Leiden.'

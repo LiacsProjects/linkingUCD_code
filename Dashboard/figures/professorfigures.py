@@ -474,3 +474,48 @@ def remove_nan(subject):
     unique_values = data.individual_profs_df[subject].unique()
     unique_values = unique_values[1:]
     return unique_values
+
+
+def convert_html_to_dash(html_code):
+    """Convert standard html to Dash components"""
+    from xml.etree import ElementTree
+    import dash_html_components as html
+
+    def parse_css(css):
+        """Convert a style in ccs format to dictionary accepted by Dash"""
+        return {k: v for style in css.strip(";").split(";") for k, v in [style.split(":")]}
+
+    def _convert(elem):
+        comp = getattr(html, elem.tag.capitalize())
+        children = [_convert(child) for child in elem]
+        if not children:
+            children = elem.text
+        attribs = elem.attrib.copy()
+        if "class" in attribs:
+            attribs["className"] = attribs.pop("class")
+        attribs = {k: (parse_css(v) if k == "style" else v) for k, v in attribs.items()}
+
+        return comp(children=children, **attribs)
+
+    et = ElementTree.fromstring(html_code)
+
+    return _convert(et)
+
+
+def create_pivot_table(values, columns, index, aggfunc):
+    aggfunc = aggfunc[0].lower()
+    df = data.individual_profs_df
+    pivot_table = pd.pivot_table(df, index=index,
+                                 columns=columns,
+                                 values=values,
+                                 aggfunc=aggfunc)
+    pivot_table_html = pivot_table.to_html()
+    pivot_table_html = pivot_table_html.replace("colspan", "colSpan")
+    pivot_table_html = pivot_table_html.replace('halign="left"', '')
+    pivot_table_html = pivot_table_html.replace('border="1"', '')
+    pivot_table_html = pivot_table_html.replace('valign="top"', '')
+    pivot_table_html = pivot_table_html.replace('rowspan', 'rowSpan')
+
+    dash_pivot_table = convert_html_to_dash(pivot_table_html)
+
+    return dash_pivot_table
