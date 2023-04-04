@@ -17,7 +17,6 @@ import data
 from figures import professorfigures, studentfigures, rectorfigures, introfigures
 from pages import professorvisuals, rectorvisuals, studentvisuals
 
-
 # Configurate dash application voor DASH
 if ON_SERVER:
     # SERVER
