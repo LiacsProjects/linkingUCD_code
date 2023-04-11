@@ -6,6 +6,7 @@ import os
 bp = 'C:/Users/micha/Documents/Leiden/Univercity/Database_Connected_Dashboard/Liam/excelfiles/'
 base_path = Path(os.environ['DASHBOARD_BASEPATH'])
 
+#######################################################################################################################
 # Professor data handling
 #######################################################################################################################
 all_dates_df = pd.read_excel(base_path / 'excelfiles/professors_all_dates.xlsx', engine='openpyxl')
@@ -48,7 +49,6 @@ individual_profs_df = pd.read_excel(base_path / 'excelfiles_L/professors_individ
 # individual_profs_df = pd.read_excel(bp + 'professors_individual.xlsx', engine='openpyxl')
 
 #######################################################################################################################
-
 # Student data handling
 #######################################################################################################################
 century_df = pd.read_excel(base_path / 'excelfiles/students_century.xlsx', engine='openpyxl')
@@ -72,9 +72,7 @@ individual_student_df = pd.read_excel(base_path / 'excelfiles/students_individua
 recmag_df = pd.read_excel(base_path / 'excelfiles/recmag.xlsx', engine='openpyxl')
 
 rector_term_start = recmag_df['Period_start']
-
 rector_term_end = recmag_df['Period_end']
-
 rector_century = recmag_df['century']
 
 rector_years = pd.DataFrame(recmag_df['Period_start'].unique())
@@ -82,14 +80,12 @@ rector_years = rector_years.rename(columns={0: 'year'})
 rector_years['century'] = rector_years['year'].astype(str).str[:2].astype(int) + 1
 
 rector_terms = recmag_df['Period_start'].value_counts()
-
 rector_names = recmag_df[['Name', 'Period_start', 'century']]
-
 rector_pictures = recmag_df['Picture_saved']
-
 rector_details = recmag_df['Term/Details']
 
 rector_per_year = recmag_df['Period_start'].value_counts().reset_index().sort_values(by=['index'], ascending=True)
 rector_per_year = rector_per_year.rename(columns={'index': 'year', 'Period_start': 'count'})
 rector_per_year['century'] = rector_per_year['year'].astype(str).str[:2].astype(int) + 1
+
 #######################################################################################################################

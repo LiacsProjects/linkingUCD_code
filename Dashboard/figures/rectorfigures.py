@@ -44,7 +44,8 @@ def create_year_cent_figure(subject, century, year, mode):
         fig = px.bar()
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
-                          title="No data in this selection")
+                          title="No data in this selection",
+                          modebar_orientation='v',)
         return fig
     if filtered_df.iloc[0][subjectx] == filtered_df.iloc[0]['year']:
         barcolor = None
@@ -79,13 +80,15 @@ def create_year_cent_figure(subject, century, year, mode):
     if mode == 'Bar graph':
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
-                          title=title_cent)
+                          title=title_cent,
+                          modebar_orientation='v',)
         # fig.update_traces(marker_color='#001158')
     else:
         # fig.update_traces(mode='markers+lines')
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
-                          title=title_cent)
+                          title=title_cent,
+                          modebar_orientation='v',)
     # fig.update_xaxes(type='date')
     return fig
 
@@ -100,7 +103,8 @@ def create_cent_figure(subject, century):
         fig = px.bar()
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
-                          title="No data in this selection")
+                          title="No data in this selection",
+                          modebar_orientation='v',)
         return fig
     filtered_df = filtered_df.sort_values(by=['count', 'century'], ascending=False)
 
@@ -118,7 +122,7 @@ def create_cent_figure(subject, century):
     else:
         title_cent += (str(century[0]) + 'th' + '-' + str(century[1]) + 'th century')
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      title=title_cent)
+                      title=title_cent, modebar_orientation='v',)
     fig.update_xaxes(type='category')
     return fig
 
@@ -132,7 +136,7 @@ def create_subject_info_graph(subject):
     fig = px.bar(merged_df, x='century', y='count', color=subjectx, color_continuous_scale='blues',
                  hover_name=subjectx, labels={'century': 'Century', 'count': 'Number of rectors'})
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      title=name + ' per century')
+                      title=name + ' per century', modebar_orientation='h',)
     fig.update_xaxes(type='category')
     return fig
 
@@ -148,7 +152,7 @@ def create_century_table(df, name):
                                        df.loc[df['century'] == cent].sort_values(by='count', ascending=False).iloc[0][
                                            0]]
         table_df.loc[len(table_df)] = ['Least rectors',
-                                       df.loc[df['century'] == cent].sort_values(by='count', ascending=False).iloc[0][
+                                       df.loc[df['century'] == cent].sort_values(by='count', ascending=True).iloc[0][
                                            0]]
     return table_df
 
@@ -169,7 +173,7 @@ def create_map(city, country, birthyear):
     fig = px.choropleth(countries, locations='iso_alpha', hover_name='country', color='iso_alpha',
                         color_continuous_scale='plasma', labels={'iso_alpha': 'Places'})
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      margin=dict(l=0, r=0, t=0, b=0))
+                      margin=dict(l=0, r=0, t=15, b=0), modebar_orientation='h',)
     fig.add_trace(go.Scattergeo(
         locationmode='ISO-3',
         lat=places['lat'],
