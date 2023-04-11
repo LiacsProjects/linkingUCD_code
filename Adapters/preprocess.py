@@ -61,8 +61,8 @@ def hoogleraren():
     df['Sterfplaats'] = df['Sterfplaats'].str.replace(r"\([^()]*\)", "", regex=True).str.strip('? ')
 
     # Check age, if invalid (age > 113 years) remove date of death
-    df['geboortedatum'] = df['geboortedatum'].apply(exad.is_date)
-    df['Sterfdatum'] = df['Sterfdatum'].apply(exad.is_date)
+    df['geboortedatum'] = df['geboortedatum'].apply(exad.checkDate)
+    df['Sterfdatum'] = df['Sterfdatum'].apply(exad.checkDate)
     max_age = 401778
     for ind in df.index:
         if df.loc[ind, "geboortedatum"] is not np.nan and df.loc[ind, "Sterfdatum"] is not np.nan and df.loc[ind, "geboortedatum"] is not None and df.loc[ind, "Sterfdatum"] is not None:
@@ -83,8 +83,8 @@ def test():
     file_location = r"data/Hoogleraren all.xlsx"
     df = pd.read_excel(file_location, parse_dates=dateColumns, engine='openpyxl')
     # Check age if possible
-    # df['geboortedatum'] = df['geboortedatum'].apply(exad.is_date)
-    # df['Sterfdatum'] = df['Sterfdatum'].apply(exad.is_date)
+    # df['geboortedatum'] = df['geboortedatum'].apply(exad.checkDate)
+    # df['Sterfdatum'] = df['Sterfdatum'].apply(exad.checkDate)
     # max_age = 401778
     # for ind in df.index:
     #     if df.loc[ind, "geboortedatum"] is not np.nan and df.loc[ind, "Sterfdatum"] is not np.nan and df.loc[ind, "geboortedatum"] is not None and df.loc[ind, "Sterfdatum"] is not None:

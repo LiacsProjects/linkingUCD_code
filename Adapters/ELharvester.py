@@ -26,38 +26,39 @@ Totaal - 2.704.172 records
 
 # Returns base for file location
 def baseSelector(register_number):
-    match register_number:
-        case 0:
-            return 'data/Erfgoed Leiden/Borgbrieven_records'
-        case 1:
-            return 'data/Erfgoed Leiden/Bonboeken_records'
-        case 2:
-            return 'data/Erfgoed Leiden/Bevolkingsregister_records'
-        case 3:
-            return 'data/Erfgoed Leiden/BS Echtscheidingsakte_records'
-        case 4:
-            return 'data/Erfgoed Leiden/BS Geboorte_records'
-        case 5:
-            return 'data/Erfgoed Leiden/BS Huwelijk_records'
-        case 6:
-            return 'data/Erfgoed Leiden/BS Overlijden_records'
-        case 7:
-            return 'data/Erfgoed Leiden/DTB Begraven_records'
-        case 8:
-            return 'data/Erfgoed Leiden/DTB Dopen_records'
-        case 9:
-            return 'data/Erfgoed Leiden/DTB Trouwen_records'
-        case 10:
-            return 'data/Erfgoed Leiden/Militieregisters_records'
-        case 11:
-            return 'data/Erfgoed Leiden/NA_records'
-        case 12:
-            return 'data/Erfgoed Leiden/Poorterboeken_records'
-        case 13:
-            return 'data/Erfgoed Leiden/Oud Rechterlijke Akten_records'
-        case _:
-            print("No base selected")
-            return
+    return ""
+    # match register_number:
+    #     case 0:
+    #         return 'data/Erfgoed Leiden/Borgbrieven_records'
+    #     case 1:
+    #         return 'data/Erfgoed Leiden/Bonboeken_records'
+    #     case 2:
+    #         return 'data/Erfgoed Leiden/Bevolkingsregister_records'
+    #     case 3:
+    #         return 'data/Erfgoed Leiden/BS Echtscheidingsakte_records'
+    #     case 4:
+    #         return 'data/Erfgoed Leiden/BS Geboorte_records'
+    #     case 5:
+    #         return 'data/Erfgoed Leiden/BS Huwelijk_records'
+    #     case 6:
+    #         return 'data/Erfgoed Leiden/BS Overlijden_records'
+    #     case 7:
+    #         return 'data/Erfgoed Leiden/DTB Begraven_records'
+    #     case 8:
+    #         return 'data/Erfgoed Leiden/DTB Dopen_records'
+    #     case 9:
+    #         return 'data/Erfgoed Leiden/DTB Trouwen_records'
+    #     case 10:
+    #         return 'data/Erfgoed Leiden/Militieregisters_records'
+    #     case 11:
+    #         return 'data/Erfgoed Leiden/NA_records'
+    #     case 12:
+    #         return 'data/Erfgoed Leiden/Poorterboeken_records'
+    #     case 13:
+    #         return 'data/Erfgoed Leiden/Oud Rechterlijke Akten_records'
+    #     case _:
+    #         print("No base selected")
+    #         return
 
 
 # TODO: add "from" statement to retrieve only newly added/updated records
