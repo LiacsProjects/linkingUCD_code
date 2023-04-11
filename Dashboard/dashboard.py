@@ -1014,19 +1014,21 @@ def synchronise_dates(min_year, max_year):
     # Input(component_id='pivot-columns-dropdown', component_property='value')
 
     Output('pivot-table', 'children'),
+    Output('pivot-chart', 'children'),
+
     Input('pivot-table-button', 'n_clicks'),
     [Input("pivot_values_dropdown", 'value')],
     [Input("pivot_columns_dropdown", 'value')],
     [Input("pivot_index_dropdown", 'value')],
     Input("pivot_aggfunc_dropdown", 'value'),
+    Input('pivot_graph_type_dropdown', 'value')
 )
-def pivot_table(pivot_button, pivot_table_values, pivot_table_columns, pivot_table_index, pivot_table_aggfunc):
+def pivot_table(pivot_button, pivot_table_values, pivot_table_columns, pivot_table_index, pivot_table_aggfunc, pivot_graph_type):
     if ctx.triggered_id == 'pivot-table-button':
-        dash_pivot_table = professorfigures.create_pivot_table(pivot_table_values, pivot_table_columns, pivot_table_index, pivot_table_aggfunc)
-
-        return dash_pivot_table
+        dash_pivot_table, dash_pivot_chart = professorfigures.create_pivot_table(pivot_table_values, pivot_table_columns, pivot_table_index, pivot_table_aggfunc, pivot_graph_type)
+        return dash_pivot_table, dash_pivot_chart
     else:
-        return None
+        return None, None
 
 
 

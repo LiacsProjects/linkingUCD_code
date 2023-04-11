@@ -1,4 +1,5 @@
 # Creating dataframe
+from dash import dcc, html, dash_table
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
@@ -502,9 +503,11 @@ def convert_html_to_dash(html_code):
     return _convert(et)
 
 
-def create_pivot_table(values, columns, index, aggfunc):
+def create_pivot_table(values, columns, index, aggfunc, graph_type):
     aggfunc = aggfunc[0].lower()
+
     df = data.individual_profs_df
+
     pivot_table = pd.pivot_table(df, index=index,
                                  columns=columns,
                                  values=values,
@@ -515,7 +518,37 @@ def create_pivot_table(values, columns, index, aggfunc):
     pivot_table_html = pivot_table_html.replace('border="1"', '')
     pivot_table_html = pivot_table_html.replace('valign="top"', '')
     pivot_table_html = pivot_table_html.replace('rowspan', 'rowSpan')
+    pivot_table_html = pivot_table_html.replace('NaN', '')
+    print(pivot_table_html)
 
+    pd.options.plotting.backend = "plotly"
     dash_pivot_table = convert_html_to_dash(pivot_table_html)
+    try:
+        pivot_chart = pivot_table.plot(kind=graph_type)
+        dash_pivot_chart = dcc.Graph(figure=pivot_chart)
+    except TypeError:
+        dash_pivot_chart = None
+    # print(type(dash_pivot_table))
 
-    return dash_pivot_table
+
+    # dash_pivot_table = dash_table.DataTable(
+    #         id='datatable-interactivity',
+    #         columns=[
+    #             {"name": i, "id": i, "deletable": True, "selectable": True} for i in pivot_table.columns
+    #         ],
+    #         data=pivot_table.reset_index().to_dict('records'),
+    #         editable=True,
+    #         filter_action="native",
+    #         sort_action="native",
+    #         sort_mode="multi",
+    #         column_selectable="single",
+    #         row_selectable="multi",
+    #         row_deletable=True,
+    #         selected_columns=[],
+    #         selected_rows=[],
+    #         page_action="native",
+    #         page_current=0,
+    #         page_size=10,
+    #     )
+
+    return dash_pivot_table, dash_pivot_chart

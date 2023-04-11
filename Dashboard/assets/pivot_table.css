@@ -1,0 +1,10 @@
+table, th, td {
+  border: 1px solid black;
+}
+
+
+th {
+  position: relative;
+  top: 0px;
+  left: 0px;
+}

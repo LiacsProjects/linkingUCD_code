@@ -375,7 +375,7 @@ pivot_table = html.Div(id="p_pivot_table_select", className="container", childre
                      placeholder='Choose values', clearable=False, multi=True, optionHeight=50,
                      id='pivot_columns_dropdown', className='dropdown',
                      style={"width": "400px"}),
-        html.P("Filters:"),
+        # html.P("Filters:"),
         html.P("AggFunc:"),
         dcc.Dropdown(['Count', 'Sum', 'Mean'],
                      placeholder='Choose values', clearable=False, multi=True, optionHeight=50,
@@ -383,6 +383,12 @@ pivot_table = html.Div(id="p_pivot_table_select", className="container", childre
                      style={"width": "400px"}),
         html.Br(),
         html.Br(),
+        # html.H1("Chart options:"),
+        html.P("Chart type"),
+        dcc.Dropdown(['bar', 'line', 'barh', 'hist', 'box', 'area', 'scatter'],
+                     placeholder='Choose values', clearable=False, multi=False, optionHeight=50,
+                     id='pivot_graph_type_dropdown', className='dropdown',
+                     style={"width": "400px"}),
         html.Button(
             'CREATE PIVOT TABLE',
             id='pivot-table-button',
@@ -391,5 +397,10 @@ pivot_table = html.Div(id="p_pivot_table_select", className="container", childre
         ),
     ]),
     html.Br(),
-    html.Div(id='pivot-table', children=[])
+    html.Div(id='pivot-table', children=[], style={
+        'overflow-x':'auto',
+        'overflow-y':'auto',
+        'max-height':'500px',
+    }),
+    html.Div(id='pivot-chart', children=[])
 ])
