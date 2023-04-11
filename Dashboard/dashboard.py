@@ -14,6 +14,9 @@ import data
 from figures import professorfigures, studentfigures, rectorfigures, introfigures
 from pages import professorvisuals, rectorvisuals, studentvisuals
 
+# Import database class
+from Adapters import database
+
 # Parameters and constants
 YEAR_STEP = 5
 MARK_SPACING = 10
@@ -140,6 +143,8 @@ def render_content(tab):
 )
 def render_content(tab):
     if tab == 'r_tab-1':
+        conn = database.Connection()
+        del conn
         return rectorvisuals.timeline
     if tab == 'r_tab-2':
         return rectorvisuals.subject_information
