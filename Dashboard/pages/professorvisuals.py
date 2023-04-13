@@ -23,6 +23,7 @@ GRAPH_CONFIG = {'modeBarButtonsToRemove': ['toImage'], 'displayModeBar': True,}
 
 # Data year calculations
 current_century = data.all_dates_df[(data.all_dates_df['century'] <= START_CENTURY)]
+
 years = []
 for y in current_century['year'][0::YEAR_STEP]:
     years.append(y)
@@ -42,7 +43,7 @@ timeline = html.Div(id='p_timeline', className='container',
                                                   id='p-year-century-subject-dropdown', className='dropdown'
                                                   ),
                                      html.P('Select century range:'),
-                                     dcc.RangeSlider(
+                                     dcc.RangeSlider( 
                                          data.all_dates_df['century'].min(),
                                          data.all_dates_df['century'].max(),
                                          CENTURY_STEP,

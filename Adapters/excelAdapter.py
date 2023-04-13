@@ -357,8 +357,8 @@ def playground():
 # main
 if __name__ == "__main__":
     # start = time.time()
-    playground()
-    # hoogleraren()  # Check number of incorrect dates
-    # studenten()
+    # playground()
+    hoogleraren()  # Check number of incorrect dates
+    studenten()
 
     # print(f"Program finished successfully in {round(time.time() - start, 2)} seconds")
