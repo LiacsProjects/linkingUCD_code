@@ -3,6 +3,8 @@
 from dash import dcc, html
 import data
 from figures import professorfigures
+import dash_bootstrap_components as dbc
+
 
 # Parameters and constants
 CENTURY_STEP = 1
@@ -37,7 +39,18 @@ timeline = html.Div(id='p_timeline', className='container',
                         html.Div(id='p_inputs', className='left_container',
                                  children=[
                                      html.H3('Graph settings:'),
-                                     html.P('Select Subject:'),
+                                     html.P(['Select ',
+                                             html.Span(
+                                                 "Subject",
+                                                 id="subject-tooltip",
+                                                 style={"textDecoration": "underline", "cursor": "pointer"}
+                                             ),
+                                             ": "]),
+                                     dbc.Tooltip(
+                                         "The default graph shows the number of new appointments per year.\n\n"
+                                         "The subject chosen in this dropdown is added as a third variable, showing more information on that subject.",
+                                         target="subject-tooltip",
+                                     ),
                                      dcc.Dropdown(SUBJECT_DROPDOWN, DEFAULT_SUBJECT,
                                                   placeholder='Choose a subject:', clearable=False,
                                                   id='p-year-century-subject-dropdown', className='dropdown'
