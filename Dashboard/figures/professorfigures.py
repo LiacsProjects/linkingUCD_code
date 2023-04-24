@@ -147,7 +147,7 @@ def create_year_cent_figure(subject, century, year, mode):
     #         title_cent = 'Number of appointments per ' + name + ' in the '
     #     else:
     #         title_cent = 'Number of appointments per ' + name + ' per year in the '
-    title_cent = "Number of appointments per year in the "
+    title_cent = "Number of new appointments per year in the "
     if century[0] == century[1]:
         title_cent += (str(century[0]) + 'th century ')
     else:
@@ -192,7 +192,7 @@ def create_cent_figure(subject, century):
     #     title_cent = 'Number of appointments per ' + name + ' in the '
     # else:
     #     title_cent = 'Number of appointments per ' + name + ' in the '
-    title_cent = "Number of appointments per year in the "
+    title_cent = "Number of new appointments per year in the "
     if century[0] == century[1]:
         title_cent += (str(century[0]) + 'th century')
     else:
