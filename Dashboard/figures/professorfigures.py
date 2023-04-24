@@ -140,13 +140,14 @@ def create_year_cent_figure(subject, century, year, mode):
     else:
         fig = px.bar()
 
-    if subjectx == 'year':
-        title_cent = name + ' per year in the '
-    else:
-        if name == 'Appointment year':
-            title_cent = 'Number of appointments per ' + name + ' in the '
-        else:
-            title_cent = 'Number of appointments per ' + name + ' per year in the '
+    # if subjectx == 'year':
+    #     title_cent = name + ' per year in the '
+    # else:
+    #     if name == 'Appointment year':
+    #         title_cent = 'Number of appointments per ' + name + ' in the '
+    #     else:
+    #         title_cent = 'Number of appointments per ' + name + ' per year in the '
+    title_cent = "Number of appointments per year in the "
     if century[0] == century[1]:
         title_cent += (str(century[0]) + 'th century ')
     else:
@@ -185,12 +186,13 @@ def create_cent_figure(subject, century):
     fig = px.bar(filtered_df, x=subjectx, hover_name=subjectx,
                  y='count', hover_data=['century'],
                  labels={subjectx: name, 'count': 'Number of appointments', 'year': 'Year', 'century': 'Century'})
-    if subjectx == 'year':
-        title_cent = name + ' in the '
-    elif subjectx == 'appointment':
-        title_cent = 'Number of appointments per ' + name + ' in the '
-    else:
-        title_cent = 'Number of appointments per ' + name + ' in the '
+    # if subjectx == 'year':
+    #     title_cent = name + ' in the '
+    # elif subjectx == 'appointment':
+    #     title_cent = 'Number of appointments per ' + name + ' in the '
+    # else:
+    #     title_cent = 'Number of appointments per ' + name + ' in the '
+    title_cent = "Number of appointments per year in the "
     if century[0] == century[1]:
         title_cent += (str(century[0]) + 'th century')
     else:
