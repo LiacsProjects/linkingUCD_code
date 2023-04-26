@@ -17,6 +17,7 @@ import data
 from figures import professorfigures, studentfigures, rectorfigures, introfigures
 from pages import professorvisuals, rectorvisuals, studentvisuals
 
+
 # Configurate dash application voor DASH
 if ON_SERVER:
     # SERVER
@@ -110,9 +111,9 @@ def pagehandler(btn, pagenr):
         pagenr = 0
     return [introfigures.home_content,
             introfigures.profs_content,
-            introfigures.students_content, introfigures.
-            rector_content, introfigures.
-            sources_content][pagenr]
+            introfigures.students_content,
+            introfigures.rector_content,
+            introfigures.sources_content][pagenr]
 
 
 # Professor tabs

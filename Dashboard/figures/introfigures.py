@@ -9,11 +9,11 @@ import data
 
 #base_path = Path(os.environ['DASHBOARD_BASEPATH'])
 #base_path_name = os.environ['DASHBOARD_BASEPATH']
-image_file = "/assets/professors_780x400.jpeg"
+image_file = "/assets/dies_cortege_445_2020-website.png"
 
 card_professor = dbc.Card([
     dbc.CardImg(
-        src="/assets/professors_780x400.jpeg",
+        src="/assets/dies_cortege_445_2020-website.png",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -22,6 +22,7 @@ card_professor = dbc.Card([
         dbc.CardBody([
             html.H3("Professors", className="card-title"),
             html.B("Visualizations of professors", className="card-text"),
+            html.P(""),
             dbc.Button("Go to visualizations", id="btn-professor", color="primary", class_name="card-btn", n_clicks=0),
         ]),
     )],
@@ -32,7 +33,7 @@ card_professor = dbc.Card([
 
 card_student = dbc.Card([
     dbc.CardImg(
-        src="/assets/Student_400x267.jpg",
+        src="/assets/Studenten_FSW_campus_pieter_de_la_court-website (1).png",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -41,6 +42,7 @@ card_student = dbc.Card([
         dbc.CardBody([
             html.H3("Students", className="card-title"),
             html.B("Visualizations of students", className="card-text"),
+            html.P(" "),
             dbc.Button("Go to visualizations", id="btn-student", color="primary", class_name="card-btn", n_clicks=0),
         ]),
     )],
@@ -60,6 +62,7 @@ card_rectores = dbc.Card([
         dbc.CardBody([
             html.H4("Rectores Magnifici", className="card-title"),
             html.B("Visualizations of Rectores Magnifici", className="card-text"),
+            html.P(),
             dbc.Button("Go to visualizations", id="btn-rectores", color="primary", class_name="card-btn", n_clicks=0),
         ]),
     )],
@@ -79,6 +82,7 @@ card_colofon = dbc.Card([
         dbc.CardBody([
             html.H3("Colofon", className="card-title"),
             html.B("Sources, contact information and more", className="card-text"),
+            html.P(" "),
             dbc.Button("Go to colofon", id="btn-colofon", color="primary", class_name="card-btn", n_clicks=0),
             # dbc.Button("Go to visualizations", color="primary", class_name="butcol"),
         ]),
@@ -176,6 +180,7 @@ sources_content = html.Div(id='src_content', className='parent_content', childre
         html.P('This website is part of the project Linking City, University and Diversity'
                'This website is work in progress. The dataset is not yet complete, '
                'information on the website will be updated periodically.'),
+        html.P('Version 1.2, date: 26-4-2023'),
         html.H2('The project'),
         html.P('This website is part of, and presents the first results of the project '
                'Linking University and City in Leiden 1575-2020. '
@@ -205,6 +210,7 @@ sources_content = html.Div(id='src_content', className='parent_content', childre
             html.A("https://hoogleraren.universiteitleiden.nl/toelichting",
                     href="https://hoogleraren.universiteitleiden.nl/toelichting"),
                           ]),
+        html.Li('Dataset composed by Ronald Sluijter with data on other teaching staff.'),
         html.Li('Additional information on rectors magnifici is retrieved from Wikipedia'),
         html.H2('Student projects', style={"text-align":"left"}),
         html.Li('Liam van Dreumel, ‘Visualisation tools to support historical research on a linked dataset about Leiden University’ BA thesis Computer Science, Leiden University.'),
@@ -214,7 +220,7 @@ sources_content = html.Div(id='src_content', className='parent_content', childre
                           html.A("(BA thesis Computer Science, Leiden University).", href="https://theses.liacs.nl/pdf/2021-2022-KoningMde.pdf")]),
         html.H2('Credits', style={"text-align":"left"}),
         html.P('We like to thank Martine Zoeteman, Saskia van Bergen, Stelios Paraschiakos, Antonis Somorakis, Wout Lamers, '
-               'Leida van Hees and Carel Stolker for their contributions to this project. '),
+               'Leida van Hees, Ronald Sluijter and Carel Stolker for their contributions to this project. '),
         html.H2('Contact', style={"text-align":"left"}),
         html.P('Ariadne Schmidt,  Wessel Kraaij'),
     ]),

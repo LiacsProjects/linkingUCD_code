@@ -4,17 +4,16 @@
   
 # importing os module 
 import os
-  
-# Ben van Yperen
-# os.environ['DASHBOARD_BASEPATH'] = 'c:/users/Benva/Jupyter/Dash applications/Linking UCD - dashboard/'
+import sys
+import platform
 
-# Micheal de Koning
-# os.environ['DASHBOARD_BASEPATH'] = 'C:/Users/micha/Documents/Leiden/Univercity/linkingUCD_code/Dashboard/'
+if os.name == "nt":
+    # Add a new environment variable
+    os.environ['DASHBOARD_BASEPATH'] = 'c:/users/Benva/PycharmProjects/linkingUCD_code/Dashboard/'
+    #os.environ['DASHBOARD_BASEPATH'] = 'C:/Users/micha/Documents/Leiden/Univercity/linkingUCD_code/Dashboard/'
 
-# Richard van Dijk
-os.environ['DASHBOARD_BASEPATH'] = 'C:/LiacsProjects/LUCD/linkingUCD_code/Dashboard/'
-
-print("DASHBOARD_BASEPATH = ", os.environ['DASHBOARD_BASEPATH'])
-
-base_path = os.environ['DASHBOARD_BASEPATH']
-print(base_path + 'excelfiles/professors_all_dates.xlsx')
+# Get the value of
+# Added environment variable
+print("Operating System:", platform.platform())
+print("Python version:", sys.version)
+print("DASHBOARD_BASEPATH:", os.environ['DASHBOARD_BASEPATH'])
