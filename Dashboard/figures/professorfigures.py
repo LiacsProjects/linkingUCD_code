@@ -7,6 +7,8 @@ import numpy as np
 import data
 import configparser
 import os
+from plotly.subplots import make_subplots
+
 
 config = configparser.ConfigParser()
 config.read(os.environ['DASHBOARD_BASEPATH'] + 'assets/config.ini')
@@ -519,14 +521,57 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type):
     pivot_table_html = pivot_table_html.replace('valign="top"', '')
     pivot_table_html = pivot_table_html.replace('rowspan', 'rowSpan')
     pivot_table_html = pivot_table_html.replace('NaN', '')
-    print(pivot_table_html)
+
+    print(pivot_table)
 
     pd.options.plotting.backend = "plotly"
     dash_pivot_table = convert_html_to_dash(pivot_table_html)
+    charts = []
+
     try:
-        pivot_chart = pivot_table.plot(kind=graph_type)
-        dash_pivot_chart = dcc.Graph(figure=pivot_chart)
-    except TypeError:
+        for value in values:
+            # for column_value in column_values:
+            #     pivot_chart = pivot_table[value][column_value].plot(kind=graph_type)
+            #     dash_pivot_chart = dcc.Graph(figure=pivot_chart)
+            #     charts.append(dash_pivot_chart)
+            # pivot_chart = pivot_table[value].plot(kind=graph_type)
+            if not columns or not index:
+                pivot_chart = pivot_table.plot(kind=graph_type)
+            elif len(columns) == 2:
+                column = columns[0]
+                column_values = df[column].unique()
+                column_values = [x for x in column_values if str(x) != 'nan']
+                pivot_chart = make_subplots()
+                for column_value in column_values:
+                    try:
+                        for column in pivot_table[value][column_value].columns:
+                            if graph_type == 'bar':
+                                subplot = go.Bar(x=pivot_table[value][column_value].index, y=pivot_table[value][column_value][column].to_list(), name=column_value+' - '+column)
+                            elif graph_type == 'line':
+                                subplot = go.Line(x=pivot_table[value][column_value].index, y=pivot_table[value][column_value][column].to_list(), name=column_value+' - '+column)
+                            elif graph_type == 'barh':
+                                # TODO barh
+                                subplot = go.Bar(x=pivot_table[value][column_value].index, y=pivot_table[value][column_value][column].to_list(), name=column_value+' - '+column)
+                            elif graph_type == 'hist':
+                                subplot = go.Histogram(x=pivot_table[value][column_value].index, y=pivot_table[value][column_value][column].to_list(), name=column_value+' - '+column)
+                            elif graph_type == 'box':
+                                subplot = go.Box(x=pivot_table[value][column_value].index, y=pivot_table[value][column_value][column].to_list(), name=column_value+' - '+column)
+                            elif graph_type == 'area':
+                                # TODO area
+                                subplot = go.Bar(x=pivot_table[value][column_value].index, y=pivot_table[value][column_value][column].to_list(), name=column_value+' - '+column)
+                            elif graph_type == 'scatter':
+                                subplot = go.Scatter(x=pivot_table[value][column_value].index, y=pivot_table[value][column_value][column].to_list(), name=column_value+' - '+column, mode='markers')
+
+                            pivot_chart.add_trace(subplot)
+                    except KeyError as e:
+                        print(e)
+                pivot_chart.update_layout(barmode='stack')
+            else:
+                pivot_chart = pivot_table[value].plot(kind=graph_type)
+            dash_pivot_chart = dcc.Graph(figure=pivot_chart)
+            charts.append(dash_pivot_chart)
+    except TypeError as e:
+        print(e)
         dash_pivot_chart = None
     # print(type(dash_pivot_table))
 
@@ -551,4 +596,4 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type):
     #         page_size=10,
     #     )
 
-    return dash_pivot_table, dash_pivot_chart
+    return dash_pivot_table, charts
