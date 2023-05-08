@@ -26,7 +26,7 @@ years.append(current_century['year'].max())
 timeline = html.Div(id='r_timeline', className='container',
                     children=[
                         html.Div(id='r_timeline_header', className='page_header',
-                                 children=[html.H1('Timeline')]
+                                 children=[html.H1('Rectores Magnifici')]
                                  ),
                         html.Div(id='r_inputs', className='left_container ',
                                  children=[
@@ -97,7 +97,7 @@ timeline = html.Div(id='r_timeline', className='container',
 subject_information = html.Div(id='r_subject_info', className='container',
                                children=[
                                    html.Div(id='r_subject_header', className='page_header',
-                                            children=[html.H1('Subject information')]),
+                                            children=[html.H1('Rectores Magnifici')]),
                                    html.Div(id='r-subject-information-container', className='left_container',
                                             children=[
                                                 html.H3('Graph settings:'),
@@ -136,7 +136,7 @@ subject_information = html.Div(id='r_subject_info', className='container',
 
 geographical_information = html.Div(id='r_geo', className='container', children=[
     html.Div(id='r_geo_header', className='page_header', children=[
-        html.H1('Geographical information')
+        html.H1('Rectores Magnifici')
     ]),
     html.Div(id='geo-map-container', className='left_container', children=[
         html.P('As of yet, there is no geographical information of the rectors.')
@@ -145,7 +145,7 @@ geographical_information = html.Div(id='r_geo', className='container', children=
 
 individual_information = html.Div(id='r_individual', className='container', children=[
     html.Div(id='r_student_header', className='page_header', children=[
-        html.H1('Rector information')
+        html.H1('Rectores Magnifici')
     ]),
     html.Div(id='r_inputs_left', className='middle_small_container ', children=[
         html.H3('Search settings:', className='inline'),
