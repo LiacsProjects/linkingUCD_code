@@ -32,7 +32,7 @@ years.append(current_century['year'].max())
 timeline = html.Div(id='p_timeline', className='container',
                     children=[
                         html.Div(id='p_timeline_header', className='page_header',
-                                 children=[html.H1('Timeline')]),
+                                 children=[html.H1('Professors')]),
                         html.Div(id='p_inputs', className='left_container',
                                  children=[
                                      html.H3('Graph settings:'),
@@ -93,7 +93,7 @@ timeline = html.Div(id='p_timeline', className='container',
 subject_information = html.Div(id='p_subject_info', className='container',
                                children=[
                                    html.Div(id='p_subject_header', className='page_header',
-                                            children=[html.H1('Subject information')]),
+                                            children=[html.H1('Professors')]),
                                    html.Div(id='p-subject-information-container', className='left_container',
                                             children=[
                                                 html.H3('Graph settings:'),
@@ -131,7 +131,7 @@ subject_information = html.Div(id='p_subject_info', className='container',
 geographical_information = html.Div(id='g_geo', className='container',
                                     children=[
                                         html.Div(id='g_geo_header', className='page_header',
-                                                 children=[html.H1('Geographical information')]
+                                                 children=[html.H1('Professors')]
                                                  ),
                                         html.Div(id='p-geo-map-container', className='right_container',
                                                  children=[
@@ -188,7 +188,7 @@ geographical_information = html.Div(id='g_geo', className='container',
 
 individual_information = html.Div(id='p_individual', className='container', children=[
     html.Div(id='p_Professor_header', className='page_header', children=[
-        html.H1('Professor information')
+        html.H1('Professors')
     ]),
     html.Div(id='p_i_inputs_left', className='middle_small_container ', children=[
         html.H3('Search settings:', className='inline'),

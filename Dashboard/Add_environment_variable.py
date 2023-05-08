@@ -9,8 +9,14 @@ import platform
 
 if os.name == "nt":
     # Add a new environment variable
-    os.environ['DASHBOARD_BASEPATH'] = 'c:/users/Benva/PycharmProjects/linkingUCD_code/Dashboard/'
-    #os.environ['DASHBOARD_BASEPATH'] = 'C:/Users/micha/Documents/Leiden/Univercity/linkingUCD_code/Dashboard/'
+    # Ben van Yperen
+    # os.environ['DASHBOARD_BASEPATH'] = 'c:/users/Benva/Jupyter/Dash applications/Linking UCD - dashboard/'
+
+    # Micheal de Koning
+    # os.environ['DASHBOARD_BASEPATH'] = 'C:/Users/micha/Documents/Leiden/Univercity/linkingUCD_code/Dashboard/'
+
+    # Richard van Dijk
+    os.environ['DASHBOARD_BASEPATH'] = 'C:/LiacsProjects/LUCD/linkingUCD_code/Dashboard/'
 
 # Get the value of
 # Added environment variable
