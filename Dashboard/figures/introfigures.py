@@ -180,7 +180,7 @@ sources_content = html.Div(id='src_content', className='parent_content', childre
         html.P('This website is part of the project Linking City, University and Diversity'
                'This website is work in progress. The dataset is not yet complete, '
                'information on the website will be updated periodically.'),
-        html.P('Version 1.2, date: 26-4-2023'),
+        html.P('Version 1.4, date: 08-05-2023'),
         html.H2('The project'),
         html.P('This website is part of, and presents the first results of the project '
                'Linking University and City in Leiden 1575-2020. '
