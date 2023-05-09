@@ -1,6 +1,6 @@
 # ****************************************************************************************** START
 # Parameter for program on server or local
-ON_SERVER = False
+ON_SERVER = True
 if not ON_SERVER:
     # added for local server
     # extra regel om environmental variable te bepalen
@@ -22,12 +22,13 @@ from pages import professorvisuals, rectorvisuals, studentvisuals
 if ON_SERVER:
     # SERVER
     app = Dash(__name__,
-               suppress_callback_exceptions=True,
-               title="Leiden Univercity Dashboard",
-               routes_pathname_prefix='/',
-               external_stylesheets=[dbc.themes.BOOTSTRAP],
-               requests_pathname_prefix='/dashboard/'
-               )
+           suppress_callback_exceptions=True,
+           title="Leiden Univercity Dashboard",
+           routes_pathname_prefix='/',
+           external_stylesheets=[dbc.themes.BOOTSTRAP],
+           requests_pathname_prefix='/dashboard/'
+           )
+
 else:
     # LOCAL
     app = Dash(__name__,
@@ -59,7 +60,7 @@ JOB_COLUMN_NAME = 'Job'
 app.layout = dbc.Container(children=[
     html.Div(id='page_top', children=[
         # html.A(id="logoA", children=[html.Img(id="logo", src="/assets/Leiden_zegel.png")]),
-        html.Img(id="logo", src="/assets/Leiden_zegel.png", n_clicks=0),
+        html.Img(id="logo", src="/dashboard/assets/Leiden_zegel.png", n_clicks=0),
         html.H1('Leiden Univercity Project', id="page_title")]),
     # dcc.Tabs(id='tab_bar', className='header_tab_bar', children=[
     #     dcc.Tab(label='Home', className='child_tab', selected_className='child_tab_selected'),

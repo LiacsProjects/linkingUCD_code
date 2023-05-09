@@ -13,11 +13,11 @@ from dash import dcc, html
 
 #base_path = Path(os.environ['DASHBOARD_BASEPATH'])
 #base_path_name = os.environ['DASHBOARD_BASEPATH']
-image_file = "/assets/dies_cortege_445_2020-website.png"
+#image_file = "/assets/dies_cortege_445_2020-website.png"
 
 card_professor = dbc.Card([
     dbc.CardImg(
-        src="/assets/dies_cortege_445_2020-website.png",
+        src="/dashboard/assets/dies_cortege_445_2020-website.png",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -37,7 +37,7 @@ card_professor = dbc.Card([
 
 card_student = dbc.Card([
     dbc.CardImg(
-        src="/assets/Studenten_FSW_campus_pieter_de_la_court-website (1).png",
+        src="/dashboard/assets/Studenten_FSW_campus_pieter_de_la_court-website (1).png",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -57,7 +57,7 @@ card_student = dbc.Card([
 
 card_rectores = dbc.Card([
     dbc.CardImg(
-        src="/assets/alumni.jpeg",
+        src="/dashboard/assets/alumni.jpeg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -77,7 +77,7 @@ card_rectores = dbc.Card([
 
 card_colofon = dbc.Card([
     dbc.CardImg(
-        src="/assets/LEI001013879.jpg",
+        src="/dashboard/assets/LEI001013879.jpg",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg",
@@ -248,7 +248,7 @@ sources_content = html.Div(id='src_content', className='parent_content', childre
         html.H2('Acknowledgements', style={"text-align": "left"}),
         html.P('The following persons support, or supported the project: Martine Zoeteman, Ronald Sluijter, '
                'Saskia van Bergen, Stelios Paraschiakos, Antonis Somorakis, Wout Lamers, Pieter Slaman, '
-               'Leida van Hees, Ellen Gehrings, Cor de Graaf, Hendrik-Jan Hoogenboom, and Carel Stolker. '
+               'Leida van Hees, Ellen Gehrings, Cor de Graaf, Hendrik-Jan Hoogeboom, and Carel Stolker. '
                ),
         html.H2('Contact', style={"text-align":"left"}),
         html.P('Ariadne Schmidt,  Wessel Kraaij.'),
