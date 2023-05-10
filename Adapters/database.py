@@ -119,7 +119,7 @@ class Connection:
     # TODO: find "gaps" in available IDs (as a result of deletion) to reuse
     def getPersonMaxID(self):
         cursor = self.mydb.cursor()
-        cursor.execute("SELECT max(PersonID) FROM person")
+        cursor.execute("SELECT max(personPersonID) FROM person")
         result = cursor.fetchone()[0]
         cursor.close()
         return result
@@ -129,7 +129,7 @@ class Connection:
         :return: List containing PersonIDs of all professors
         """
         cursor = self.mydb.cursor()
-        cursor.execute("SELECT PersonID FROM person WHERE TypeOfPerson = 1")
+        cursor.execute("SELECT personPersonID FROM person WHERE TypeOfPerson = 1")
         result = cursor.fetchall()
         cursor.close()
         return result
@@ -143,10 +143,10 @@ class Connection:
         """
         cursor = self.mydb.cursor()
         result = []
-        queryPerson = """SELECT FirstName, Affix, LastName, Gender, Nationality FROM person WHERE PersonID = %s"""
+        queryPerson = """SELECT FirstName, Affix, LastName, Gender, Nationality FROM person WHERE personPersonID = %s"""
         cursor.execute(queryPerson % prof_id)
         result.append({"person": cursor.fetchall()})
-        queryLocation = """SELECT Country, City, Street, StartDate, TypeOfLocation FROM location WHERE PersonID_location = %s"""
+        queryLocation = """SELECT Country, City, Street, locationStartDate, TypeOfLocation FROM location WHERE locationPersonID = %s"""
         cursor.execute(queryLocation % prof_id)
         result.append({"locations": cursor.fetchall()})
         cursor.close()
@@ -169,6 +169,30 @@ class Connection:
         else:
             return False
 
+    def getAttributeNames(self, table: str) -> list:
+        if not self.checkTableName(table):
+            print("Incorrect table name when executing \"getAttributeNames\"")
+            return []
+        cursor = self.mydb.cursor()
+        cursor.execute("SHOW columns FROM " + table)
+        res = cursor.fetchall()
+        attributeNames = [i[0] for i in res]
+        cursor.close()
+        return attributeNames
+
+    def findTableName(self, attribute: str) -> str:
+        query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE COLUMN_NAME LIKE '%{}%' " \
+                "AND TABLE_SCHEMA='Univercity'".format(attribute)
+        cursor = self.mydb.cursor()
+        cursor.execute(query)
+        table_name = cursor.fetchone()
+        cursor.close()
+        if table_name is not None:
+            return table_name[0]
+        else:
+            print("Cannot find table corresponding to attribute:", attribute)
+            return ""
+
     # Converts textual type to TypeID
     def convertTypeToID(self, textual_types, table_name):
         """
@@ -190,6 +214,68 @@ class Connection:
                     IDs.append(int(typeID))
                     break
         return IDs
+
+    def QueryBuilderPublic(self, attributes: list, tables: list, main_col_name: str, person_type: str, where: list) -> pd.DataFrame:
+        year = "SUBSTRING({table}StartDate, 1, 4)".format(table=tables[0])
+        century = "SUBSTRING({table}StartDate, 1, 2) + 1".format(table=tables[0])
+        person_type = self.convertTypeToID([person_type], "type_of_person")[0]
+
+        if attributes[0] == 'StartDate':
+            attributes[0] = year
+        elif attributes[0] == 'EndDate':
+            year = year.replace('StartDate', 'EndDate')
+            century = century.replace('StartDate', 'EndDate')
+            attributes[0] = year
+
+        if not where:  # if "where" is empty convert to empty string
+            where = ""
+        else:  # if "where" is NOT empty convert to correct syntax
+            where = " AND " + " AND ".join(where)
+
+        # Add join to translate from type "number" to textual description
+        type_join = ""
+        if len(tables) == 2:
+            type_name = tables[1].split('_')[-1].capitalize()
+            type_id = self.getAttributeNames(tables[1])[0]
+            type_join = f" JOIN {tables[1]} ON {type_id} = TypeOf{type_name}"
+
+        query = "SELECT {attr} as '{attrName}', count({attr}) as 'count', {year} as 'year', {century} as 'century'" \
+                " FROM {table}" \
+                " JOIN person ON personPersonID = {table}PersonID AND TypeOfPerson = {person_type}{type_join}" \
+                " WHERE {table}StartDate IS NOT NULL AND {attr} IS NOT NULL{where}" \
+                " GROUP BY {year}, {attr}" \
+                " ORDER BY {year} ASC".format(attr=attributes[0], attrName=main_col_name, year=year, century=century,
+                                              table=tables[0], where=where, person_type=person_type, type_join=type_join)
+
+        if 'EndDate' in attributes[0]:
+            query = query.replace('StartDate', 'EndDate')
+        cursor = self.mydb.cursor()
+        cursor.execute(query)
+        attributes = [i[0] for i in cursor.description]
+        result_df = pd.DataFrame(cursor.fetchall(), columns=attributes)
+        result_df = result_df.astype({main_col_name: 'string', 'count': 'int64', 'year': 'int64', 'century': 'int64'})
+        cursor.close()
+        return result_df
+
+    def QueryBuilderPivotTable(self, index, values, columns, aggfunc):
+        attributes = index + values + columns
+        query = "SELECT " + ', '.join(attributes)
+        tables = []
+        # Get tables to which attributes belong
+        for attr in attributes:
+            table_name = self.findTableName(attr)
+            if table_name != "" and table_name not in tables:
+                tables.append(table_name)
+        query += " FROM " + tables[0]
+        # Add joins for each table
+        for table in tables[1:]:
+            query += " JOIN {table} ON {table}PersonID = {table2}PersonID".format(table=table, table2=tables[0])
+        print(query)
+        cursor = self.mydb.cursor()
+        cursor.execute(query)
+        result_df = pd.DataFrame(cursor.fetchall(), columns=attributes)
+        cursor.close()
+        return pd.pivot_table(result_df, index=index, columns=columns, values=values, aggfunc=aggfunc)
 
     def select(self, table_name, attributes, where_clause):
         """
@@ -215,7 +301,7 @@ class Connection:
             attributes = [i[0] for i in cursor.description]
 
         # .set_index Only works when ID is at the first position in [attributes]
-        result_df = pd.DataFrame(cursor.fetchall(), columns=attributes).set_index(attributes[0])
+        result_df = pd.DataFrame(cursor.fetchall(), columns=attributes).convert_dtypes().set_index(attributes[0])
         cursor.close()
         return result_df
 
@@ -249,14 +335,8 @@ class Connection:
 if __name__ == "__main__":
     conn = Connection()
     start = time.time()
-    # query = "SELECT p.PersonID, p.FirstName AS 'First name', p.LastName AS 'Last name', p.Gender, birth_loc.StartDate AS 'Birth date', birth_loc.City AS 'Birth place', birth_loc.Country AS 'Birth country', death_loc.StartDate AS 'Death date', death_loc.City AS 'Death place', death_loc.Country AS 'Death country' FROM person p LEFT OUTER JOIN location birth_loc ON birth_loc.PersonID_location = p.PersonID AND birth_loc.TypeOfLocation = 1 LEFT OUTER JOIN location death_loc ON death_loc.PersonID_location = p.PersonID AND death_loc.TypeOfLocation = 2 WHERE AVG='VRIJ' AND TypeOfPerson=1;"
-    query = "SELECT p.PersonID, p.FirstName AS 'First name', p.LastName AS 'Last name', p.Gender, birth_loc.StartDate AS 'Birth date', birth_loc.City AS 'Birth place', birth_loc.Country AS 'Birth country', death_loc.StartDate AS 'Death date', death_loc.City AS 'Death place', death_loc.Country AS 'Death country' FROM person p LEFT OUTER JOIN location birth_loc ON birth_loc.PersonID_location = p.PersonID AND birth_loc.TypeOfLocation = 1 LEFT OUTER JOIN location death_loc ON death_loc.PersonID_location = p.PersonID AND death_loc.TypeOfLocation = 2 WHERE AVG='VRIJ' AND TypeOfPerson=1"
-    cursor = conn.mydb.cursor()
-    cursor.execute(query)
-    attributes = [i[0] for i in cursor.description]
-    result_df = pd.DataFrame(cursor.fetchall(), columns=attributes).set_index(attributes[0])
-    cursor.close()
+    res = conn.QueryBuilderPublic(['Region'], ['location'], "region", "student", ["TypeOfLocation = 1"])
+    print(res)
     del conn
-    print(result_df.replace({np.nan: None}).head(45).to_string())
+    # print(result_df.replace({np.nan: None}).head(45).to_string())
     print(f"Program finished successfully in {time.time() - start} seconds")
-    print("database.py")

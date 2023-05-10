@@ -22,7 +22,7 @@ YEAR_STEP = 5
 MARK_SPACING = 10
 # ******************************************************************************************  LOCAL
 # Configurate dash application voor DASH
-app = Dash(__name__, suppress_callback_exceptions=True,
+app = Dash(__name__, suppress_callback_exceptions=False,
            routes_pathname_prefix='/',
            external_stylesheets=[dbc.themes.BOOTSTRAP],
            #  uitgeschakeld  #      requests_pathname_prefix='/dashboard/'
