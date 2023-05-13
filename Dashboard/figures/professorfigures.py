@@ -9,7 +9,6 @@ import configparser
 import os
 from plotly.subplots import make_subplots
 
-
 config = configparser.ConfigParser()
 config.read(os.environ['DASHBOARD_BASEPATH'] + 'assets/config.ini')
 mapbox_token = config['mapbox']['token']
@@ -113,7 +112,7 @@ def create_year_cent_figure(subject, century, year, mode):
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
                           title="No data in this selection",
-                          modebar_orientation='v',)
+                          modebar_orientation='v', )
         return fig
     if filtered_df.iloc[0][subjectx] == filtered_df.iloc[0]['year']:
         bar_color = None
@@ -158,7 +157,7 @@ def create_year_cent_figure(subject, century, year, mode):
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
                           title=title_cent,
-                          modebar_orientation='v',)
+                          modebar_orientation='v', )
     else:
         # fig.update_traces(mode='lines+markers')
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
@@ -167,6 +166,7 @@ def create_year_cent_figure(subject, century, year, mode):
                           modebar_orientation='v')
     # fig.update_xaxes(type='date')
     return fig
+
 
 # Century graph
 def create_cent_figure(subject, century):
@@ -179,7 +179,7 @@ def create_cent_figure(subject, century):
         fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black',
                           plot_bgcolor='rgba(223,223,218,0.7)',
                           title="No data in this selection",
-                          modebar_orientation='v',)
+                          modebar_orientation='v', )
         return fig
     if subjectx == 'year':
         filtered_df = filtered_df.sort_values(by=[subjectx, 'century'], ascending=True)
@@ -199,7 +199,7 @@ def create_cent_figure(subject, century):
     else:
         title_cent += (str(century[0]) + 'th' + '-' + str(century[1]) + 'th century')
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      title=title_cent,modebar_orientation='v',)
+                      title=title_cent, modebar_orientation='v', )
     fig.update_xaxes(type='category')
     return fig
 
@@ -211,9 +211,9 @@ def create_subject_info_graph(subject):
     if subjectx == 'year' or subjectx == 'age':
         merged_df = merged_df.sort_values(by=[subjectx, 'century'], ascending=True)
     fig = px.bar(merged_df, x='century', y='count', color=subjectx, color_continuous_scale='blues',
-                 hover_name=subjectx, labels={'century': 'Century', 'count': 'Number of appointments'},)
+                 hover_name=subjectx, labels={'century': 'Century', 'count': 'Number of appointments'}, )
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      title=name + ' per century', modebar_orientation='h',)
+                      title=name + ' per century', modebar_orientation='h', )
     fig.update_xaxes(type='category')
     return fig
 
@@ -246,7 +246,7 @@ def create_country_map(min_year, max_year):
                         color_continuous_scale='plasma', labels={'count': 'Number of appointments'},
                         )
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      margin=dict(l=0, r=0, t=0, b=0), modebar_orientation='v',)
+                      margin=dict(l=0, r=0, t=0, b=0), modebar_orientation='v', )
     fig.update_geos(
         visible=True, resolution=110,
         showcountries=True, countrycolor="black"
@@ -265,7 +265,7 @@ def create_country_line_map(min_year, max_year):
     filtered_df = filtered_df.sort_values(by=['count', 'country'], ascending=False)
     fig = px.scatter_geo(filtered_df, locations='iso_alpha', color='country', size='count')
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      margin=dict(l=0, r=0, t=0, b=0), modebar_orientation='v',)
+                      margin=dict(l=0, r=0, t=0, b=0), modebar_orientation='v', )
     fig.update_geos(
         visible=True, resolution=110,
         showcountries=True, countrycolor="black"
@@ -297,7 +297,7 @@ def create_animated_country_map(min_year, max_year):
     fig = px.choropleth(merged_df, locations='iso_alpha', color='count', hover_name='country', animation_frame='year',
                         color_continuous_scale='plasma', labels={'count': 'Number of appointments'})
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      margin=dict(l=0, r=0, t=0, b=0), modebar_orientation='v',)
+                      margin=dict(l=0, r=0, t=0, b=0), modebar_orientation='v', )
     return fig, merged_df
 
 
@@ -305,7 +305,7 @@ def create_animated_country_map(min_year, max_year):
 def create_mapbox_heat_map(min_year, max_year):
     # from urllib.request import urlopen
     import json
-    with open(os.environ['DASHBOARD_BASEPATH']+'assets/countries.geojson') as response:
+    with open(os.environ['DASHBOARD_BASEPATH'] + 'assets/countries.geojson') as response:
         countries = json.load(response)
     merged_df = data.birthcountry_df[data.birthcountry_df['year'] <= max_year]
     merged_df = merged_df[merged_df['year'] >= min_year]
@@ -350,9 +350,9 @@ def create_mapbox_scatter_map(min_year, max_year):
             'lon': merged_df.loc[merged_df['year'] == year, 'lon'],
             'marker': go.scattermapbox.Marker(
                 size=merged_df.loc[merged_df['year'] == year, 'count'] /
-                    merged_df.loc[merged_df['year'] == year, 'count'].max() * 100,
+                     merged_df.loc[merged_df['year'] == year, 'count'].max() * 100,
                 color=merged_df.loc[merged_df['year'] == year, 'count'] /
-                    merged_df.loc[merged_df['year'] == year, 'count'].max() * 100,
+                      merged_df.loc[merged_df['year'] == year, 'count'].max() * 100,
                 showscale=True,
                 colorbar={'title': 'Appointments', 'titleside': 'top', 'thickness': 20, 'ticksuffix': ' %'},
             ),
@@ -439,7 +439,7 @@ def create_map(city, country, birthyear):
     fig = px.choropleth(countries, locations='iso_alpha', hover_name='country', color='iso_alpha',
                         color_continuous_scale='plasma', labels={'iso_alpha': 'Places'})
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      margin=dict(l=0, r=0, t=15, b=0), modebar_orientation='h',)
+                      margin=dict(l=0, r=0, t=15, b=0), modebar_orientation='h', )
     fig.add_trace(go.Scattergeo(
         locationmode='ISO-3',
         lat=places['lat'],
@@ -510,10 +510,14 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type):
 
     df = data.individual_profs_df
 
+    # df_columns = columns + index + values
+    # print(df[df_columns])
+
     pivot_table = pd.pivot_table(df, index=index,
                                  columns=columns,
                                  values=values,
                                  aggfunc=aggfunc)
+
     pivot_table_html = pivot_table.to_html()
     pivot_table_html = pivot_table_html.replace("colspan", "colSpan")
     pivot_table_html = pivot_table_html.replace('halign="left"', '')
@@ -522,22 +526,89 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type):
     pivot_table_html = pivot_table_html.replace('rowspan', 'rowSpan')
     pivot_table_html = pivot_table_html.replace('NaN', '')
 
-    print(pivot_table)
-
     pd.options.plotting.backend = "plotly"
     dash_pivot_table = convert_html_to_dash(pivot_table_html)
     charts = []
 
     try:
         for value in values:
-            # for column_value in column_values:
-            #     pivot_chart = pivot_table[value][column_value].plot(kind=graph_type)
-            #     dash_pivot_chart = dcc.Graph(figure=pivot_chart)
-            #     charts.append(dash_pivot_chart)
-            # pivot_chart = pivot_table[value].plot(kind=graph_type)
-            if not columns or not index:
-                pivot_chart = pivot_table.plot(kind=graph_type)
-            elif len(columns) == 2:
+
+            # columns > 0 and index = 0
+            if columns and not index:
+                # columns = 2 and index = 0
+                if len(columns) > 1:
+
+                    column = columns[0]
+                    column_values = df[column].unique()
+                    column_values = [x for x in column_values if str(x) != 'nan']
+                    pivot_chart = make_subplots()
+                    for column_value in column_values:
+                        try:
+                            for column in pivot_table[column_value].columns:
+                                if graph_type == 'bar':
+                                    subplot = go.Bar(x=[pivot_table[column_value].index[0]],
+                                                     y=pivot_table[column_value][column].to_list(),
+                                                     hovertext=column_value + ' - ' + column,
+                                                     name=column_value + ' - ' + column)
+                                elif graph_type == 'line':
+                                    subplot = go.Line(x=[pivot_table[column_value].index[0]],
+                                                      y=pivot_table[column_value][column].to_list(),
+                                                      hovertext=column_value + ' - ' + column,
+                                                      name=column_value + ' - ' + column)
+                                elif graph_type == 'barh':
+                                    # TODO barh
+                                    subplot = go.Bar(x=[pivot_table[column_value].index[0]],
+                                                     y=pivot_table[column_value][column].to_list(),
+                                                     hovertext=column_value + ' - ' + column,
+                                                     name=column_value + ' - ' + column)
+                                elif graph_type == 'hist':
+                                    subplot = go.Histogram(x=[pivot_table[column_value].index[0]],
+                                                           y=pivot_table[column_value][column].to_list(),
+                                                           hovertext=column_value + ' - ' + column,
+                                                           name=column_value + ' - ' + column)
+                                elif graph_type == 'box':
+                                    subplot = go.Box(x=[pivot_table[column_value].index[0]],
+                                                     y=pivot_table[column_value][column].to_list(),
+                                                     hovertext=column_value + ' - ' + column,
+                                                     name=column_value + ' - ' + column)
+                                elif graph_type == 'area':
+                                    # TODO area
+                                    subplot = go.Bar(x=[pivot_table[column_value].index[0]],
+                                                     y=pivot_table[column_value][column].to_list(),
+                                                     hovertext=column_value + ' - ' + column,
+                                                     name=column_value + ' - ' + column)
+                                elif graph_type == 'scatter':
+                                    subplot = go.Scatter(x=[pivot_table[column_value].index[0]],
+                                                         y=pivot_table[column_value][column].to_list(),
+                                                         hovertext=column_value + ' - ' + column,
+                                                         name=column_value + ' - ' + column, mode='markers')
+                                pivot_chart.add_trace(subplot)
+                        except KeyError as e:
+                            print(e)
+                        pivot_chart.update_layout(barmode='stack')
+
+                # columns = 1 and index = 0
+                elif len(columns) == 1:
+                    pivot_chart = pivot_table.plot(kind=graph_type)
+
+            # columns = 0 and index > 0
+            elif not columns and index:
+                # columns = 0 and index = 2
+                if len(index) > 1 and len(columns) == 0:
+                    pivot_chart = make_subplots()
+                    x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                    pivot_chart.add_trace(go.Bar(x=x_list, y=pivot_table[value].values))
+
+                # columns = 0 and index = 1
+                elif len(index) == 1:
+                    pivot_chart = pivot_table[value].plot(kind=graph_type)
+
+            # columns = 1 and index = 1
+            elif len(index) == 1 and len(columns) == 1:
+                pivot_chart = pivot_table[value].plot(kind=graph_type)
+
+            # columns = 2 and index = 1
+            elif len(index) == 1 and len(columns) > 1:
                 column = columns[0]
                 column_values = df[column].unique()
                 column_values = [x for x in column_values if str(x) != 'nan']
@@ -546,35 +617,195 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type):
                     try:
                         for column in pivot_table[value][column_value].columns:
                             if graph_type == 'bar':
-                                subplot = go.Bar(x=pivot_table[value][column_value].index, y=pivot_table[value][column_value][column].to_list(), name=column_value+' - '+column)
+                                subplot = go.Bar(x=pivot_table[value][column_value].index,
+                                                 y=pivot_table[value][column_value][column].to_list(),
+                                                 hovertext=column_value + ' - ' + column,
+                                                 name=column_value + ' - ' + column)
+
                             elif graph_type == 'line':
-                                subplot = go.Line(x=pivot_table[value][column_value].index, y=pivot_table[value][column_value][column].to_list(), name=column_value+' - '+column)
+                                subplot = go.Line(x=pivot_table[value][column_value].index,
+                                                  y=pivot_table[value][column_value][column].to_list(),
+                                                  hovertext=column_value + ' - ' + column,
+                                                  name=column_value + ' - ' + column)
                             elif graph_type == 'barh':
                                 # TODO barh
-                                subplot = go.Bar(x=pivot_table[value][column_value].index, y=pivot_table[value][column_value][column].to_list(), name=column_value+' - '+column)
+                                subplot = go.Bar(x=pivot_table[value][column_value].index,
+                                                 y=pivot_table[value][column_value][column].to_list(),
+                                                 hovertext=column_value + ' - ' + column,
+                                                 name=column_value + ' - ' + column)
                             elif graph_type == 'hist':
-                                subplot = go.Histogram(x=pivot_table[value][column_value].index, y=pivot_table[value][column_value][column].to_list(), name=column_value+' - '+column)
+                                subplot = go.Histogram(x=pivot_table[value][column_value].index,
+                                                       y=pivot_table[value][column_value][column].to_list(),
+                                                       hovertext=column_value + ' - ' + column,
+                                                       name=column_value + ' - ' + column)
                             elif graph_type == 'box':
-                                subplot = go.Box(x=pivot_table[value][column_value].index, y=pivot_table[value][column_value][column].to_list(), name=column_value+' - '+column)
+                                subplot = go.Box(x=pivot_table[value][column_value].index,
+                                                 y=pivot_table[value][column_value][column].to_list(),
+                                                 hovertext=column_value + ' - ' + column,
+                                                 name=column_value + ' - ' + column)
                             elif graph_type == 'area':
                                 # TODO area
-                                subplot = go.Bar(x=pivot_table[value][column_value].index, y=pivot_table[value][column_value][column].to_list(), name=column_value+' - '+column)
+                                subplot = go.Bar(x=pivot_table[value][column_value].index,
+                                                 y=pivot_table[value][column_value][column].to_list(),
+                                                 hovertext=column_value + ' - ' + column,
+                                                 name=column_value + ' - ' + column)
                             elif graph_type == 'scatter':
-                                subplot = go.Scatter(x=pivot_table[value][column_value].index, y=pivot_table[value][column_value][column].to_list(), name=column_value+' - '+column, mode='markers')
-
+                                subplot = go.Scatter(x=pivot_table[value][column_value].index,
+                                                     y=pivot_table[value][column_value][column].to_list(),
+                                                     hovertext=column_value + ' - ' + column,
+                                                     name=column_value + ' - ' + column, mode='markers')
                             pivot_chart.add_trace(subplot)
                     except KeyError as e:
                         print(e)
                 pivot_chart.update_layout(barmode='stack')
-            else:
-                pivot_chart = pivot_table[value].plot(kind=graph_type)
+
+            # columns = 1 and index = 2
+            elif len(index) > 1 and len(columns) == 1:
+                column = columns[0]
+                column_values = df[column].unique()
+                column_values = [x for x in column_values if str(x) != 'nan']
+                pivot_chart = make_subplots()
+                for column in pivot_table[value].columns:
+                    if graph_type == 'bar':
+                        x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                        subplot = go.Bar(x=x_list, y=pivot_table[value][column].to_list(),
+                                         hovertext=column, name=column)
+                    elif graph_type == 'line':
+                        x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                        subplot = go.Line(x=x_list, y=pivot_table[value][column].to_list(),
+                                          hovertext=column, name=column)
+                    elif graph_type == 'barh':
+                        # TODO barh
+                        x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                        subplot = go.Line(x=x_list, y=pivot_table[value][column].to_list(),
+                                          hovertext=column, name=column)
+                    elif graph_type == 'hist':
+                        x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                        subplot = go.Histogram(x=x_list, y=pivot_table[value][column].to_list(),
+                                               hovertext=column, name=column)
+                    elif graph_type == 'box':
+                        x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                        subplot = go.Box(x=x_list, y=pivot_table[value][column].to_list(),
+                                         hovertext=column, name=column)
+                    elif graph_type == 'area':
+                        # TODO area
+                        x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                        subplot = go.Bar(x=x_list, y=pivot_table[value][column].to_list(),
+                                         hovertext=column, name=column)
+                    elif graph_type == 'scatter':
+                        x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                        subplot = go.Scatter(x=x_list, y=pivot_table[value][column].to_list(),
+                                             hovertext=column, name=column, mode='markers')
+
+                    pivot_chart.add_trace(subplot)
+                pivot_chart.update_layout(barmode='stack')
+
+            # columns = 2 and index = 2
+            elif len(index) > 1 and len(columns) > 1:
+                column = columns[0]
+                column_values = df[column].unique()
+                column_values = [x for x in column_values if str(x) != 'nan']
+                pivot_chart = make_subplots()
+                for column_value in column_values:
+                    try:
+                        for column in pivot_table[value][column_value].columns:
+                            if graph_type == 'bar':
+                                x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                                subplot = go.Bar(x=x_list, y=pivot_table[value][column_value][column].to_list(),
+                                                 hovertext=column_value + ' - ' + column,
+                                                 name=column_value + ' - ' + column)
+
+                            elif graph_type == 'line':
+                                x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                                subplot = go.Line(x=x_list, y=pivot_table[value][column_value][column].to_list(),
+                                                  hovertext=column_value + ' - ' + column,
+                                                  name=column_value + ' - ' + column)
+                            elif graph_type == 'barh':
+                                # TODO barh
+                                x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                                subplot = go.Bar(x=x_list, y=pivot_table[value][column_value][column].to_list(),
+                                                 hovertext=column_value + ' - ' + column,
+                                                 name=column_value + ' - ' + column)
+                            elif graph_type == 'hist':
+                                x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                                subplot = go.Histogram(x=x_list, y=pivot_table[value][column_value][column].to_list(),
+                                                       hovertext=column_value + ' - ' + column,
+                                                       name=column_value + ' - ' + column)
+                            elif graph_type == 'box':
+                                x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                                subplot = go.Box(x=x_list, y=pivot_table[value][column_value][column].to_list(),
+                                                 hovertext=column_value + ' - ' + column,
+                                                 name=column_value + ' - ' + column)
+                            elif graph_type == 'area':
+                                # TODO area
+                                x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                                subplot = go.Bar(x=x_list, y=pivot_table[value][column_value][column].to_list(),
+                                                 hovertext=column_value + ' - ' + column,
+                                                 name=column_value + ' - ' + column)
+                            elif graph_type == 'scatter':
+                                x_list = [str(i) for i in pivot_table[value].index.tolist()]
+                                subplot = go.Scatter(x=x_list, y=pivot_table[value][column_value][column].to_list(),
+                                                     hovertext=column_value + ' - ' + column,
+                                                     name=column_value + ' - ' + column, mode='markers')
+                            pivot_chart.add_trace(subplot)
+                    except KeyError as e:
+                        print(e)
+
+                pivot_chart.update_layout(barmode='stack')
+            # TODO customizable barmode
+            # TODO geographic data visualisation
+            # TODO filters
+            # TODO database implementation
+            # TODO make it so you cant select the same thing in index and column
+
+            pivot_chart.update_layout(width=1200, height=700, barmode='stack')
             dash_pivot_chart = dcc.Graph(figure=pivot_chart)
             charts.append(dash_pivot_chart)
+
+        if 'Birth place' in index and not columns:
+            cities_coords_df = pd.read_excel(
+                'C:/Users/boert/Documents/uni/thesis/code_for_github/linkingUCD_code/Dashboard/figures/cities_coordinates.xlsx',
+                engine='openpyxl')
+
+            counter = 0
+            cities_list = []
+            lons = []
+            lats = []
+            count = []
+
+            for row_index in pivot_table[value].index:
+                # print(row_index)
+                # print(pivot_table[value].iloc[counter])
+                cities_list.append(row_index)
+                count.append(pivot_table[value].iloc[counter])
+                lons.append(cities_coords_df[cities_coords_df['City'] == row_index]['Longitudes'].values[0])
+                lats.append(cities_coords_df[cities_coords_df['City'] == row_index]['Latitudes'].values[0])
+                counter += 1
+
+            geo_df = pd.DataFrame()
+            geo_df['City'] = cities_list
+            geo_df['Count'] = count
+            geo_df['Latitude'] = lats
+            geo_df['Longitude'] = lons
+            geo_fig = go.Figure(data=go.Scattergeo(
+                lon=geo_df['Longitude'],
+                lat=geo_df['Latitude'],
+                text=geo_df['City'],
+                marker=dict(
+                    size=geo_df['Count'] * 2,
+                    line_color='rgb(40,40,40)',
+                    line_width=0.5,
+                    sizemode='area',
+                ),
+            ))
+            geo_fig.update_layout(width=1200, height=700)
+            dash_geo_chart = dcc.Graph(figure=geo_fig)
+            charts.append(dash_geo_chart)
+
     except TypeError as e:
         print(e)
         dash_pivot_chart = None
     # print(type(dash_pivot_table))
-
 
     # dash_pivot_table = dash_table.DataTable(
     #         id='datatable-interactivity',
