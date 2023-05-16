@@ -146,9 +146,9 @@ def insertProfessors(df):
     maxID += 1
     # Handle: http://hdl.handle.net/1887.1/item:[nummer]
     person_df = df[["Voornamen", "Achternaam", "Achternaam", "Roepnaam", "Geslacht", "Geboorteland", "Handle", "NAVG"]]
-    person_df.insert(loc=0, column="PersonID", value=range(maxID, maxID + len(person_df)))
+    person_df.insert(loc=0, column="personPersonID", value=range(maxID, maxID + len(person_df)))
     person_df.insert(loc=1, column="TypeOfPerson", value=conn.convertTypeToID(["Professor"], "type_of_person")[0])
-    person_attributes = ["PersonID", "TypeOfPerson", "FirstName", "LastName", "FamilyName", "Nickname", "Gender",
+    person_attributes = ["personPersonID", "TypeOfPerson", "FirstName", "LastName", "FamilyName", "Nickname", "Gender",
                          "Nationality", "Handles", "AVG"]
     conn.insert("person", person_attributes, person_df.replace({np.nan: None}), True)
 
@@ -162,9 +162,9 @@ def insertProfessors(df):
     birth_loc_df.insert(loc=1, column="TypeOfLocation",
                         value=conn.convertTypeToID(["Geboorteplaats"], "type_of_location")[0])  # Place of birth ID
     birth_loc_df.insert(loc=5, column="EndDate", value=df["geboortedatum"])
-    birth_loc_df.insert(loc=6, column="PersonID", value=person_df["PersonID"])
+    birth_loc_df.insert(loc=6, column="locationPersonID", value=person_df["personPersonID"])
     location_attributes = ["LocationID", "TypeOfLocation", "Country", "City", "StartDate", "EndDate",
-                           "PersonID_location"]
+                           "locationPersonID"]
     conn.insert("location", location_attributes, birth_loc_df.replace({np.nan: None}), True)
     # conn.insertMany("location", birth_loc_df.replace({np.nan: None}))
 
@@ -177,7 +177,7 @@ def insertProfessors(df):
     death_loc_df.insert(loc=1, column="TypeOfLocation",
                         value=conn.convertTypeToID(["Sterfplaats"], "type_of_location")[0])  # Place of death ID
     death_loc_df.insert(loc=5, column="EndDate", value=df["geboortedatum"])
-    death_loc_df.insert(loc=6, column="PersonID", value=person_df["PersonID"])
+    death_loc_df.insert(loc=6, column="locationPersonID", value=person_df["personPersonID"])
     conn.insert("location", location_attributes, death_loc_df.replace({np.nan: None}), True)
     # conn.insertMany("location", death_loc_df.replace({np.nan: None}))
 
@@ -202,14 +202,14 @@ def insertProfessors(df):
                          value=conn.convertTypeToID(df['Vakgebied ' + period], 'type_of_expertise'))
         period_df.insert(loc=4, column="TypeOfFaculty",
                          value=conn.convertTypeToID(df['Faculteit ' + period], 'type_of_faculty'))
-        period_df.insert(loc=7, column="PersonID", value=person_df["PersonID"])
+        period_df.insert(loc=7, column="professionPersonID", value=person_df["personPersonID"])
 
         # Filter entries to exclude empty professions
         period_df = period_df[
             (period_df['Datum aanstelling ' + period].notna()) | (period_df['TypeOfExpertise'].notna()) | (
                 period_df['TypeOfPosition'].notna())]
         profession_attributes = ["ProfessionID", "TypeOfProfession", "TypeOfPosition", "TypeOfExpertise",
-                                 "TypeOfFaculty", "StartDate", "EndDate", "PersonID_profession"]
+                                 "TypeOfFaculty", "StartDate", "EndDate", "professionPersonID"]
         conn.insert("profession", profession_attributes, period_df.replace({np.nan: None}), True)
 
     # Commit and close database connection
@@ -253,11 +253,11 @@ def insertStudents(df):
     #  VN_standaard: remove all after ','
     person_df = df[
         ["VN standaard", "AN standaard", "AN standaard", "LAND", "RELIGIE INGESCHREVENE", "STATUS INGESCHREVENE"]]
-    person_df.insert(loc=0, column="PersonID", value=range(maxID, maxID + len(person_df)))
+    person_df.insert(loc=0, column="personPersonID", value=range(maxID, maxID + len(person_df)))
     person_df.insert(loc=1, column="TypeOfPerson", value=conn.convertTypeToID(["Student"], "type_of_person")[0])
     person_df.insert(loc=8, column="AVG", value="VRIJ")
-    person_attributes = ["PersonID", "TypeOfPerson", "FirstName", "LastName", "FamilyName", "Nationality", "Religion",
-                         "Status", "AVG"]
+    person_attributes = ["personPersonID", "TypeOfPerson", "FirstName", "LastName", "FamilyName", "Nationality",
+                         "Religion", "Status", "AVG"]
     conn.insert("person", person_attributes, person_df.replace({np.nan: None}), True)
     # conn.insertMany("person", person_df.replace({np.nan: None}))
 
@@ -269,15 +269,15 @@ def insertStudents(df):
                         value=conn.convertTypeToID(["Geboorteplaats"], "type_of_location")[0])
     birth_loc_df.insert(loc=5, column="Geboortedatum", value=df['GEB JAAR'])
     birth_loc_df.insert(loc=6, column="EndDate", value=birth_loc_df["Geboortedatum"])
-    birth_loc_df.insert(loc=7, column="PersonID", value=person_df["PersonID"])
+    birth_loc_df.insert(loc=7, column="locationPersonID", value=person_df["personPersonID"])
     location_attributes = ["LocationID", "TypeOfLocation", "Country", "City", "Region", "StartDate", "EndDate",
-                           "PersonID_location"]
+                           "locationPersonID"]
     conn.insert("location", location_attributes, birth_loc_df.replace({np.nan: None}), True)
 
     # Create and insert profession dataframe
     profession_attributes = ["ProfessionID", "TypeOfProfession", "TypeOfPosition", "TypeOfFaculty", "StartDate",
-                             "PersonID_profession"]
-    profession_df = pd.DataFrame(columns=["PersonID"], data=person_df["PersonID"])
+                             "professionPersonID"]
+    profession_df = pd.DataFrame(columns=["professionPersonID"], data=person_df["personPersonID"])
     profession_df.insert(loc=0, column="ProfessionID", value=None)
     profession_df.insert(loc=1, column="TypeOfProfession",
                          value=conn.convertTypeToID(["Student"], "type_of_profession")[0])
@@ -343,22 +343,23 @@ def playground():
     # df = pd.read_excel(file_location, engine='openpyxl').replace({np.nan: None})
 
     # # print(len(df[df['Geboorteland'].isin(["Verenigd Koninkrijk"])]))
-    start = time.time()
-    print(f"Program finished successfully in {time.time() - start} seconds")
-    dates = ["1901-1-01", "2000", "1850-02", "Tussen 1635 en 1640", "1996-04-01 ?0", "1621 (voor 9 februari)",
-             "onbekend", "1971-13-18", "2019-01-00", "1980-13-41", "1957-07-38", "1955-02-29"]
-    new = []
-    for date in dates:
-        new.append(checkDate(date))
-        print(date, "\t", checkDate(date))
+    # start = time.time()
+    # print(f"Program finished successfully in {time.time() - start} seconds")
+    # dates = ["1901-1-01", "2000", "1850-02", "Tussen 1635 en 1640", "1996-04-01 ?0", "1621 (voor 9 februari)",
+    #          "onbekend", "1971-13-18", "2019-01-00", "1980-13-41", "1957-07-38", "1955-02-29"]
+    # new = []
+    # for date in dates:
+    #     new.append(checkDate(date))
+    #     print(date, "\t", checkDate(date))
     # print(new)
+    pass
 
 
 # main
 if __name__ == "__main__":
-    # start = time.time()
-    playground()
-    # hoogleraren()  # Check number of incorrect dates
-    # studenten()
+    start = time.time()
+    # playground()
+    hoogleraren()  # Check number of incorrect dates
+    studenten()
 
     # print(f"Program finished successfully in {round(time.time() - start, 2)} seconds")
