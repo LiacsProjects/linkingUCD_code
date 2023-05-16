@@ -163,7 +163,7 @@ def insertProfessors(df):
                         value=conn.convertTypeToID(["Geboorteplaats"], "type_of_location")[0])  # Place of birth ID
     birth_loc_df.insert(loc=5, column="EndDate", value=df["geboortedatum"])
     birth_loc_df.insert(loc=6, column="locationPersonID", value=person_df["personPersonID"])
-    location_attributes = ["LocationID", "TypeOfLocation", "Country", "City", "StartDate", "EndDate",
+    location_attributes = ["LocationID", "TypeOfLocation", "Country", "City", "locationStartDate", "locationEndDate",
                            "locationPersonID"]
     conn.insert("location", location_attributes, birth_loc_df.replace({np.nan: None}), True)
     # conn.insertMany("location", birth_loc_df.replace({np.nan: None}))
@@ -209,7 +209,7 @@ def insertProfessors(df):
             (period_df['Datum aanstelling ' + period].notna()) | (period_df['TypeOfExpertise'].notna()) | (
                 period_df['TypeOfPosition'].notna())]
         profession_attributes = ["ProfessionID", "TypeOfProfession", "TypeOfPosition", "TypeOfExpertise",
-                                 "TypeOfFaculty", "StartDate", "EndDate", "professionPersonID"]
+                                 "TypeOfFaculty", "professionStartDate", "professionEndDate", "professionPersonID"]
         conn.insert("profession", profession_attributes, period_df.replace({np.nan: None}), True)
 
     # Commit and close database connection
@@ -270,14 +270,16 @@ def insertStudents(df):
     birth_loc_df.insert(loc=5, column="Geboortedatum", value=df['GEB JAAR'])
     birth_loc_df.insert(loc=6, column="EndDate", value=birth_loc_df["Geboortedatum"])
     birth_loc_df.insert(loc=7, column="locationPersonID", value=person_df["personPersonID"])
-    location_attributes = ["LocationID", "TypeOfLocation", "Country", "City", "Region", "StartDate", "EndDate",
+    location_attributes = ["LocationID", "TypeOfLocation", "Country", "City", "Region", "locationStartDate", "locationEndDate",
                            "locationPersonID"]
     conn.insert("location", location_attributes, birth_loc_df.replace({np.nan: None}), True)
 
     # Create and insert profession dataframe
-    profession_attributes = ["ProfessionID", "TypeOfProfession", "TypeOfPosition", "TypeOfFaculty", "StartDate",
+    profession_attributes = ["ProfessionID", "TypeOfProfession", "TypeOfPosition", "TypeOfFaculty", "professionStartDate",
                              "professionPersonID"]
-    profession_df = pd.DataFrame(columns=["professionPersonID"], data=person_df["personPersonID"])
+    # profession_df = pd.DataFrame(columns=["professionPersonID"], data=[person_df["personPersonID"]])
+    profession_df = pd.DataFrame()
+    profession_df.to_excel("PIDs.xlsx")
     profession_df.insert(loc=0, column="ProfessionID", value=None)
     profession_df.insert(loc=1, column="TypeOfProfession",
                          value=conn.convertTypeToID(["Student"], "type_of_profession")[0])
@@ -288,7 +290,8 @@ def insertStudents(df):
     registrationDate_df["reg"] = df['DATUMJAAR as'].map(str) + '-' + df['DATUMINMND as'].map(str) + '-' + df[
         'DATUMINDAG as'].map(str)
     registrationDate_df["reg"] = registrationDate_df["reg"].apply(checkDate)
-    profession_df.insert(loc=4, column="StartDate", value=registrationDate_df["reg"])
+    profession_df.insert(loc=4, column="professionStartDate", value=registrationDate_df["reg"])
+    profession_df.insert(loc=5, column="professionPersonID", value=person_df["personPersonID"])
     conn.insert("profession", profession_attributes, profession_df.replace({np.nan: None}), True)
 
     # Commit and close database connection
@@ -358,8 +361,8 @@ def playground():
 # main
 if __name__ == "__main__":
     # start = time.time()
-    playground()
-    # hoogleraren()  # Check number of incorrect dates
-    # studenten()
+    # playground()
+    hoogleraren()  # Check number of incorrect dates
+    studenten()
 
     # print(f"Program finished successfully in {round(time.time() - start, 2)} seconds")
