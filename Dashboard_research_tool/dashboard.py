@@ -10,11 +10,6 @@ import numpy as np
 from dash import Dash, dcc, html, Input, Output, ctx, dash_table, State, ALL
 import figures
 
-# import data, page lay-outs and functions
-import data
-# from figures import professorfigures, studentfigures, rectorfigures, introfigures
-# from pages import professorvisuals, rectorvisuals, studentvisuals
-
 # Import database class
 from Adapters import database
 
@@ -31,20 +26,9 @@ app = Dash(__name__, suppress_callback_exceptions=True,
            #  uitgeschakeld  #      requests_pathname_prefix='/dashboard/'
            )
 
-
-
-
-
 # ****************************************************************************************** SERVER
 # Configurate dash application voor server
 # server = app.server
-
-# ******************************************************************************************  TODO
-
-# TODO: implement store functions to allow users to save their changes made to the dashboard TODO:
-#  connect database to dashboard
-# TODO: create joined page for all persons TODO: link city/country coordinates to city/country dataframes, preferably
-#  through function that reads coordinates from a file: countries.geojson and cities1-2-3.csv
 
 # ******************************************************************************************  START
 
@@ -90,9 +74,9 @@ app.layout = dbc.Container(children=[
         ]),
         html.Br(),
         html.Div(id='pivot-table', children=[], style={
-            'overflow-x':'auto',
-            'overflow-y':'auto',
-            'max-height':'500px',
+            'overflow-x': 'auto',
+            'overflow-y': 'auto',
+            'max-height': '500px',
         }),
         html.Div(id='pivot-chart', children=[])
     ])],
@@ -110,14 +94,21 @@ app.layout = dbc.Container(children=[
     Input("pivot_aggfunc_dropdown", 'value'),
     Input('pivot_graph_type_dropdown', 'value')
 )
-def pivot_table(pivot_button, pivot_table_values, pivot_table_columns, pivot_table_index, pivot_table_aggfunc, pivot_graph_type):
+def pivot_table(pivot_button, pivot_table_values, pivot_table_columns, pivot_table_index, pivot_table_aggfunc,
+                pivot_graph_type):
     if ctx.triggered_id == 'pivot-table-button':
         dash_pivot_table, dash_pivot_chart = figures.create_pivot_table(pivot_table_values,
-                                                                                 pivot_table_columns, pivot_table_index,
-                                                                                 pivot_table_aggfunc, pivot_graph_type)
+                                                                        pivot_table_columns, pivot_table_index,
+                                                                        pivot_table_aggfunc, pivot_graph_type)
         return dash_pivot_table, dash_pivot_chart
     else:
         return None, None
+
+    # TODO animatie kaart
+    # TODO gemiddelde leeftijd enz weergeven (ook op een kaart)
+    # TODO filters!!
+    # TODO ELO integratie met tijmen zn ding, komt via openarchives in michael database
+
 
 
 # ******************************************************************************************  LOCAL
@@ -129,4 +120,3 @@ if __name__ == '__main__':
 #    app.run_server(debug=False)
 #
 # ******************************************************************************************  END
-

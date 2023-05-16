@@ -44,8 +44,8 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type):
 
     conn = database.Connection()
     df, pivot_table = conn.QueryBuilderPivotTable(index, values, columns, aggfunc)
-    print(df, pivot_table)
-    print(pd.pivot_table(df, values, index, columns, aggfunc))
+    # print(df, pivot_table)
+    # print(pd.pivot_table(df, values, index, columns, aggfunc))
     del conn
 
     pivot_table_html = pivot_table.to_html()
@@ -58,7 +58,11 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type):
 
     pd.options.plotting.backend = "plotly"
     dash_pivot_table = convert_html_to_dash(pivot_table_html)
+
     charts = []
+
+    # print(pivot_table)
+    # print(pivot_table_html)
 
     try:
         for value in values:
@@ -356,5 +360,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type):
     #         page_current=0,
     #         page_size=10,
     #     )
-
+    print(charts[0])
+    print(dash_pivot_table)
     return dash_pivot_table, charts
