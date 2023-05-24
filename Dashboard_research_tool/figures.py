@@ -74,9 +74,12 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
     pivot_table = pd.pivot_table(df, index=index, columns=columns, values=values, aggfunc=aggfunc)
 
     if minimum_threshold:
-        pivot_table = pivot_table[(pivot_table >= minimum_threshold).any(1)]
+        pivot_table_row_sum = pivot_table.sum(axis=1)
+        pivot_table = pivot_table.loc[list(pivot_table_row_sum[pivot_table_row_sum > minimum_threshold].index)]
     if maximum_threshold:
-        pivot_table = pivot_table[(pivot_table <= maximum_threshold).any(1)]
+        pivot_table_row_sum = pivot_table.sum(axis=1)
+        pivot_table = pivot_table.loc[list(pivot_table_row_sum[pivot_table_row_sum < maximum_threshold].index)]
+
 
     del conn
 
