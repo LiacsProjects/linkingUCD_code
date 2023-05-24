@@ -69,7 +69,9 @@ rector_pictures = recmag_df['Picture_saved']
 
 rector_details = recmag_df['Term/Details']
 
+rector_per_year = recmag_df['Period_start'].value_counts().reset_index()
+rector_per_year = rector_per_year.sort_values(by=['Period_start'], axis=0, ascending=True)
 #rector_per_year = recmag_df['Period_start'].value_counts().reset_index().sort_values(by=['index'], ascending=True)
-#rector_per_year = rector_per_year.rename(columns={'index': 'year', 'Period_start': 'count'})
-#rector_per_year['century'] = rector_per_year['year'].astype(str).str[:2].astype(int) + 1
+rector_per_year = rector_per_year.rename(columns={'Period_start': 'year'})
+rector_per_year['century'] = rector_per_year['year'].astype(str).str[:2].astype(int) + 1
 #######################################################################################################################
