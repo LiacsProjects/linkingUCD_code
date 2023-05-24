@@ -291,10 +291,19 @@ def create_country_line_map(min_year, max_year):
 def create_animated_country_map(min_year, max_year):
     merged_df = data.birthcountry_df[data.birthcountry_df['year'] <= max_year]
     merged_df = merged_df[merged_df['year'] >= min_year]
-    fig = px.choropleth(merged_df, locations='iso_alpha', color='count', hover_name='country', animation_frame='year',
-                        color_continuous_scale='plasma', labels={'count': 'Number of appointments'})
-    fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      margin=dict(l=0, r=0, t=0, b=0), modebar_orientation='v',)
+
+    fig = px.choropleth(merged_df,
+                        locations='iso_alpha',
+                        color='count',
+                        hover_name='country',
+                        animation_frame='year',
+                        color_continuous_scale='plasma',
+                        labels={'count': 'Number of appointments'})
+    fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)',
+                      font_color='black',
+                      plot_bgcolor='rgba(223,223,218,0.7)',
+                      margin=dict(l=0, r=0, t=0, b=0),
+                      modebar_orientation='v',)
     return fig, merged_df
 
 

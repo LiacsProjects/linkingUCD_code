@@ -1,19 +1,23 @@
 # Creating dataframe
 # Import modules
+
 import dash_bootstrap_components as dbc
-import dash
+#import dash
+
 from dash import dcc, html
-import os
+#import os
+
 #from pathlib import Path
-import data
+
+#import data
 
 #base_path = Path(os.environ['DASHBOARD_BASEPATH'])
 #base_path_name = os.environ['DASHBOARD_BASEPATH']
-image_file = "/assets/professors_780x400.jpeg"
+image_file = "/assets/dies_cortege_445_2020-website.png"
 
 card_professor = dbc.Card([
     dbc.CardImg(
-        src="/assets/professors_780x400.jpeg",
+        src="/assets/dies_cortege_445_2020-website.png",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -22,6 +26,7 @@ card_professor = dbc.Card([
         dbc.CardBody([
             html.H3("Professors", className="card-title"),
             html.B("Visualizations of professors", className="card-text"),
+            html.P(""),
             dbc.Button("Go to visualizations", id="btn-professor", color="primary", class_name="card-btn", n_clicks=0),
         ]),
     )],
@@ -32,7 +37,7 @@ card_professor = dbc.Card([
 
 card_student = dbc.Card([
     dbc.CardImg(
-        src="/assets/Student_400x267.jpg",
+        src="/assets/Studenten_FSW_campus_pieter_de_la_court-website (1).png",
         top=True,
         style={"opacity": 0.5},
         class_name="cardImg"
@@ -41,6 +46,7 @@ card_student = dbc.Card([
         dbc.CardBody([
             html.H3("Students", className="card-title"),
             html.B("Visualizations of students", className="card-text"),
+            html.P(" "),
             dbc.Button("Go to visualizations", id="btn-student", color="primary", class_name="card-btn", n_clicks=0),
         ]),
     )],
@@ -60,6 +66,7 @@ card_rectores = dbc.Card([
         dbc.CardBody([
             html.H4("Rectores Magnifici", className="card-title"),
             html.B("Visualizations of Rectores Magnifici", className="card-text"),
+            html.P(),
             dbc.Button("Go to visualizations", id="btn-rectores", color="primary", class_name="card-btn", n_clicks=0),
         ]),
     )],
@@ -79,6 +86,7 @@ card_colofon = dbc.Card([
         dbc.CardBody([
             html.H3("Colofon", className="card-title"),
             html.B("Sources, contact information and more", className="card-text"),
+            html.P(" "),
             dbc.Button("Go to colofon", id="btn-colofon", color="primary", class_name="card-btn", n_clicks=0),
             # dbc.Button("Go to visualizations", color="primary", class_name="butcol"),
         ]),
@@ -172,50 +180,77 @@ rector_content = html.Div(id='r_content', className='parent_content', children=[
 
 sources_content = html.Div(id='src_content', className='parent_content', children=[
     html.Div(id='src_info', className='container', children=[
-        html.H2('About this site'),
-        html.P('This website is part of the project Linking City, University and Diversity'
-               'This website is work in progress. The dataset is not yet complete, '
-               'information on the website will be updated periodically.'),
-        html.H2('The project'),
-        html.P('This website is part of, and presents the first results of the project '
-               'Linking University and City in Leiden 1575-2020. '
-               'The aim of the project is to examine the interaction between the university and the city. '
-               'The impact of the presence of the university on the city has been described '
-               'from different perspectives, but we know little about the interaction between '
-               'the changing populations in town and gown. '
-               'The presence of an academic population affected the urban demography, '
-               'social-economic structures and culture. '
-               'The urban dynamics related to migration and socio-economic development '
-               'may -vice versa- have had impact on the university. The question is how.'  
-               'This project will examine the interaction between university and city through data science methods.'),
-        html.H2('Projectteam', style={"text-align":"left"}),
-        html.P('Wessel Kraaij (Data Science), Ariadne Schmidt (History), '
-               'Joost Visser (Data Science), Richard van Dijk (Data Science), '
-               'Michael de Koning (Computer Science), Ben van Yperen (History).'),
-        html.H2('Datasources', style={"text-align":"left"}),
-        html.P('The following sources are being used for this dashboard:'),
-        html.Li('Dataset Martine Zoeteman, Student Population Leiden University 1575-1812 (2011), based upon Album Studiosorum. '
-               'For an extensive explanation of the sources see:'  
-               'Martine Zoeteman-van Pelt, De studentenpopulatie van de Leidse universiteit, 1575-1812; :'
-               ' "Een volk op zyn Siams gekleet eenige mylen van Den Haag woonende" (Leiden 2011).'),
+        html.H2('The LUCD website', style={"text-align": "left"}),
+        html.P('This website is one of the deliverables of the project Linking University, City and Diversity, '
+               'in short LUCD. The website is work-in-progress. The data shown are based on different high quality '
+               'historical data sources. New releases will come out frequently.'
+               ),
+        html.P('Version 0.4, release date: 08-05-2023.'),
+        html.H2('The project', style={"text-align": "left"}),
+        html.P('End 2021 the research project linking University, City and Diversity (LUCD) started, '
+               'led by researchers and students from Humanities and Computer Sciences of the University Leiden. '
+               'Initially, the project will provide data to study the mobility, geographical segregation and '
+               'integration of Leiden society of former scholars, students and alumni of Leiden University from 1575 '
+               'to the present. The project comes with conceptual, epistemological and technological challenges.'
+               ),
+        html.P('The impact of the presence of the University on the City of Leiden has been described from different '
+               'perspectives, but we know a little about the interaction between the changing populations in town and '
+               'gown. The presence of an academic population have affected the urban demography, social-economic '
+               'structures and culture, and - on the other end - the urban dynamics related to migration and '
+               'social-economic development may have had impact on the University too. The question arises how, why '
+               'and to what extent these influences emerged over the years. '
+               ),
+        html.P('This project will examine the interaction between University and City with computer science methods. '
+               'Together with the Computer Science institute - in the role of conceptual high level software architect '
+               'and weekly guidance of the students - a number of algorithms will be developed where several computer '
+               'science students will help as part of their bachelor or master thesis project. See below for the '
+               'current list. '
+               ),
+        html.H2('The team anno 2023', style={"text-align": "left"}),
+        html.P('Core team: '),
+        html.P('Ariadne Schmidt (Humanities), Wessel Kraaij, Joost Visser, Richard van Dijk (Computer Science).'),
+        html.P('Student team: '),
+        html.P('Ben van Yperen (Humanities), Michael de Koning, Julian de Boer, Tijmen ter Beek and Ilse Driessen '
+               '(Computer Science). '),
+        html.H2('The historical data sources', style={"text-align": "left"}),
+        html.P('The following sources have been used for this dashboard:'
+               ),
         html.Li(children=[
-            html.A("https://hoogleraren.universiteitleiden.nl/ ",
-                   href="https://hoogleraren.universiteitleiden.nl/"),
-           'More information about this source can be found at ',
-            html.A("https://hoogleraren.universiteitleiden.nl/toelichting",
-                    href="https://hoogleraren.universiteitleiden.nl/toelichting"),
-                          ]),
-        html.Li('Additional information on rectors magnifici is retrieved from Wikipedia'),
-        html.H2('Student projects', style={"text-align":"left"}),
-        html.Li('Liam van Dreumel, ‘Visualisation tools to support historical research on a linked dataset about Leiden University’ BA thesis Computer Science, Leiden University.'),
-        html.Li(children=['Rick Schreuder, ‘Design of a database supporting the exploration of historical documents and linked register data’ ',
-                          html.A("(BA thesis Computer Science, Leiden University).", href="https://theses.liacs.nl/pdf/2021-2022-SchreuderRRJ.pdf")]),
-        html.Li(children=['Michael de Koning ‘Extraction, transformation, linking and loading of cultural heritage data’ ',
-                          html.A("(BA thesis Computer Science, Leiden University).", href="https://theses.liacs.nl/pdf/2021-2022-KoningMde.pdf")]),
-        html.H2('Credits', style={"text-align":"left"}),
-        html.P('We like to thank Martine Zoeteman, Saskia van Bergen, Stelios Paraschiakos, Antonis Somorakis, Wout Lamers, '
-               'Leida van Hees and Carel Stolker for their contributions to this project. '),
+                'Dataset Martine Zoeteman, Student Population Leiden University 1575-1812 based on the Album '
+                'Studiosorum. ',
+                html.P('Martine Zoeteman-van Pelt, De studentenpopulatie van de Leidse Universiteit, 1575-1812, '),
+                html.P(' "Een volk op zyn Siams gekleet eenige mylen van Den Haag woonende", Leiden 2011.'),
+                ]),
+        html.Li('Dataset Saskia van Bergen, Scholars of Leiden, Leidse UB special collections, '),
+        html.Li(children=[
+                    'Dataset Saskia van Bergen, Scholars of Leiden, Leidse UB special collections via ',
+                    html.A("https://hoogleraren.universiteitleiden.nl/. ", href="https://hoogleraren.universiteitleiden.nl/"),
+                    'An explanation of this data source can be found at ',
+                    html.A("https://hoogleraren.universiteitleiden.nl/toelichting. ", href="https://hoogleraren.universiteitleiden.nl/toelichting"),
+                ]),
+        html.Li('Dataset Ronald Sluijter, Lectors of Leiden.'),
+        html.Li('Dataset Rectores Magnifici about Scholars of Leiden who held the position of Rector Magnificus, retrieved from Wikipedia.'
+                ),
+        html.P(''),
+        html.H2('The student projects', style={"text-align": "left"}
+                ),
+        html.Li('Liam van Dreumel, "Visualisation tools to support historical research on a linked dataset about Leiden University.", BSc thesis Computer Science, Leiden University, Summer 2022.'),
+        html.Li(children=['Rick Schreuder, "Design of a database supporting the exploration of historical documents and linked register data.", BSc thesis Computer Science, Leiden University, Summer 2022, ',
+            html.A("https://theses.liacs.nl/pdf/2021-2022-SchreuderRRJ.pdf.", href="https://theses.liacs.nl/pdf/2021-2022-SchreuderRRJ.pdf")]
+                ),
+        html.Li(children=['Michael de Koning "Extraction, transformation, linking and loading of cultural heritage data.", BSc thesis Computer Science, Leiden University.", Summer 2022, ',
+            html.A("https://theses.liacs.nl/pdf/2021-2022-KoningMde.pdf.", href="https://theses.liacs.nl/pdf/2021-2022-KoningMde.pdf")]
+                ),
+        html.Li('Tijmen ter Beek, "Record Linkage algorithms to investigate the population genealogy of Leiden and surroundings between 1811 and 1952.", BSc thesis Computer Science, Leiden University, in progress, Summer 2023.'),
+        html.Li('Julian de Boer, "Explorative and interactive visualizations of historical datasets about University Leiden.", BSc thesis Computer Science, Leiden University, in progress, Summer 2023.'
+                ),
+        html.P(''),
+        html.H2('Acknowledgements', style={"text-align": "left"}),
+        html.P('The following persons support, or supported the project: Martine Zoeteman, Ronald Sluijter, '
+               'Saskia van Bergen, Stelios Paraschiakos, Antonis Somorakis, Wout Lamers, Pieter Slaman, '
+               'Leida van Hees, Ellen Gehrings, Cor de Graaf, Hendrik-Jan Hoogenboom, and Carel Stolker. '
+               ),
         html.H2('Contact', style={"text-align":"left"}),
-        html.P('Ariadne Schmidt,  Wessel Kraaij'),
-    ]),
-])
+        html.P('Ariadne Schmidt,  Wessel Kraaij.'),
+        ]),
+    ])

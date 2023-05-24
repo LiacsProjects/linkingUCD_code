@@ -32,7 +32,7 @@ years.append(current_century['year'].max())
 timeline = html.Div(id='s_timeline', className='container',
                     children=[
                         html.Div(id='s_timeline_header', className='page_header',
-                                 children=[html.H1('Timeline')]),
+                                 children=[html.H1('Students')]),
                         html.Div(id='s_inputs', className='left_container ',
                                  children=[
                                      html.H3('Graph settings:'),
@@ -106,49 +106,45 @@ timeline = html.Div(id='s_timeline', className='container',
                     ])
 
 subject_information = html.Div(id='s_subject_info', className='container',
-                               children=[
-                                   html.Div(id='s_subject_header', className='page_header',
-                                            children=[
-                                                html.H1('Subject information')
-                                            ]
-                                            ),
-                                   html.Div(id='subject-information-container', className='left_container ',
-                                            children=[
-                                                html.H3('Graph settings:'),
-                                                dcc.Dropdown(
-                                                    SUBJECT_DROPDOWN,
-                                                    DEFAULT_SUBJECT,
-                                                    placeholder='Choose a subject',
-                                                    clearable=False,
-                                                    style={'background-color':
-                                                           'rgba(223,223,218,0.7)',
-                                                           'color': 'black',
-                                                           'margin': '1% 1% 1% 1%'},
-                                                    id='subject-dropdown',
-                                                    className='dropdown'
-                                                ),
-                                                html.Div(id='subject_header2',
-                                                         children=[html.H3('Subject information:'),
-                                                                   html.Div(id='subject-information')
-                                                                   ]
-                                                         ),
-                                            ]),
+    children=[
+        html.Div(id='s_subject_header', className='page_header',
+            children=[html.H1('Students')]
+            ),
+        html.Div(id='subject-information-container', className='left_container ',
+            children=[html.H3('Graph settings:'),
+                dcc.Dropdown(
+                    SUBJECT_DROPDOWN,
+                    DEFAULT_SUBJECT,
+                    placeholder='Choose a subject',
+                    clearable=False,
+                    style={'background-color':
+                           'rgba(223,223,218,0.7)',
+                           'color': 'black',
+                           'margin': '1% 1% 1% 1%'},
+                    id='subject-dropdown',
+                    className='dropdown'
+                    ),
+                    html.Div(id='subject_header2',
+                        children=[html.H3('Subject information:'),
+                                html.Div(id='subject-information')]
+                             ),
+                    ]),
 
-                                   html.Div(id='subject-dropdown-container', className='right_container',
-                                            children=[
-                                                html.H3('Graph:'),
-                                                dcc.Graph(id='subject-graph',
-                                                          config=GRAPH_CONFIG,
-                                                          ),
-                                                html.H3('Subject data:'),
-                                                html.Div(id='subject-table-container'),
-                                            ]
-                                            ),
-                               ]),
+        html.Div(id='subject-dropdown-container', className='right_container',
+            children=[html.H3('Graph:'),
+                dcc.Graph(
+                    id='subject-graph',
+                    config=GRAPH_CONFIG,
+                    ),
+                    html.H3('Subject data:'),
+                        html.Div(id='subject-table-container'),
+                    ]
+                ),
+            ]),
 
 geographical_information = html.Div(id='s_geo', className='container', children=[
     html.Div(id='s_geo_header', className='page_header', children=[
-        html.H1('Geographical information')
+        html.H1('Students')
     ]),
     html.Div(id='geo-map-container', className='right_container', children=[
         html.H3('Geographical origin of students'),
@@ -203,7 +199,7 @@ geographical_information = html.Div(id='s_geo', className='container', children=
 
 individual_information = html.Div(id='s_individual', className='container', children=[
     html.Div(id='s_student_header', className='page_header', children=[
-        html.H1('Student information')
+        html.H1('Students')
     ]),
     html.Div(id='i_inputs_left', className='middle_small_container ', children=[
         html.H3('Search settings:', className='inline'),
