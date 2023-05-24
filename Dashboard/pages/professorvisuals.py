@@ -19,6 +19,7 @@ GRAPH_SUBJECT_DROPDOWN = ['Gender', 'Birth', 'Death', 'Promotion', 'Promotion ty
 GEOMAPS_OPTIONS = ['Heat map', 'Line map', 'MP Heat map', 'MP Scatter map', 'Animated map']
 DEFAULT_GRAPH = 'Bar graph'
 GRAPH_DROPDOWN = ['Bar graph', 'Line graph', 'Scatter graph']
+GRAPH_CONFIG = {'modeBarButtonsToRemove': ['toImage'], 'displayModeBar': True,}
 
 # Data year calculations
 current_century = data.all_dates_df[(data.all_dates_df['century'] <= START_CENTURY)]
@@ -31,7 +32,7 @@ years.append(current_century['year'].max())
 timeline = html.Div(id='p_timeline', className='container',
                     children=[
                         html.Div(id='p_timeline_header', className='page_header',
-                                 children=[html.H1('Timeline')]),
+                                 children=[html.H1('Professors')]),
                         html.Div(id='p_inputs', className='left_container',
                                  children=[
                                      html.H3('Graph settings:'),
@@ -68,9 +69,10 @@ timeline = html.Div(id='p_timeline', className='container',
                                  ),
                         html.Div(id='p-year-century-dropdown-container', className='right_container',
                                  children=[
-                                     html.H4('Graph:'),
-                                     dcc.Graph(id='p-year-century-graph', )
-                                 ],
+                                           html.H4('Graph:'),
+                                           dcc.Graph(id='p-year-century-graph',
+                                                     config=GRAPH_CONFIG, )
+                                          ] ,
                                  ),
                         html.Div(id='p-timeline-information-container', className='left_container ',
                                  children=[
@@ -80,16 +82,18 @@ timeline = html.Div(id='p_timeline', className='container',
                                  ),
                         html.Div(id='p-century-dropdown-container', className='right_container',
                                  children=[
-                                     html.H4('Sorted bar graph:'),
-                                     dcc.Graph(id='p-century-graph'),
-                                 ]
+                                           html.H4('Sorted bar graph:'),
+                                           dcc.Graph(id='p-century-graph',
+                                                     config=GRAPH_CONFIG,
+                                                    ),
+                                          ]
                                  ),
                     ])
 
 subject_information = html.Div(id='p_subject_info', className='container',
                                children=[
                                    html.Div(id='p_subject_header', className='page_header',
-                                            children=[html.H1('Subject information')]),
+                                            children=[html.H1('Professors')]),
                                    html.Div(id='p-subject-information-container', className='left_container',
                                             children=[
                                                 html.H3('Graph settings:'),
@@ -115,7 +119,9 @@ subject_information = html.Div(id='p_subject_info', className='container',
                                    html.Div(id='p-subject-dropdown-container', className='right_container',
                                             children=[
                                                 html.H3('Graph:'),
-                                                dcc.Graph(id='p-subject-graph'),
+                                                dcc.Graph(id='p-subject-graph',
+                                                          config=GRAPH_CONFIG,
+                                                         ),
                                                 html.H3('Subject data:'),
                                                 html.Div(id='p-subject-table-container'),
                                             ]),
@@ -125,7 +131,7 @@ subject_information = html.Div(id='p_subject_info', className='container',
 geographical_information = html.Div(id='g_geo', className='container',
                                     children=[
                                         html.Div(id='g_geo_header', className='page_header',
-                                                 children=[html.H1('Geographical information')]
+                                                 children=[html.H1('Professors')]
                                                  ),
                                         html.Div(id='p-geo-map-container', className='right_container',
                                                  children=[
@@ -182,16 +188,11 @@ geographical_information = html.Div(id='g_geo', className='container',
 
 individual_information = html.Div(id='p_individual', className='container', children=[
     html.Div(id='p_Professor_header', className='page_header', children=[
-        html.H1('Professor information')
+        html.H1('Professors')
     ]),
     html.Div(id='p_i_inputs_left', className='middle_small_container ', children=[
         html.H3('Search settings:', className='inline'),
-        html.Button(
-            'Search',
-            id='p-search-individual',
-            className='inline',
-            style={'margin-left': '1%'}
-        ),
+
         html.Br(),
         html.P('Search for a name:', className='inline'),
         dcc.Input(
@@ -233,9 +234,9 @@ individual_information = html.Div(id='p_individual', className='container', chil
         dcc.Input(
             id='p-birthyear-min-input', className='inline',
             type='number',
-            min=data.all_dates_df['year'].min(),
-            max=data.all_dates_df['year'].max() - 1,
-            value=data.all_dates_df['year'].min(),
+            min=data.birth_df['year'].min(),
+            max=data.birth_df['year'].max() - 1,
+            value=data.birth_df['year'].min(),
             style={'background-color': 'rgba(223,223,218,0.7)', 'color': 'black', 'margin': '1%'},
         ),
         dcc.Input(
@@ -254,6 +255,14 @@ individual_information = html.Div(id='p_individual', className='container', chil
             value='Yes',
             id='p-include-missing-dates',
             className='inline',
+        ),
+        html.Br(),
+        html.Br(),
+        html.Button(
+            'START SEARCH',
+            id='p-search-individual',
+            className='inline',
+            style={'font-weight': 'bold', 'margin-left': '20%', 'height': '75px', 'width': '200px'},
         ),
     ]),
     html.Div(id='p_i_inputs_right', className='middle_small_container ', children=[
@@ -334,7 +343,8 @@ individual_information = html.Div(id='p_individual', className='container', chil
         ]),
     ]),
     html.Div(id='p-individual-information', className='middle_container', children=[
-        html.H3('Professor search data:'),
+        html.A(id='p-search-results'),
+        html.H3(id='p-individual-search-results-header', ),
         html.Div(id='p-individual-search-results', children=[
             html.Div(id='p-individual-search-results-number', className='inline', style={"font-weight": "bold"}),
             html.Div(id='p-individual-search-text', className='inline', style={'margin-left': '8px'})

@@ -9,23 +9,23 @@ base_path = Path(os.environ['DASHBOARD_BASEPATH'])
 all_dates_df = pd.read_excel(base_path / 'excelfiles/professors_all_dates.xlsx', engine='openpyxl')
 dates_df = pd.read_excel(base_path / 'excelfiles/professors_dates.xlsx', engine='openpyxl')
 
-gender_df = pd.read_excel(base_path / 'excelfiles_L/professors_gender.xlsx', engine='openpyxl')
-title_df = pd.read_excel(base_path / 'excelfiles_L/professors_title.xlsx', engine='openpyxl')
-birth_df = pd.read_excel(base_path / 'excelfiles_L/professors_birth.xlsx', engine='openpyxl')
-birthplace_df = pd.read_excel(base_path / 'excelfiles_L/professors_birth_place.xlsx', engine='openpyxl')
-birthcountry_df = pd.read_excel(base_path / 'excelfiles_L/professors_birth_country.xlsx', engine='openpyxl')
-death_df = pd.read_excel(base_path / 'excelfiles_L/professors_death.xlsx', engine='openpyxl')
-deathplace_df = pd.read_excel(base_path / 'excelfiles_L/professors_death_place.xlsx', engine='openpyxl')
-deathcountry_df = pd.read_excel(base_path / 'excelfiles_L/professors_death_country.xlsx', engine='openpyxl')
-promotion_df = pd.read_excel(base_path / 'excelfiles_L/professors_promotion.xlsx', engine='openpyxl')
-promotiontype_df = pd.read_excel(base_path / 'excelfiles_L/professors_promotion_type.xlsx', engine='openpyxl')
-promotion_place_df = pd.read_excel(base_path / 'excelfiles_L/professors_promotion_place.xlsx', engine='openpyxl')
-appointment_df = pd.read_excel(base_path / 'excelfiles_L/professors_appointment.xlsx', engine='openpyxl')
-professor_job_df = pd.read_excel(base_path / 'excelfiles_L/professors_job.xlsx', engine='openpyxl')
-subject_df = pd.read_excel(base_path / 'excelfiles_L/professors_subject.xlsx', engine='openpyxl')
-faculty_df = pd.read_excel(base_path / 'excelfiles_L/professors_faculty.xlsx', engine='openpyxl')
-end_df = pd.read_excel(base_path / 'excelfiles_L/professors_end.xlsx', engine='openpyxl')
-individual_profs_df = pd.read_excel(base_path / 'excelfiles_L/professors_individual.xlsx', engine='openpyxl')
+gender_df = pd.read_excel(base_path / 'excelfiles_R/professors_gender.xlsx', engine='openpyxl')
+title_df = pd.read_excel(base_path / 'excelfiles_R/professors_title.xlsx', engine='openpyxl')
+birth_df = pd.read_excel(base_path / 'excelfiles_R/professors_birth.xlsx', engine='openpyxl')
+birthplace_df = pd.read_excel(base_path / 'excelfiles_R/professors_birth_place.xlsx', engine='openpyxl')
+birthcountry_df = pd.read_excel(base_path / 'excelfiles_R/professors_birth_country.xlsx', engine='openpyxl')
+death_df = pd.read_excel(base_path / 'excelfiles_R/professors_death.xlsx', engine='openpyxl')
+deathplace_df = pd.read_excel(base_path / 'excelfiles_R/professors_death_place.xlsx', engine='openpyxl')
+deathcountry_df = pd.read_excel(base_path / 'excelfiles_R/professors_death_country.xlsx', engine='openpyxl')
+promotion_df = pd.read_excel(base_path / 'excelfiles_R/professors_promotion.xlsx', engine='openpyxl')
+promotiontype_df = pd.read_excel(base_path / 'excelfiles_R/professors_promotion_type.xlsx', engine='openpyxl')
+promotion_place_df = pd.read_excel(base_path / 'excelfiles_R/professors_promotion_place.xlsx', engine='openpyxl')
+appointment_df = pd.read_excel(base_path / 'excelfiles_R/professors_appointment.xlsx', engine='openpyxl')
+professor_job_df = pd.read_excel(base_path / 'excelfiles_R/professors_job.xlsx', engine='openpyxl')
+subject_df = pd.read_excel(base_path / 'excelfiles_R/professors_subject.xlsx', engine='openpyxl')
+faculty_df = pd.read_excel(base_path / 'excelfiles_R/professors_faculty.xlsx', engine='openpyxl')
+end_df = pd.read_excel(base_path / 'excelfiles_R/professors_end.xlsx', engine='openpyxl')
+individual_profs_df = pd.read_excel(base_path / 'excelfiles_R/professors_individual.xlsx', engine='openpyxl')
 
 #######################################################################################################################
 
@@ -69,7 +69,9 @@ rector_pictures = recmag_df['Picture_saved']
 
 rector_details = recmag_df['Term/Details']
 
-rector_per_year = recmag_df['Period_start'].value_counts().reset_index().sort_values(by=['index'], ascending=True)
-rector_per_year = rector_per_year.rename(columns={'index': 'year', 'Period_start': 'count'})
+rector_per_year = recmag_df['Period_start'].value_counts().reset_index()
+rector_per_year = rector_per_year.sort_values(by=['Period_start'], axis=0, ascending=True)
+#rector_per_year = recmag_df['Period_start'].value_counts().reset_index().sort_values(by=['index'], ascending=True)
+rector_per_year = rector_per_year.rename(columns={'Period_start': 'year'})
 rector_per_year['century'] = rector_per_year['year'].astype(str).str[:2].astype(int) + 1
 #######################################################################################################################
