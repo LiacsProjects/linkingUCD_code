@@ -273,6 +273,7 @@ class Connection:
         for table in tables[1:]:
             query += " JOIN {table} ON {table}PersonID = {table2}PersonID".format(table=table, table2=tables[0])
         print(query)
+        # query += " WHERE Gender IS NOT NULL"
         cursor = self.mydb.cursor()
         cursor.execute(query)
         result_df = pd.DataFrame(cursor.fetchall(), columns=attributes)

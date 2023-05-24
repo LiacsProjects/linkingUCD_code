@@ -1,0 +1,13 @@
+table, th, td {
+    border: 1px solid;
+}
+
+th{
+    border-collapse: collapse;
+}
+
+.dash-dropdown{
+    width: 100%;
+    vertical-align: center;
+    horiz-align: center;
+}

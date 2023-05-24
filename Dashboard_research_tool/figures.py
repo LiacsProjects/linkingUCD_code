@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 import pandas as pd
 from plotly.subplots import make_subplots
 from Adapters import database
+import dash_bootstrap_components as dbc
 
 
 def convert_html_to_dash(html_code):
@@ -32,8 +33,11 @@ def convert_html_to_dash(html_code):
     return _convert(et)
 
 
-def create_pivot_table(values, columns, index, aggfunc, graph_type):
+def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_inputs, filter_labels, filter_exclude):
     aggfunc = aggfunc[0].lower()
+
+    filters = zip(filter_labels, filter_inputs)
+
 
     if not values:
         values = []
@@ -44,8 +48,36 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type):
 
     conn = database.Connection()
     df, pivot_table = conn.QueryBuilderPivotTable(index, values, columns, aggfunc)
-    # print(df, pivot_table)
-    # print(pd.pivot_table(df, values, index, columns, aggfunc))
+    counter = 0
+    for filter_tuple in filters:
+        if filter_tuple[1] and filter_tuple[0] != 'Minimum threshold' and filter_tuple[0] != 'Maximum threshold':
+            filter_exclude_bool = filter_exclude[counter]
+            if not filter_exclude_bool:
+                filter_inputs = filter_tuple[1].split(';')
+                df = df[df[filter_tuple[0]].isin(filter_inputs)]
+            else:
+                filter_inputs = filter_tuple[1].split(';')
+                df = df[~df[filter_tuple[0]].isin(filter_inputs)]
+        if filter_tuple[0] == 'Minimum threshold':
+            if filter_tuple[1]:
+                minimum_threshold = int(filter_tuple[1])
+            else:
+                minimum_threshold = None
+        elif filter_tuple[0] == 'Maximum threshold':
+            if filter_tuple[1]:
+                maximum_threshold = int(filter_tuple[1])
+            else:
+                maximum_threshold = None
+
+        counter += 1
+
+    pivot_table = pd.pivot_table(df, index=index, columns=columns, values=values, aggfunc=aggfunc)
+
+    if minimum_threshold:
+        pivot_table = pivot_table[(pivot_table >= minimum_threshold).any(1)]
+    if maximum_threshold:
+        pivot_table = pivot_table[(pivot_table <= maximum_threshold).any(1)]
+
     del conn
 
     pivot_table_html = pivot_table.to_html()
@@ -339,27 +371,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type):
     except TypeError as e:
         print(e)
         dash_pivot_chart = None
-    # print(type(dash_pivot_table))
 
-    # dash_pivot_table = dash_table.DataTable(
-    #         id='datatable-interactivity',
-    #         columns=[
-    #             {"name": i, "id": i, "deletable": True, "selectable": True} for i in pivot_table.columns
-    #         ],
-    #         data=pivot_table.reset_index().to_dict('records'),
-    #         editable=True,
-    #         filter_action="native",
-    #         sort_action="native",
-    #         sort_mode="multi",
-    #         column_selectable="single",
-    #         row_selectable="multi",
-    #         row_deletable=True,
-    #         selected_columns=[],
-    #         selected_rows=[],
-    #         page_action="native",
-    #         page_current=0,
-    #         page_size=10,
-    #     )
-    print(charts[0])
-    print(dash_pivot_table)
+    # dash_pivot_table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, index=True)
     return dash_pivot_table, charts
