@@ -5,6 +5,9 @@
 4. Download and run the installer file.  The workbench is now installed without server yet.
 5. Select on the download page MySQL Community Server, and download "Windows (x86, 64-bit), ZIP Archive".
 6. Extract the zip file, and ... 
+7. See manual below:
+
+https://downloads.mysql.com/docs/mysql-installer-en.a4.pdf
 
 
 5. Download the "MySQL Installer" from https://dev.mysql.com/downloads/windows/installer/.
