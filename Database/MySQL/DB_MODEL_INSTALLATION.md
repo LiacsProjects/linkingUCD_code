@@ -1,16 +1,8 @@
 # Installation guide:
 1. Create an Account at the Oracle website https://www.mysql.com/
 2. Log in and go to downloads, select "MySQL Community (GPL) Downloads".
-3. Select the MySQL workbench and download "Windows (x86, 64-bit), MSI Installer".
-4. Download and run the installer file.  The workbench is now installed without server yet.
-5. Select on the download page MySQL Community Server, and download "Windows (x86, 64-bit), ZIP Archive".
-6. Extract the zip file, and ... 
-7. See manual below:
-
-https://downloads.mysql.com/docs/mysql-installer-en.a4.pdf
-
-
-5. Download the "MySQL Installer" from https://dev.mysql.com/downloads/windows/installer/.
+3. See manual https://downloads.mysql.com/docs/mysql-installer-en.a4.pdf
+4. Download the "MySQL Installer Community" from https://dev.mysql.com/downloads/windows/installer/.
 6. Select custom installation and choose to install the Workbench and Server. Optionally, you may also install several Connectors if needed.
 7. After successfully installing everything, open the MySQL Workbench.
 8. Create a new connection for working on the project. 
