@@ -669,9 +669,9 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
             for word in words:
                 # TODO: sort on relevance
                 if search_option == 'Contains':
-                    contains_df = df.loc[df['First name'].str.contains(str(word), case=False)]
-                    contains_df1 = df.loc[df['Last name'].str.contains(str(word), case=False)]
-                    temp_total_df = pd.concat([contains_df, contains_df1], ignore_index=True)
+                   contains_df = df.loc[df['First name'].str.contains(str(word), case=False, na=False)]
+                   contains_df1 = df.loc[df['Last name'].str.contains(str(word), case=False, na=False)]
+                   temp_total_df = pd.concat([contains_df, contains_df1], ignore_index=True)
                 elif search_option == 'Equals':
                     equals_df = df.loc[df['First name'] == str(word)]
                     equals_df1 = df.loc[df['Last name'] == str(word)]
@@ -1492,8 +1492,8 @@ def update_student_table(search_button, selected_name, search_option, min_enrol,
             temp_total_df = pd.DataFrame()
             for word in words:
                 if search_option == 'Contains':
-                    contains_df = df.loc[df['First name'].str.contains(str(word), case=False)]
-                    contains_df1 = df.loc[df['Last name'].str.contains(str(word), case=False)]
+                    contains_df = df.loc[df['First name'].str.contains(str(word), case=False, na=False)]
+                    contains_df1 = df.loc[df['Last name'].str.contains(str(word), case=False, na=False)]
                     temp_total_df = pd.concat([contains_df, contains_df1], ignore_index=True)
                 elif search_option == 'Equals':
                     equals_df = df.loc[df['First name'] == str(word)]
@@ -2110,8 +2110,8 @@ def update_recmag_table(search_button, selected_name, search_option, min_term, m
             temp_total_df = pd.DataFrame()
             for word in words:
                 if search_option == 'Contains':
-                    contains_df = df.loc[df['First name'].str.contains(str(word), case=False)]
-                    contains_df1 = df.loc[df['Last name'].str.contains(str(word), case=False)]
+                    contains_df = df.loc[df['First name'].str.contains(str(word), case=False, na=False)]
+                    contains_df1 = df.loc[df['Last name'].str.contains(str(word), case=False, na=False)]
                     temp_total_df = pd.concat([contains_df, contains_df1], ignore_index=True)
                 elif search_option == 'Equals':
                     equals_df = df.loc[df['First name'] == str(word)]
