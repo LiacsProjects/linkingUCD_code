@@ -296,7 +296,7 @@ class Connection:
         format_strings = ', '.join(['%s'] * len(attributes)) % tuple(attributes)
         query = ("SELECT %s FROM {tn} %s" % (format_strings, where_clause))
         query = query.format(tn=table_name).strip()
-        # print(query)
+        print(query)
         cursor.execute(query)
 
         # Fetch all column names when asterix is used
