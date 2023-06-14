@@ -22,10 +22,7 @@ pivot_table_options = ['TypeOfPerson', 'FirstName', 'LastName', 'FamilyName', 'A
                        'TypeOfLocation', 'City', 'Country', 'Region', 'ISO_Alpha_3']
 graph_options = ['bar', 'line', 'barh', 'hist', 'box', 'area', 'scatter']
 
-graph_tab = dbc.Card(
-    dbc.CardBody(
-        [
-        dbc.Row([
+layout = dbc.Container(children=[dbc.Row([
                 dbc.Col([html.P("Index:"),
                         dcc.Dropdown(pivot_table_options,
                                      placeholder='Choose values', clearable=False, multi=True, optionHeight=50,
@@ -80,33 +77,8 @@ graph_tab = dbc.Card(
                     'overflow-y': 'auto',
                     'max-height': '500px',
                 }))),
+            dbc.Row(html.Div(id='pivot-chart', children=[]))], fluid=True)
 
-            # dcc.Loading(id='pivot-table-loading', children=html.Div(id="pivot-table-loading-output")),
-            # dbc.Spinner(html.Div(id='pivot-chart', children=[]))
-            # dcc.Loading(id='pivot-chart-loading', children=html.Div(id="pivot-chart-loading-output")),
-            dbc.Row(html.Div(id='pivot-chart', children=[]))
-        ]
-    )
-)
-
-network_tab = dbc.Card(
-    dbc.CardBody(
-        [
-            dbc.Row([
-                dbc.Col([
-                    html.Div(children=[], id='network-div'),
-                    dbc.Button('Generate Network', id='network-button')
-                ])
-            ])
-        ]
-    )
-)
-
-layout = dbc.Container(children=[dbc.Tabs([
-    dbc.Tab(graph_tab, label='graph-tab'),
-    dbc.Tab(network_tab, label='network-tab')
-])],
-    fluid=True)
 
 @callback(
     Output('pivot-table', 'children'),
