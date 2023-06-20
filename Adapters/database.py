@@ -257,7 +257,8 @@ class Connection:
         cursor.close()
         return result_df
 
-    def QueryBuilderPivotTable(self, index, values, columns, aggfunc):
+    # TODO: add Values is not null
+    def QueryBuilderPivotTable(self, index, values, columns, aggfunc, where) -> pd.pivot_table:
         attributes = index + values + columns
         query = "SELECT " + ', '.join(attributes)
         tables = []
@@ -268,8 +269,14 @@ class Connection:
                 tables.append(table_name)
         query += " FROM " + tables[0]
         # Add joins for each table
+
         for table in tables[1:]:
             query += " JOIN {table} ON {table}PersonID = {table2}PersonID".format(table=table, table2=tables[0])
+
+        # TODO: Join type tables
+
+        if where:  # if "where" is NOT empty convert to correct syntax
+            query += " WHERE" + "AND ".join(where)
         print(query)
         cursor = self.mydb.cursor()
         cursor.execute(query)
@@ -311,17 +318,13 @@ class Connection:
             return
         if values_df is None:
             return
-        if prepared:
-            # Optimization for consecutive execution of many equal or similar queries
-            cursor = self.mydb.cursor(prepared=True)
-        else:
-            # Currently unused -> use for instance for record linker when inserting a small number
-            cursor = self.mydb.cursor(prepared=False)
 
         format_strings = ', '.join(['%s'] * len(attributes))
         query = ("INSERT INTO {tn} (%s) VALUES (%s)" % (format_strings % tuple(attributes), format_strings))
         query = query.format(tn=table_name).strip()
         # print(query)
+
+        cursor = self.mydb.cursor(prepared=prepared)
         try:
             cursor.executemany(query, list(values_df.itertuples(index=False, name=None)))
         except mysql.connector.Error as error:
@@ -335,8 +338,10 @@ class Connection:
 if __name__ == "__main__":
     conn = Connection()
     start = time.time()
-    res = conn.QueryBuilderPublic(['Region'], ['location'], "region", "student", ["TypeOfLocation = 1"])
-    print(res)
+    # res = conn.QueryBuilderPublic(['Region'], ['location'], "region", "student", ["TypeOfLocation = 1"])
+    # print(res)
+    maxID = conn.getPersonMaxID()
+    print(conn.getAttributeNames("person"))
     del conn
     # print(result_df.replace({np.nan: None}).head(45).to_string())
     print(f"Program finished successfully in {time.time() - start} seconds")
