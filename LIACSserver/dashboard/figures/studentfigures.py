@@ -91,17 +91,19 @@ def create_year_cent_figure(subject, century, year, age, mode):
         filtered_df = filtered_df[filtered_df['age'] <= int(age[1])]
         filtered_df = filtered_df[filtered_df['age'] >= int(age[0])]
         filtered_df = filtered_df.sort_values(by=['year', subjectx, 'century'], ascending=True)
-    if mode == 'Line graph':
+    if mode == 'Scatter graph':
         fig = px.line(filtered_df, x='year', y='count', color=subjectx, markers=True,
                       labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'},
                       hover_name=subjectx, hover_data=['year', 'century'])
-    elif mode == 'Scatter graph':
-        fig = px.scatter(filtered_df, x='year', y='count', size='count', color=subjectx, color_continuous_scale='blues',
+    elif mode == 'Line graph':
+        fig = px.scatter(filtered_df, x='year', y='count', size='count',
+                         #color=subjectx, color_continuous_scale='blues',
                          log_x=True, labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year',
                                              'century': 'Century'},
                          hover_name=subjectx, hover_data=['year', 'century'])
     elif mode == 'Bar graph':
-        fig = px.bar(filtered_df, x='year', y='count', color=subjectx, color_continuous_scale='blues',
+        fig = px.bar(filtered_df, x='year', y='count',
+                     #color=subjectx, color_continuous_scale='blues',
                      labels={subjectx: name, 'count': 'Number of enrollments', 'year': 'Year', 'century': 'Century'},
                      hover_name=subjectx, hover_data=['year', 'century'])
     if subjectx == 'year':
@@ -171,8 +173,8 @@ def create_century_table(df, name):
     table_df = pd.DataFrame(columns=['Statistic', 'Enrollments'])
     for cent in df['century'].unique():
         table_df.loc[len(table_df)] = ['Century', cent]
-        table_df.loc[len(table_df)] = ['Total enrollments', df.loc[df['century'] == cent, 'count'].sum().round(0)]
-        table_df.loc[len(table_df)] = ['Average enrollments', df.loc[df['century'] == cent, 'count'].mean().round(0)]
+        table_df.loc[len(table_df)] = ['Total enrollments', round(df.loc[df['century'] == cent, 'count'].sum(),0)]
+        table_df.loc[len(table_df)] = ['Average enrollments', round(df.loc[df['century'] == cent, 'count'].mean(),0)]
         table_df.loc[len(table_df)] = ['Most enrollments',
                                        df.loc[df['century'] == cent].sort_values(by='count', ascending=False).iloc[0][
                                            0]]
@@ -231,7 +233,7 @@ def create_country_line_map(min_year, max_year):
             lon=lons,
             mode='lines',
             line=dict(width=1, color='blue'),
-            name='Birth Country to Leiden'
+            name='Place of birth'
         )
     )
     return fig, filtered_df
@@ -252,7 +254,7 @@ def create_animated_country_map(min_year, max_year):
 def create_mapbox_heat_map(min_year, max_year):
     from urllib.request import urlopen
     import json
-    with open('../assets/countries.geojson') as response:
+    with open('assets/countries.geojson') as response:
         countries = json.load(response)
     merged_df = data.country_df[data.country_df['year'] <= max_year]
     merged_df = merged_df[merged_df['year'] >= min_year]

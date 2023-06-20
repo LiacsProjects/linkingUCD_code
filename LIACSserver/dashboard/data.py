@@ -20,7 +20,7 @@ promotion_df = pd.read_excel(base_path / 'excelfiles/professors_promotion.xlsx',
 promotiontype_df = pd.read_excel(base_path / 'excelfiles/professors_promotion_type.xlsx', engine='openpyxl')
 promotion_place_df = pd.read_excel(base_path / 'excelfiles/professors_promotion_place.xlsx', engine='openpyxl')
 appointment_df = pd.read_excel(base_path / 'excelfiles/professors_appointment.xlsx', engine='openpyxl')
-job_df = pd.read_excel(base_path / 'excelfiles/professors_job.xlsx', engine='openpyxl')
+professor_job_df = pd.read_excel(base_path / 'excelfiles/professors_job.xlsx', engine='openpyxl')
 subject_df = pd.read_excel(base_path / 'excelfiles/professors_subject.xlsx', engine='openpyxl')
 faculty_df = pd.read_excel(base_path / 'excelfiles/professors_faculty.xlsx', engine='openpyxl')
 end_df = pd.read_excel(base_path / 'excelfiles/professors_end.xlsx', engine='openpyxl')

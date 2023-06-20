@@ -1,9 +1,34 @@
 # Creating dataframe
+# Import modules
 import dash
 from dash import dcc, html
 import data
-from figures import studentfigures
 
+# Parameters and constants
+CENTURY_STEP     = 1
+YEAR_STEP        = 5
+AGE_STEP         = 10
+MARK_SPACING     = 10
+START_CENTURY    = 16
+DEFAULT_SUBJECT = 'Number of enrollments'
+SUBJECT_DROPDOWN = ['Number of enrollments', 'Origin countries', 'Origin cities', 'Enrollment ages',
+                   'Enrollment faculties', 'Royal status', 'Student jobs', 'Student religion']
+DEFAULT_GRAPH_SUBJECT = 'Number of enrollments'
+GRAPH_SUBJECT_DROPDOWN = ['Number of enrollments', 'Origin cities', 'Enrollment ages', 'Enrollment faculties', 
+                          'Royal status', 'Student jobs', 'Student religion']
+GEOMAPS_OPTIONS  = ['Heat map', 'Line map', 'MP Heat map', 'MP Scatter map', 'Animated map']
+DEFAULT_GRAPH = 'Bar graph'
+GRAPH_DROPDOWN   = ['Line graph', 'Bar graph']
+
+# Data year calculaionss
+from figures import studentfigures
+current_century = data.all_dates_df[(data.all_dates_df['century'] <= START_CENTURY)]
+years = []
+for y in current_century['year'][0::YEAR_STEP]:
+        years.append(y)
+years.append(current_century['year'].max() )
+
+# layout page 
 timeline = html.Div(id='s_timeline', className='container', children=[
     html.Div(id='s_timeline_header', className='page_header', children=[
         html.H1('Timeline')
@@ -13,32 +38,41 @@ timeline = html.Div(id='s_timeline', className='container', children=[
         html.H3('Graph settings:'),
         html.P('Select Subject:'),
         dcc.Dropdown(
-            ['Number of enrollments', 'Origin countries', 'Origin cities', 'Enrollment ages',
-             'Enrollment faculties', 'Royal status', 'Student jobs', 'Student religion'],
-            'Number of enrollments', placeholder='Choose a subject', clearable=False,
+            SUBJECT_DROPDOWN,
+            DEFAULT_SUBJECT, placeholder='Choose a subject', clearable=False,
             id='year-century-subject-dropdown', className='dropdown'
         ),
-        html.P('Select year range:'),
-        html.Div(id='year-slider-container'),
+
         html.P('Select century range:'),
         dcc.RangeSlider(
             data.year_df['century'].min(),
             data.year_df['century'].max(),
-            1,
-            value=[data.year_df['century'].min(), data.year_df['century'].min()],
-            marks={str(cent): str(cent) for cent in data.year_df['century']},
+            CENTURY_STEP,
+            value=[data.year_df['century'].min(), data.all_dates_df['century'].min()],
+            marks={str(cent): str(cent) for cent in data.all_dates_df['century']},
             id='year-century-slider'
         ),
+        html.P('Select year range:'),   
+        dcc.RangeSlider(
+                        current_century['year'].min(),
+                        current_century['year'].max(),
+                        YEAR_STEP,
+                        id='year-slider',
+                        ),
+        html.Div(id='year-slider-container'),
+
         html.P('Select graph type:'),
         dcc.Dropdown(
-            ['Line graph', 'Scatter graph', 'Bar graph'], 'Scatter graph', placeholder='Choose a graph style',
+            GRAPH_DROPDOWN, DEFAULT_GRAPH, placeholder='Choose a graph style',
             clearable=False, id='year-century-dropdown', className='dropdown'
         ),
+        html.Div(id='year-century-graph'),
+        html.Div(id='subject-graph'),
         html.P('Select age range:'),
         dcc.RangeSlider(
             data.age_df['age'].min(),
             data.age_df['age'].max(),
-            10,
+            AGE_STEP,
             value=[data.age_df['age'].min(), data.age_df['age'].max()],
             id='subject-slider'
         ),
@@ -62,13 +96,13 @@ subject_information = html.Div(id='s_subject_info', className='container', child
     html.Div(id='subject-information-container', className='right_container ', children=[
         html.H3('Subject information'),
         dcc.Dropdown(
-            ['Number of enrollments', 'Origin countries', 'Origin cities', 'Origin regions',
-             'Enrollment ages', 'Enrollment faculties', 'Royal status', 'Student jobs', 'Student religion'],
-            'Number of enrollments', placeholder='Choose a subject', clearable=False,
+            SUBJECT_DROPDOWN,
+            DEFAULT_SUBJECT, placeholder='Choose a subject', clearable=False,
             style={'background-color': 'rgba(223,223,218,0.7)', 'color': 'black', 'margin': '1% 1% 1% 1%'},
             id='subject-dropdown', className='dropdown'
         ),
         html.Div(id='subject-information'),
+        html.Div(id='subject-graph'),
     ]),
 ]),
 
@@ -77,14 +111,15 @@ geographical_information = html.Div(id='s_geo', className='container', children=
         html.H1('Geographical information')
     ]),
     html.Div(id='geo-map-container', className='left_container', children=[
-        html.H3('Student enrollments per country'),
+        html.H3('Geographical origin of students'),
         html.Div(id='map-title'),
         html.Div(id='map-container'),
         html.Div(id='animation-container'),
+        html.P('Map with present day borders'),
         html.P('Choose map:', className='inline'),
         dcc.RadioItems(
             inline=True,
-            options=['Heat map', 'Line map', 'MP Heat map', 'MP Scatter map', 'Animated map'],
+            options=GEOMAPS_OPTIONS,
             value='Heat map',
             id='map-choice',
             className='inline',
@@ -93,9 +128,10 @@ geographical_information = html.Div(id='s_geo', className='container', children=
         html.A('Go to globe', href='assets/mapboxLeiden.html', target='_blank', rel='noreferrer noopener'),
         html.Br(),
         html.P('Select subject:', className='inline'),
-        dcc.Dropdown([
-            'Number of enrollments', 'Origin cities', 'Enrollment ages', 'Enrollment faculties', 'Royal status',
-            'Student jobs', 'Student religion'], 'Number of enrollments', placeholder='Choose a subject',
+        dcc.Dropdown(
+            GRAPH_SUBJECT_DROPDOWN,
+            'Number of enrollments', 
+            placeholder='Choose a subject',
             clearable=False, id='geo-subject-dropdown', className='dropdown'
         ),
         html.Br(),
@@ -194,7 +230,7 @@ individual_information = html.Div(id='s_individual', className='container', chil
         dcc.RadioItems(
             inline=True,
             options=['Yes', 'No'],
-            value='No',
+            value='Yes',
             id='include-missing-dates',
             className='inline',
         ),
