@@ -1,0 +1,18 @@
+LOKAAL SITE BEWERKEN
+Stap 1: Download en installeer Local: https://localwp.com/
+Stap 2: Download LUCD_template.zip
+Stap 3: Ga in je verkenner naar Appdata > Roaming > Local > blueprints (via C:, Users, mezelf in mijn geval)
+Stap 4: Plaats de LUCD_template.zip in de blueprints map
+Stap 5: Open Local: als het goed is staat de template nu op de 'blueprints' pagina
+Stap 6: Klink linksboven --> add new site (of ctrl+n op windows) en klik vervolgens op "create from blueprint" en dan kies je dus de template als blueprint
+Stap 7: Nu kun je lokaal de website bewerken.
+
+
+DE SITE EXPORTEREN
+Stap 1: start de site in Local
+Stap 2: klikt op de 3 puntjes naast de site titel
+Stap 3: klik op export site
+
+Wat we dus denk ik moeten doen, is dat iedere keer als iemand het bewerkt, daarna een nieuwe verise op GitHub ervan geplaatst wordt.
+Wel kunnen we op deze manier nog steeds tegelijkertijd aan de site werken dus ik weet niet hoe handig dit is (nut van Github beetje weg)
+Laat het me weten als iemand een handigere manier weet!
