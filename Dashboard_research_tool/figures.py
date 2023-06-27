@@ -5,6 +5,7 @@ import pandas as pd
 from plotly.subplots import make_subplots
 from Adapters import database
 import dash_bootstrap_components as dbc
+import math
 
 
 def convert_html_to_dash(html_code):
@@ -377,3 +378,68 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
 
     # dash_pivot_table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, index=True)
     return dash_pivot_table, charts
+
+
+def create_map():
+    cities_coords = pd.read_excel("geographic_visualisation/cities_coordinates.xlsx")
+    conn = database.Connection()
+    df, pivot_table = conn.QueryBuilderPivotTable(['City'], ['TypeOfPerson'], [], 'count')
+    counter = 0
+    del conn
+
+    filter = [1]
+    if filter == [1]:
+        scale = 10
+    if filter == [1,2]:
+        scale = 50
+    if filter == [2]:
+        scale = 30
+
+    df = df[df['TypeOfPerson'].isin(filter)]
+    pivot_table = pd.pivot_table(df, index=['City'], columns=[], values=['TypeOfPerson'], aggfunc='count')
+
+    geo_df = pd.DataFrame()
+    city_list = []
+    city_count_list = []
+    lon_list = []
+    lat_list = []
+    for city in pivot_table.index:
+        try:
+            lat_list.append(cities_coords[cities_coords['City'] == city]['Latitudes'].to_list()[0])
+            lon_list.append(cities_coords[cities_coords['City'] == city]['Longitudes'].to_list()[0])
+            city_list.append(city)
+            city_count_list.append(pivot_table.loc[city]['TypeOfPerson'])
+        except IndexError:
+            city_list.append(city)
+            city_count_list.append(pivot_table.loc[city]['TypeOfPerson'])
+            lat_list.append(None)
+            lon_list.append(None)
+
+    geo_df['City'] = city_list
+    geo_df['Count'] = city_count_list
+    geo_df['Longitude'] = lon_list
+    geo_df['Latitude'] = lat_list
+
+    fig = go.Figure()
+
+    for row in geo_df.iterrows():
+        fig.add_trace(go.Scattergeo(
+            lon=[row[1]["Longitude"]],
+            lat=[row[1]['Latitude']],
+            text=str(row[1]['Count']),
+            marker=dict(
+                size=math.log(row[1]['Count'], 1.02)/10,
+                color='royalblue',
+                line_color='rgb(40,40,40)',
+                line_width=0.5,
+                sizemode='area'
+            ),
+            name=row[1]['City']
+        ))
+    print('created fig')
+    # return dcc.Graph(figure=fig)
+    return fig
+
+#
+# fig = create_map()
+# fig.show()
