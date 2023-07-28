@@ -29,7 +29,7 @@ layout = dbc.Container(children=[
             html.P('Enter depth'), dcc.Input(id='depth-input', type='number', placeholder='Enter network depth'),
             html.Br(),
             html.Br(),
-            html.P('Enter person'), dcc.Input(id='person-input', type='number', placeholder='Enter person to start search'),
+            html.P('Enter person name or ID'), dcc.Input(id='person-input', placeholder='Enter person name or ID'),
             html.Br(),
             html.Br(),
             html.P('Choose network layout'), dbc.Select(
@@ -67,12 +67,12 @@ layout = dbc.Container(children=[
             dbc.Modal(
                 [
                     dbc.ModalHeader(dbc.ModalTitle("General Information")),
-                    # TODO enter specific dates here and update as needed
-                    dbc.ModalBody("This application can be used to visualise connections between people that lived in Leiden between *enter dates*"
-                                  "The networks are generated using birth certificates, death certificates and marriage certificates."
+                    # TODO update as needed
+                    dbc.ModalBody("This application can be used to visualise connections between people that lived in Leiden between 1811 and 1995. "
+                                  "The networks are generated using birth certificates, death certificates and marriage certificates. "
                                   "To generate a network, choose a person to start looking for connections to that person. For each connection, "
-                                  "more connections will be searched for until the specified depth is reached."
-                                  "Keep in mind that depths beyond 4 can take very long, this will be improved in the future."),
+                                  "more connections will be searched for until the specified depth is reached. "
+                                  "Keep in mind that higher depths (>3) can take long, this will be improved in the future."),
                     dbc.ModalHeader(dbc.ModalTitle("Layouts")),
                     dbc.ModalBody("There are several layouts available in this application. "),
                     dbc.ModalBody(html.Ul([
@@ -99,7 +99,7 @@ layout = dbc.Container(children=[
     ]),
     dbc.Row([
         dbc.Col([
-            html.Div(children=[], id='network-div'),
+            dbc.Spinner(html.Div(id="loading-output", children=[html.Div(children=[], id='network-div')])),
         ])
     ])],
     fluid=True)
@@ -127,6 +127,5 @@ def toggle_modal(n1, n2, is_open):
 )
 def network(network_button, depth, start_person, layout, drawing_options):
     if ctx.triggered_id == 'network-button':
-        print(drawing_options)
         fig = figures.create_network_fig(depth, start_person, layout, drawing_options)
         return dcc.Graph(figure=fig)

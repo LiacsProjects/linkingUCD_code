@@ -7,7 +7,7 @@ from Adapters import database
 import dash_bootstrap_components as dbc
 import math
 import networkx as nx
-
+from fuzzywuzzy import fuzz, process
 
 
 rl_df = pd.read_csv(
@@ -15,7 +15,12 @@ rl_df = pd.read_csv(
     sep=';')
 relations_df = pd.read_csv(
     'H:/Documents/uni/thesis/code_for_github/linkingUCD_code/Dashboard_research_tool/pages/genealogical_visualisation/relations_all.csv')
+all_names = rl_df['name'].unique()
 
+
+def find_closest_string_match(input_string, string_list):
+    closest_match = process.extractOne(input_string, string_list)
+    return closest_match[0]
 
 
 def convert_html_to_dash(html_code):
@@ -446,9 +451,6 @@ def create_map():
     return fig
 
 
-# fig = create_map()
-# fig.show()
-
 # relations van 1 individu vinden
 def relations_to_person(unique_person_id):
     """
@@ -535,7 +537,12 @@ def find_edges(unique_person_id, depth, completed_ids):
 
 
 def create_network_fig(depth, start_person, layout, drawing_options):
-    relation_type_options = ['Overleden', 'huwelijk', 'vader', 'moeder']
+    try:
+        start_person = int(start_person)
+    except ValueError:
+        start_person = find_closest_string_match(start_person, all_names)
+        # TODO wat als er twee mensen met dezelfde naam zijn? ook heel langzaam
+        start_person = list(rl_df[rl_df['name'] == start_person]['unique_person_id'].unique())[0]
 
     # find all edges
     edges_relations = find_edges(start_person, depth, [])

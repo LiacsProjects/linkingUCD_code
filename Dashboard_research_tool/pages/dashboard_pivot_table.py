@@ -72,12 +72,20 @@ layout = dbc.Container(children=[dbc.Row([
                 ]))),
             html.Br(),
             dbc.Row(dbc.Col(
-                html.Div(id='pivot-table', children=[], style={
-                    'overflow-x': 'auto',
-                    'overflow-y': 'auto',
-                    'max-height': '500px',
-                }))),
-            dbc.Row(html.Div(id='pivot-chart', children=[]))], fluid=True)
+                dbc.Spinner(children=[
+                    html.Div(id='pivot-table', children=[], style={
+                        'overflow-x': 'auto',
+                        'overflow-y': 'auto',
+                        'max-height': '500px',
+                    })
+                    ]
+                )
+            )
+            ),
+            dbc.Row(
+                dbc.Spinner(children=[html.Div(id='pivot-chart', children=[])])
+            )
+    ], fluid=True)
 
 
 @callback(
