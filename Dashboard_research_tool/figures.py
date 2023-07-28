@@ -6,6 +6,16 @@ from plotly.subplots import make_subplots
 from Adapters import database
 import dash_bootstrap_components as dbc
 import math
+import networkx as nx
+
+
+
+rl_df = pd.read_csv(
+    'H:/Documents/uni/thesis/code_for_github/linkingUCD_code/Dashboard_research_tool/pages/genealogical_visualisation/RL Gelinkte Personen.csv',
+    sep=';')
+relations_df = pd.read_csv(
+    'H:/Documents/uni/thesis/code_for_github/linkingUCD_code/Dashboard_research_tool/pages/genealogical_visualisation/relations_all.csv')
+
 
 
 def convert_html_to_dash(html_code):
@@ -49,6 +59,7 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
 
     conn = database.Connection()
     df, pivot_table = conn.QueryBuilderPivotTable(index, values, columns, aggfunc)
+    print(df)
     counter = 0
     for filter_tuple in filters:
         if filter_tuple[1] and filter_tuple[0] != 'Minimum threshold' and filter_tuple[0] != 'Maximum threshold':
@@ -381,7 +392,7 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
 
 
 def create_map():
-    cities_coords = pd.read_excel("geographic_visualisation/cities_coordinates.xlsx")
+    cities_coords = pd.read_excel("D:/documents/uni/thesis/code_for_github/linkingUCD_code/Dashboard_research_tool/pages/geographic_visualisation/cities_coordinates.xlsx")
     conn = database.Connection()
     df, pivot_table = conn.QueryBuilderPivotTable(['City'], ['TypeOfPerson'], [], 'count')
     counter = 0
@@ -440,6 +451,379 @@ def create_map():
     # return dcc.Graph(figure=fig)
     return fig
 
-#
+
 # fig = create_map()
 # fig.show()
+
+# relations van 1 individu vinden
+def relations_to_person(unique_person_id):
+    """
+    Looks up one person in the rl_df, this person has many certificates to their name,
+    these certificates are looked up in the relations_df, finding links between people
+    the links are registered, and the id's (from the rl_df) are stored
+    """
+
+
+    person_data = rl_df[rl_df['unique_person_id'] == unique_person_id]
+    names = list(person_data['name'].unique())
+
+    relations = []
+    relations_id = []
+    counter = 0
+
+    # edges is a list in this form [(unique_person_id_1, unique_person_id_2), relation_type, name_1, name_2, year]
+    # the unique_person_id comes from the Rl Gelinkte Personen file
+    edges = []
+
+    for certificate in person_data['uuid']:
+        # found an edge from the unique_person_id in this function to someone else
+        if len(relations_df[relations_df['uuid_1'] == certificate]):
+            # the relation in the relations_df
+            relation = relations_df[relations_df['uuid_1'] == certificate]
+            for single_relation in relation.iterrows():
+                relations.append(single_relation[1])
+
+                # the id from rl_df from the 'other' person in the relation
+                uuid_2 = single_relation[1].loc['uuid_2']
+                try:
+                    unique_person_id_2 = int(rl_df[rl_df['uuid'] == uuid_2]['unique_person_id'])
+                except TypeError:
+                    # print('typeerror', rl_df[rl_df['uuid'] == uuid_2]['unique_person_id'])
+                    unique_person_id_2 = None
+
+                relations_id.append(unique_person_id_2)
+
+                # print(single_relation)
+                # print(unique_person_id)
+                # print(unique_person_id_2)
+                # print(certificate)
+                # print(uuid_2)
+
+                certificate_person_data = person_data[person_data['uuid'] == certificate]
+                certificate_person_data_2 = rl_df[rl_df['unique_person_id'] == unique_person_id_2][
+                    rl_df[rl_df['unique_person_id'] == unique_person_id_2]['uuid'] == uuid_2]
+
+                # print(type(certificate_person_data['year']))
+                # print(certificate_person_data_2)
+
+                edges.append([(unique_person_id, unique_person_id_2), single_relation[1]['relation_type'], (list(certificate_person_data['year']), list(certificate_person_data['name']), list(certificate_person_data_2['year']), list(certificate_person_data_2['name']))])
+            # print('\n\n')
+
+        # found an edge from someone else to the unique_person_id in this function
+        if len(relations_df[relations_df['uuid_2'] == certificate]):
+            # the relation in the relations_df
+            relation = relations_df[relations_df['uuid_2'] == certificate]
+            for single_relation in relation.iterrows():
+                relations.append(single_relation[1])
+
+                # the id from rl_df from the 'other' person in the relation
+                uuid_2 = single_relation[1].loc['uuid_1']
+                try:
+                    unique_person_id_2 = int(rl_df[rl_df['uuid'] == uuid_2]['unique_person_id'])
+                except TypeError:
+                    # print('typeerror', rl_df[rl_df['uuid'] == uuid_2]['unique_person_id'])
+                    unique_person_id_2 = None
+
+                relations_id.append(unique_person_id_2)
+
+                # print(single_relation)
+                # print(unique_person_id)
+                # print(unique_person_id_2)
+                # print(certificate)
+                # print(uuid_2)
+
+                certificate_person_data = person_data[person_data['uuid'] == certificate]
+                certificate_person_data_2 = rl_df[rl_df['unique_person_id'] == unique_person_id_2][rl_df[rl_df['unique_person_id'] == unique_person_id_2]['uuid'] == uuid_2]
+
+                # print(certificate_person_data)
+                # print(certificate_person_data_2)
+
+                edges.append([(unique_person_id_2, unique_person_id), single_relation[1]['relation_type'], (list(certificate_person_data_2['year']), list(certificate_person_data_2['name']), list(certificate_person_data['year']), list(certificate_person_data['name']))])
+            # print('\n\n')
+        counter += 1
+
+    # edge[0][0] == child, edge[0][1] == parent
+    return edges, relations_id
+
+
+def find_edges(unique_person_id, depth, completed_ids):
+    print(depth)
+    if unique_person_id not in completed_ids:
+        edges, next_id_list = relations_to_person(unique_person_id)
+        completed_ids.append(unique_person_id)
+        depth -= 1
+        if depth:
+            for next_id in next_id_list:
+                new_edges = find_edges(next_id, depth, completed_ids)
+                if new_edges:
+                    for new_edge in new_edges:
+
+                        edges.append(new_edge)
+        return edges
+
+
+def create_network_fig(depth, start_person):
+    relation_type_options = ['Overleden', 'huwelijk', 'vader', 'moeder']
+
+    # find all edges
+    edges_relations = find_edges(start_person, depth, [])
+
+    processed_edges = []
+
+    layer_dict = {}
+    layer_dict.update({start_person: 0})
+    # first create the graph with networkx
+    G = nx.Graph()
+    for edge_relation in edges_relations:
+
+        if edge_relation not in processed_edges and edge_relation[0][0] and edge_relation[0][1]:
+            G.add_edge(*(edge_relation[0][0], edge_relation[0][1]))
+
+            processed_edges.append(edge_relation)
+
+    for processed_edge in processed_edges:
+        relation_type = processed_edge[1]
+        relation_person_1 = processed_edge[0][0]
+        relation_person_2 = processed_edge[0][1]
+
+        if relation_person_1 in list(layer_dict.keys()):
+            layer = layer_dict[relation_person_1]
+            if relation_type == 'huwelijk' or relation_type == 'Overleden':
+                layer_dict.update({relation_person_2: layer})
+            elif relation_type == 'vader' or relation_type == 'moeder':
+                layer_dict.update({relation_person_2: layer + 1})
+
+        if relation_person_2 in list(layer_dict.keys()):
+            layer = layer_dict[relation_person_2]
+            if relation_type == 'huwelijk' or relation_type == 'Overleden':
+                layer_dict.update({relation_person_1: layer})
+            elif relation_type == 'vader' or relation_type == 'moeder':
+                layer_dict.update({relation_person_1: layer - 1})
+
+    print(layer_dict)
+
+    for node_id in list(layer_dict.keys()):
+        G.add_node(node_id, layer=layer_dict[node_id])
+
+
+
+    # create positions
+    # TODO based on user input
+    print(G.nodes())
+
+    pos = nx.multipartite_layout(G, subset_key='layer', align='horizontal')
+    counter = 0
+    for pos_value in pos:
+        # print(pos[pos_value])
+        # print(processed_edges[counter])
+        # new_y_value = processed_edges[counter][2][0][0]-1800
+        # pos[pos_value] = [pos[pos_value][0], new_y_value]
+
+        counter += 1
+
+    mnode_x, mnode_y, mnode_txt = [], [], []
+
+    edge_trace = []
+    arrow_layouts = []
+
+    edge_text_counter = 0
+
+    # create the edges in the figure
+    for edge in G.edges():
+        relation_type = 'No relation type found'
+
+        # additional information for every edge
+        for processed_edge in processed_edges:
+            if processed_edge[0] == edge or (processed_edge[0][1], processed_edge[0][0]) == edge:
+                # print(processed_edge[0], edge, processed_edge[1])
+                relation_type = str(processed_edge[1])
+                relation_type_string = '<br>Relation type: ' + str(processed_edge[1])
+                person_1_data = '<br>Person 1 ID: ' + str(processed_edge[0][0]) + '<br>Person 1 Name: ' + str(
+                    processed_edge[2][1][0])
+                person_2_data = '<br>Person 2 ID: ' + str(processed_edge[0][1]) + '<br>Person 2 Name: ' + str(
+                    processed_edge[2][3][0])
+                year = "Year: " + str(processed_edge[2][0])
+
+                break
+
+        edge_x = []
+        edge_y = []
+
+
+        if edge[0] == processed_edge[0][0]:
+            x0, y0 = pos[edge[1]]
+            x1, y1 = pos[edge[0]]
+        else:
+            x0, y0 = pos[edge[0]]
+            x1, y1 = pos[edge[1]]
+
+        arrow_x1 = (2 * x0 + 3.5 * x1) / 5.5
+        arrow_y1 = (2 * y0 + 3.5 * y1) / 5.5
+
+        if relation_type == "Overleden":
+            y1 -= 0.01
+
+        edge_x.append(x0)
+        edge_x.append(x1)
+        edge_x.append(None)
+        edge_y.append(y0)
+        edge_y.append(y1)
+        edge_y.append(None)
+
+        if relation_type == 'huwelijk':
+            mnode_x.extend([(x0 + x1) / 2])
+            mnode_y.extend([(y0 + y1) / 2 + 0.01])
+        else:
+            mnode_x.extend([arrow_x1])
+            mnode_y.extend([arrow_y1])
+
+        if relation_type != "Overleden":
+            mnode_txt.extend([year + person_1_data + person_2_data + relation_type_string])
+        else:
+            mnode_txt.extend([year + person_1_data + relation_type_string])
+
+        edge_text_counter += 1
+
+        if relation_type == 'vader':
+            edge_trace.append(go.Scatter(
+                x=edge_x, y=edge_y,
+                line=dict(width=0.7, color='#6495ED'),
+                hoverinfo='text',
+                mode='lines',
+            ))
+
+            arrow_layouts.append(dict(
+                x=arrow_x1,
+                y=arrow_y1,
+                xref='x',
+                yref='y',
+                text='',
+                showarrow=True,
+                axref='x', ayref='y',
+                ax=x0,
+                ay=y0,
+                arrowhead=3,
+                arrowsize=1.3,
+                arrowwidth=2,
+                arrowcolor='#6495ED'
+            ))
+        elif relation_type == "moeder":
+            edge_trace.append(go.Scatter(
+                x=edge_x, y=edge_y,
+                line=dict(width=0.7, color='#fc9df9'),
+                hoverinfo='text',
+                mode='lines',
+            ))
+
+            arrow_layouts.append(dict(
+                x=arrow_x1,
+                y=arrow_y1,
+                xref='x',
+                yref='y',
+                text='',
+                showarrow=True,
+                axref='x', ayref='y',
+                ax=x0,
+                ay=y0,
+                arrowhead=3,
+                arrowsize=1.3,
+                arrowwidth=2,
+                arrowcolor='#fc9df9'
+            ))
+        elif relation_type == 'huwelijk':
+            half_x = (x0 + x1) / 2
+            half_y = (y0 + y1) / 2 + 0.01
+            edge_x_1 = (x0, half_x)
+            edge_y_1 = (y0, half_y)
+            edge_x_2 = (half_x, x1)
+            edge_y_2 = (half_y, y1)
+
+            edge_trace.append(go.Scatter(
+                x=edge_x_1, y=edge_y_1,
+                line=dict(width=2, color='#daa520', shape='spline', smoothing=1.3),
+                hoverinfo='text',
+                mode='lines',))
+            edge_trace.append(go.Scatter(
+                x=edge_x_2, y=edge_y_2,
+                line=dict(width=2, color='#daa520', shape='spline', smoothing=1.3),
+                hoverinfo='text',
+                mode='lines',))
+
+        elif relation_type == 'Overleden':
+            edge_trace.append(go.Scatter(
+                x=edge_x, y=edge_y,
+                line=dict(width=2, color='#000000'),
+                hoverinfo='text',
+                mode='lines', ))
+
+    # text for hovering
+
+    mnode_trace = go.Scatter(x=mnode_x, y=mnode_y, mode="markers", showlegend=False,
+                             hovertext=mnode_txt, marker=go.Marker(opacity=0))
+
+    # draw every node in the fig
+    node_x = []
+    node_y = []
+    for node in G.nodes():
+        x, y = pos[node]
+        node_x.append(x)
+        node_y.append(y)
+
+    node_trace = go.Scatter(
+        x=node_x, y=node_y,
+        mode='markers',
+            hoverinfo='text',
+        marker=dict(
+            showscale=True,
+            # colorscale options
+            # 'Greys' | 'YlGnBu' | 'Greens' | 'YlOrRd' | 'Bluered' | 'RdBu' |
+            # 'Reds' | 'Blues' | 'Picnic' | 'Rainbow' | 'Portland' | 'Jet' |
+            # 'Hot' | 'Blackbody' | 'Earth' | 'Electric' | 'Viridis' |
+            colorscale='YlGnBu',
+            reversescale=True,
+            color=[],
+            size=10,
+            colorbar=dict(
+                thickness=15,
+                title='Node Connections',
+                xanchor='left',
+                titleside='right'
+            ),
+            line_width=2),
+        )
+
+    node_adjacencies = []
+    node_text = []
+    for node, adjacencies in enumerate(G.adjacency()):
+        node_adjacencies.append(len(adjacencies[1]))
+        for processed_edge in processed_edges:
+            if list(G.nodes())[node] == processed_edge[0][0]:
+                node_name = processed_edge[2][1][0]
+            elif list(G.nodes())[node] == processed_edge[0][1]:
+                node_name = processed_edge[2][3][0]
+
+        node_text.append(f'Person ID: {list(G.nodes())[node]}<br>Name: {node_name}<br>Number of connections: ' + str(len(adjacencies[1])))
+
+    node_trace.marker.color = node_adjacencies
+    node_trace.text = node_text
+
+    # create the figure
+    fig = go.Figure(data=[node_trace],
+                    layout=go.Layout(
+                        hovermode='closest',
+                        showlegend=False,
+                        xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                        yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                        width=1200,
+                        height=1000
+                    ),
+                    )
+    for edge_trace_value in edge_trace:
+        fig.add_trace(edge_trace_value)
+
+    fig.add_trace(mnode_trace)
+
+    for arrow_layout in arrow_layouts:
+        fig.add_annotation(arrow_layout)
+
+    return fig
