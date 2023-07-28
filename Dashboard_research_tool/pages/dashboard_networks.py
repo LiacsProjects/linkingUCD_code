@@ -6,7 +6,7 @@
 import dash_bootstrap_components as dbc
 import dash_daq as daq
 import pandas as pd
-from dash import Dash, dcc, html, Input, Output, ctx, ALL, callback
+from dash import Dash, dcc, html, Input, Output, ctx, ALL, callback, State
 # import figures
 import random
 import visdcc
@@ -32,13 +32,89 @@ layout = dbc.Container(children=[
             html.P('Enter person'), dcc.Input(id='person-input', type='number', placeholder='Enter person to start search'),
             html.Br(),
             html.Br(),
+            html.P('Choose network layout'), dbc.Select(
+                id="network-layout-dropdown",
+                options=[
+                    {"label": "Generational view", "value": "Generational view"},
+                    {"label": "Kamada-Kawai layout", "value": "Kamada-Kawai layout"},
+                    {"label": "Circular layout", "value": "Circular layout"},
+                    # {"label": "Spectral layout", "value": "Spectral layout"},
+                ],
+                ),
+            html.Br(),
+            html.Br(),
+            dbc.Checklist(
+                options=[
+                    {"label": "Vader", "value": "vader"},
+                    {"label": "Moeder", "value": "moeder"},
+                    {"label": "Huwelijk", "value": "huwelijk"},
+                    {"label": "Overleden", "value": "Overleden"}
+                ],
+                value=[1],
+                id="switches-input-network-drawing",
+                switch=True,
+            ),
+            html.Br(),
+            html.Br(),
             dbc.Button('Generate Network', id='network-button'),
-            html.Div(children=[], id='network-div'),
-            html.Div(children=[], id='network-visdcc')
 
+
+        ]),
+        dbc.Col([
+            html.Br(),
+            dbc.Button("Additional information", id='relations-modal'),
+
+            dbc.Modal(
+                [
+                    dbc.ModalHeader(dbc.ModalTitle("General Information")),
+                    # TODO enter specific dates here and update as needed
+                    dbc.ModalBody("This application can be used to visualise connections between people that lived in Leiden between *enter dates*"
+                                  "The networks are generated using birth certificates, death certificates and marriage certificates."
+                                  "To generate a network, choose a person to start looking for connections to that person. For each connection, "
+                                  "more connections will be searched for until the specified depth is reached."
+                                  "Keep in mind that depths beyond 4 can take very long, this will be improved in the future."),
+                    dbc.ModalHeader(dbc.ModalTitle("Layouts")),
+                    dbc.ModalBody("There are several layouts available in this application. "),
+                    dbc.ModalBody(html.Ul([
+                            html.Li("Generational view (recommended): This layout uses layers for each generation. Parents will always be one layer above children, and partners will be on the same layer."),
+                            html.Li("Kamada-Kawai layout: This layout attempts to group nodes together using the Kamada–Kawai algorithm."),
+                            html.Li("Circular layout: This layout presents all nodes in a circular pattern."),
+                        ])
+                    ),
+                    dbc.ModalHeader(dbc.ModalTitle("Relations examples")),
+                    dbc.ModalBody(html.Img(src='assets/network-legenda.png', style={
+                        'height': '70%'
+                    }),),
+                    dbc.ModalFooter(
+                        dbc.Button(
+                            "Close", id="close", className="ms-auto", n_clicks=0
+                        )
+                    ),
+                ],
+                id='networks-modal',
+                size="xl",
+                is_open=False
+            )
+        ])
+    ]),
+    dbc.Row([
+        dbc.Col([
+            html.Div(children=[], id='network-div'),
         ])
     ])],
     fluid=True)
+
+
+@callback(
+    Output("networks-modal", "is_open"),
+    [Input("relations-modal", "n_clicks"), Input("close", "n_clicks")],
+    [State("networks-modal", "is_open")],
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
+
 
 @callback(
     Output('network-div', 'children'),
@@ -46,9 +122,11 @@ layout = dbc.Container(children=[
     Input('network-button', 'n_clicks'),
     Input('depth-input', 'value'),
     Input('person-input', 'value'),
+    Input('network-layout-dropdown', 'value'),
+    Input('switches-input-network-drawing', 'value')
 )
-def network(network_button, depth, start_person):
+def network(network_button, depth, start_person, layout, drawing_options):
     if ctx.triggered_id == 'network-button':
-
-        fig = figures.create_network_fig(depth, start_person)
+        print(drawing_options)
+        fig = figures.create_network_fig(depth, start_person, layout, drawing_options)
         return dcc.Graph(figure=fig)

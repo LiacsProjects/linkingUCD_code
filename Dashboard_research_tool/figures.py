@@ -59,7 +59,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
 
     conn = database.Connection()
     df, pivot_table = conn.QueryBuilderPivotTable(index, values, columns, aggfunc)
-    print(df)
     counter = 0
     for filter_tuple in filters:
         if filter_tuple[1] and filter_tuple[0] != 'Minimum threshold' and filter_tuple[0] != 'Maximum threshold':
@@ -108,8 +107,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
 
     charts = []
 
-    # print(pivot_table)
-    # print(pivot_table_html)
 
     try:
         for value in values:
@@ -355,8 +352,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
             count = []
 
             for row_index in pivot_table[value].index:
-                # print(row_index)
-                # print(pivot_table[value].iloc[counter])
                 cities_list.append(row_index)
                 count.append(pivot_table[value].iloc[counter])
                 lons.append(cities_coords_df[cities_coords_df['City'] == row_index]['Longitudes'].values[0])
@@ -447,7 +442,6 @@ def create_map():
             ),
             name=row[1]['City']
         ))
-    print('created fig')
     # return dcc.Graph(figure=fig)
     return fig
 
@@ -488,26 +482,17 @@ def relations_to_person(unique_person_id):
                 try:
                     unique_person_id_2 = int(rl_df[rl_df['uuid'] == uuid_2]['unique_person_id'])
                 except TypeError:
-                    # print('typeerror', rl_df[rl_df['uuid'] == uuid_2]['unique_person_id'])
                     unique_person_id_2 = None
 
                 relations_id.append(unique_person_id_2)
 
-                # print(single_relation)
-                # print(unique_person_id)
-                # print(unique_person_id_2)
-                # print(certificate)
-                # print(uuid_2)
 
                 certificate_person_data = person_data[person_data['uuid'] == certificate]
                 certificate_person_data_2 = rl_df[rl_df['unique_person_id'] == unique_person_id_2][
                     rl_df[rl_df['unique_person_id'] == unique_person_id_2]['uuid'] == uuid_2]
 
-                # print(type(certificate_person_data['year']))
-                # print(certificate_person_data_2)
 
                 edges.append([(unique_person_id, unique_person_id_2), single_relation[1]['relation_type'], (list(certificate_person_data['year']), list(certificate_person_data['name']), list(certificate_person_data_2['year']), list(certificate_person_data_2['name']))])
-            # print('\n\n')
 
         # found an edge from someone else to the unique_person_id in this function
         if len(relations_df[relations_df['uuid_2'] == certificate]):
@@ -521,25 +506,14 @@ def relations_to_person(unique_person_id):
                 try:
                     unique_person_id_2 = int(rl_df[rl_df['uuid'] == uuid_2]['unique_person_id'])
                 except TypeError:
-                    # print('typeerror', rl_df[rl_df['uuid'] == uuid_2]['unique_person_id'])
                     unique_person_id_2 = None
 
                 relations_id.append(unique_person_id_2)
 
-                # print(single_relation)
-                # print(unique_person_id)
-                # print(unique_person_id_2)
-                # print(certificate)
-                # print(uuid_2)
-
                 certificate_person_data = person_data[person_data['uuid'] == certificate]
                 certificate_person_data_2 = rl_df[rl_df['unique_person_id'] == unique_person_id_2][rl_df[rl_df['unique_person_id'] == unique_person_id_2]['uuid'] == uuid_2]
 
-                # print(certificate_person_data)
-                # print(certificate_person_data_2)
-
                 edges.append([(unique_person_id_2, unique_person_id), single_relation[1]['relation_type'], (list(certificate_person_data_2['year']), list(certificate_person_data_2['name']), list(certificate_person_data['year']), list(certificate_person_data['name']))])
-            # print('\n\n')
         counter += 1
 
     # edge[0][0] == child, edge[0][1] == parent
@@ -547,7 +521,6 @@ def relations_to_person(unique_person_id):
 
 
 def find_edges(unique_person_id, depth, completed_ids):
-    print(depth)
     if unique_person_id not in completed_ids:
         edges, next_id_list = relations_to_person(unique_person_id)
         completed_ids.append(unique_person_id)
@@ -557,12 +530,11 @@ def find_edges(unique_person_id, depth, completed_ids):
                 new_edges = find_edges(next_id, depth, completed_ids)
                 if new_edges:
                     for new_edge in new_edges:
-
                         edges.append(new_edge)
         return edges
 
 
-def create_network_fig(depth, start_person):
+def create_network_fig(depth, start_person, layout, drawing_options):
     relation_type_options = ['Overleden', 'huwelijk', 'vader', 'moeder']
 
     # find all edges
@@ -600,8 +572,6 @@ def create_network_fig(depth, start_person):
             elif relation_type == 'vader' or relation_type == 'moeder':
                 layer_dict.update({relation_person_1: layer - 1})
 
-    print(layer_dict)
-
     for node_id in list(layer_dict.keys()):
         G.add_node(node_id, layer=layer_dict[node_id])
 
@@ -609,17 +579,16 @@ def create_network_fig(depth, start_person):
 
     # create positions
     # TODO based on user input
-    print(G.nodes())
-
-    pos = nx.multipartite_layout(G, subset_key='layer', align='horizontal')
-    counter = 0
-    for pos_value in pos:
-        # print(pos[pos_value])
-        # print(processed_edges[counter])
-        # new_y_value = processed_edges[counter][2][0][0]-1800
-        # pos[pos_value] = [pos[pos_value][0], new_y_value]
-
-        counter += 1
+    if layout == 'Generational view':
+        pos = nx.multipartite_layout(G, subset_key='layer', align='horizontal')
+    elif layout == 'Kamada-Kawai layout':
+        pos = nx.kamada_kawai_layout(G)
+    elif layout == 'Circular layout':
+        pos = nx.circular_layout(G)
+    elif layout == 'Spectral layout':
+        pos = nx.spectral_layout(G)
+    elif layout == 'Random layout':
+        pos = nx.random_layout(G)
 
     mnode_x, mnode_y, mnode_txt = [], [], []
 
@@ -635,7 +604,6 @@ def create_network_fig(depth, start_person):
         # additional information for every edge
         for processed_edge in processed_edges:
             if processed_edge[0] == edge or (processed_edge[0][1], processed_edge[0][0]) == edge:
-                # print(processed_edge[0], edge, processed_edge[1])
                 relation_type = str(processed_edge[1])
                 relation_type_string = '<br>Relation type: ' + str(processed_edge[1])
                 person_1_data = '<br>Person 1 ID: ' + str(processed_edge[0][0]) + '<br>Person 1 Name: ' + str(
@@ -660,8 +628,10 @@ def create_network_fig(depth, start_person):
         arrow_x1 = (2 * x0 + 3.5 * x1) / 5.5
         arrow_y1 = (2 * y0 + 3.5 * y1) / 5.5
 
-        if relation_type == "Overleden":
-            y1 -= 0.01
+        if relation_type == "Overleden" and layout == "Generational view":
+            y1 -= 0.02
+        elif relation_type == "Overleden":
+            y1 -= 0.05
 
         edge_x.append(x0)
         edge_x.append(x1)
@@ -673,9 +643,12 @@ def create_network_fig(depth, start_person):
         if relation_type == 'huwelijk':
             mnode_x.extend([(x0 + x1) / 2])
             mnode_y.extend([(y0 + y1) / 2 + 0.01])
-        else:
+        elif relation_type == "vader" or relation_type == "moeder":
             mnode_x.extend([arrow_x1])
             mnode_y.extend([arrow_y1])
+        else:
+            mnode_x.extend([(x0 + x1) / 2])
+            mnode_y.extend([(y0 + y1) / 2])
 
         if relation_type != "Overleden":
             mnode_txt.extend([year + person_1_data + person_2_data + relation_type_string])
@@ -684,7 +657,7 @@ def create_network_fig(depth, start_person):
 
         edge_text_counter += 1
 
-        if relation_type == 'vader':
+        if relation_type == 'vader' and 'vader' in drawing_options:
             edge_trace.append(go.Scatter(
                 x=edge_x, y=edge_y,
                 line=dict(width=0.7, color='#6495ED'),
@@ -707,7 +680,7 @@ def create_network_fig(depth, start_person):
                 arrowwidth=2,
                 arrowcolor='#6495ED'
             ))
-        elif relation_type == "moeder":
+        elif relation_type == "moeder" and 'moeder' in drawing_options:
             edge_trace.append(go.Scatter(
                 x=edge_x, y=edge_y,
                 line=dict(width=0.7, color='#fc9df9'),
@@ -730,7 +703,7 @@ def create_network_fig(depth, start_person):
                 arrowwidth=2,
                 arrowcolor='#fc9df9'
             ))
-        elif relation_type == 'huwelijk':
+        elif relation_type == 'huwelijk' and 'huwelijk' in drawing_options:
             half_x = (x0 + x1) / 2
             half_y = (y0 + y1) / 2 + 0.01
             edge_x_1 = (x0, half_x)
@@ -749,7 +722,7 @@ def create_network_fig(depth, start_person):
                 hoverinfo='text',
                 mode='lines',))
 
-        elif relation_type == 'Overleden':
+        elif relation_type == 'Overleden' and 'Overleden' in drawing_options:
             edge_trace.append(go.Scatter(
                 x=edge_x, y=edge_y,
                 line=dict(width=2, color='#000000'),
