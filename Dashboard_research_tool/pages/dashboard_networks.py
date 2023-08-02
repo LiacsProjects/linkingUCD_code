@@ -128,4 +128,7 @@ def toggle_modal(n1, n2, is_open):
 def network(network_button, depth, start_person, layout, drawing_options):
     if ctx.triggered_id == 'network-button':
         fig = figures.create_network_fig(depth, start_person, layout, drawing_options)
-        return dcc.Graph(figure=fig)
+        if type(fig) == str:
+            return fig
+        else:
+            return dcc.Graph(figure=fig)

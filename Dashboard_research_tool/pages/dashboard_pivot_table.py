@@ -6,7 +6,7 @@
 import dash_bootstrap_components as dbc
 import dash_daq as daq
 import pandas as pd
-from dash import Dash, dcc, html, Input, Output, ctx, ALL, callback
+from dash import Dash, dcc, html, Input, Output, ctx, ALL, callback, State
 import figures
 import random
 import visdcc
@@ -38,7 +38,7 @@ layout = dbc.Container(children=[dbc.Row([
                                      placeholder='Choose values', clearable=False, multi=True, optionHeight=50,
                                      id='pivot_columns_dropdown', className='dropdown',
                                      style={"width": "400px"}),
-                        html.P("AggFunc:"),
+                        html.P("Aggregate Function:"),
                         dcc.Dropdown(['Count', 'Sum', 'Mean'],
                                      placeholder='Choose values', clearable=False, multi=True, optionHeight=50,
                                      id='pivot_aggfunc_dropdown', className='dropdown',
@@ -63,12 +63,71 @@ layout = dbc.Container(children=[dbc.Row([
                                     id='pivot-table-button'),
                          dbc.Button('Load example',
                                     id='example-button'),
-                         dbc.Button('Random',
-                                    id='random-button'),
+                         # dbc.Button('Random',
+                         #            id='random-button'),
                          dbc.Button('Clear',
-                                    id='clear-button')],
+                                    id='clear-button'),
+                         dbc.Button('Additional Information',
+                                    id='info-button')]
                         # size='me', #className="d-grid gap-2"
                     ),
+                    dbc.Modal(
+                        [
+                            dbc.ModalHeader(dbc.ModalTitle("General Information")),
+                            # TODO update as needed
+                            dbc.ModalBody("This application is used to visualize the data present in our database. "
+                                          "The database contains data on members from Leiden University, since the sixteenth century. "
+                                          "In this application you can interactively generate your own visualizations based on what you want to see. "
+                                          "This is done using the dropdown menus and filters. In the following sections the options present in this application are explained."),
+                            dbc.ModalHeader(dbc.ModalTitle("Pivot Tables")),
+                            dbc.ModalBody("The pivot tables are used to transform non-numeric data into tables and visualisations. "
+                                          "The original data will contain columns with data such as a name, place and gender connected to one person. "),
+                            dbc.ModalBody(html.B("Index")),
+                            dbc.ModalBody("The index of a pivot table take columns from the original data, and displays them in the index of the final table. "),
+                            dbc.ModalBody(html.B("Columns")),
+                            dbc.ModalBody("The columns in a pivot table take columns from the original data, and displays them in the columns of the final table. "),
+                            dbc.ModalBody(html.B("Values")),
+                            dbc.ModalBody("The values of a pivot table are what is shown in the cells. The values are columns from the original data that the aggregate function is applied to. "),
+                            dbc.ModalBody(html.B("Aggregate Function")),
+                            dbc.ModalBody("The aggregate function decides what is done with the data collected by the previous settings. Currently the data only supports the 'count' function.  "),
+                            dbc.ModalBody(html.B("Chart Type")),
+                            dbc.ModalBody("The Chart Type decides what kind of chart the final visualization will be. "),
+                            dbc.ModalBody(html.B("Filters")),
+                            dbc.ModalBody("By excluding or only including some data, you can visualize the data that is relevant to the visualization. "
+                                          "This is done by entering a value that you want to include or exclude. If you want to enter multiple values you can separate them with "
+                                          "a semi-colon, e.g. Country: Nederland;Duitsland;Verenigd Koninkrijk"),
+                            dbc.ModalHeader(dbc.ModalTitle("Examples")),
+                            dbc.ModalBody(html.B("Example 1")),
+                            dbc.ModalBody("A common option is to use 'Type of Person' as values. This effectively means everyone in the database. "
+                                          "You can then use filters to choose if you want to view students or professors. "
+                                          "This pivot table can be read as follows: 'There were 39 rows with any TypeOfPerson associated with the Archeologie faculty'."),
+                            dbc.ModalBody(html.Img(src='assets/example_1_table.png', style={
+                                'height': '70%'
+                            }),),
+                            dbc.ModalBody(html.Img(src='assets/example_1_chart.png', style={
+                                'width': '80%'
+                            }), ),
+                            dbc.ModalBody(html.B("Example 2")),
+                            dbc.ModalBody("In this example a column was added to visualize the separation between genders. "
+                                          "You can also add multiple columns and indexes to further divide the data into separate categories. "
+                                          "This pivot table can be read as follows: 'There were 48 men with any TypeOfPerson from the country België, and there were 2 women with the same values and country'. "
+                                          "Note that this example only includes professors. Because the students data do not include gender, they are left out automatically with this selection. "),
+                            dbc.ModalBody(html.Img(src='assets/example_2_table.png', style={
+                                'height': '70%'
+                            }), ),
+                            dbc.ModalBody(html.Img(src='assets/example_2_chart.png', style={
+                                'width': '80%'
+                            }), ),
+                            dbc.ModalFooter(
+                                dbc.Button(
+                                    "Close", id="close", className="ms-auto", n_clicks=0
+                                )
+                            ),
+                        ],
+                        id='pivottable-modal',
+                        size="xl",
+                        is_open=False
+                    )
                 ]))),
             html.Br(),
             dbc.Row(dbc.Col(
@@ -86,6 +145,17 @@ layout = dbc.Container(children=[dbc.Row([
                 dbc.Spinner(children=[html.Div(id='pivot-chart', children=[])])
             )
     ], fluid=True)
+
+
+@callback(
+    Output("pivottable-modal", "is_open"),
+    [Input("info-button", "n_clicks"), Input("close", "n_clicks")],
+    [State("pivottable-modal", "is_open")],
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
 
 
 @callback(
@@ -161,26 +231,21 @@ def filters(values, columns, index):
     Output("pivot_aggfunc_dropdown", 'value'),
     Output('pivot_graph_type_dropdown', 'value'),
     Input('example-button', 'n_clicks'),
-    Input('random-button', 'n_clicks'),
+    # Input('random-button', 'n_clicks'),
     Input('clear-button', 'n_clicks')
 )
-def extra_buttons(example_button, random_button, clear_button):
+def extra_buttons(example_button, clear_button):
     if ctx.triggered_id == 'example-button':
         return ['LastName'], ['Gender'], ['Country'], ['Count'], 'bar'
 
-    if ctx.triggered_id == 'random-button':
-        return [pivot_table_options[random.randint(0, len(pivot_table_options) - 1)]], \
-            [pivot_table_options[random.randint(0, len(pivot_table_options) - 1)]], \
-            [pivot_table_options[random.randint(0, len(pivot_table_options) - 1)]], \
-            ['Count'], \
-            graph_options[random.randint(0, len(graph_options) - 1)]
+    # if ctx.triggered_id == 'random-button':
+    #     return [pivot_table_options[random.randint(0, len(pivot_table_options) - 1)]], \
+    #         [pivot_table_options[random.randint(0, len(pivot_table_options) - 1)]], \
+    #         [pivot_table_options[random.randint(0, len(pivot_table_options) - 1)]], \
+    #         ['Count'], \
+    #         graph_options[random.randint(0, len(graph_options) - 1)]
 
     if ctx.triggered_id == 'clear-button':
         return None, None, None, None, None
 
-# TODO animatie kaart
-# TODO gemiddelde leeftijd enz weergeven (ook op een kaart)
-# TODO ELO integratie met tijmen zn ding, komt via openarchives in michael database
-# TODO geografisch
-# TODO filters specifiek voor jaartallen/data
 # TODO typeof... veranderen van nummers naar categorie

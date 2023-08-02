@@ -11,10 +11,10 @@ from fuzzywuzzy import fuzz, process
 
 
 rl_df = pd.read_csv(
-    'H:/Documents/uni/thesis/code_for_github/linkingUCD_code/Dashboard_research_tool/pages/genealogical_visualisation/RL Gelinkte Personen.csv',
+    'D:/documents/uni/thesis/code_for_github/linkingUCD_code_latest/Dashboard_research_tool/genealogical_visualisation/RL Gelinkte Personen.csv',
     sep=';')
 relations_df = pd.read_csv(
-    'H:/Documents/uni/thesis/code_for_github/linkingUCD_code/Dashboard_research_tool/pages/genealogical_visualisation/relations_all.csv')
+    'D:/documents/uni/thesis/code_for_github/linkingUCD_code_latest/Dashboard_research_tool/genealogical_visualisation/relations_all.csv')
 all_names = rl_df['name'].unique()
 
 
@@ -50,20 +50,69 @@ def convert_html_to_dash(html_code):
 
 
 def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_inputs, filter_labels, filter_exclude):
+    if not aggfunc:
+        return "Aggregate Function can not be empty.", None
+    if not graph_type:
+        return "Chart Type can not be empty.", None
     aggfunc = aggfunc[0].lower()
 
     filters = zip(filter_labels, filter_inputs)
 
+    if not columns and not index:
+        return "At least one 'Columns' or 'Index' is required.", None
 
     if not values:
-        values = []
+        return "'Values' can not be empty.", None
     if not columns:
         columns = []
     if not index:
         index = []
+    attributes = index + columns + values
 
     conn = database.Connection()
+
     df, pivot_table = conn.QueryBuilderPivotTable(index, values, columns, aggfunc)
+
+    if 'TypeOfPerson' in attributes:
+        type_person_df = conn.select('type_of_person', "*", "")
+        for type_value in df['TypeOfPerson'].unique():
+            try:
+                df['TypeOfPerson'] = df['TypeOfPerson'].replace(type_value, type_person_df.loc[type_value][0])
+            except KeyError:
+                continue
+
+    if 'TypeOfProfession' in attributes:
+        type_profession_df = conn.select('type_of_profession', '*', '')
+        for type_value in df['TypeOfProfession'].unique():
+            try:
+                df['TypeOfProfession'] = df['TypeOfProfession'].replace(type_value, type_profession_df.loc[type_value][0])
+            except KeyError:
+                continue
+
+    if 'TypeOfPosition' in attributes:
+        type_position_df = conn.select('type_of_position', '*', '')
+        for type_value in df['TypeOfPosition'].unique():
+            try:
+                df['TypeOfPosition'] = df['TypeOfPosition'].replace(type_value, type_position_df.loc[type_value][0])
+            except KeyError:
+                continue
+
+    if 'TypeOfExpertise' in attributes:
+        type_expertise_df = conn.select('type_of_expertise', '*', '')
+        for type_value in df['TypeOfExpertise'].unique():
+            try:
+                df['TypeOfExpertise'] = df['TypeOfExpertise'].replace(type_value, type_expertise_df.loc[type_value][0])
+            except KeyError:
+                continue
+
+    if 'TypeOfFaculty' in attributes:
+        type_faculty_df = conn.select('type_of_faculty', '*', '')
+        for type_value in df['TypeOfFaculty'].unique():
+            try:
+                df['TypeOfFaculty'] = df['TypeOfFaculty'].replace(type_value, type_faculty_df.loc[type_value][0])
+            except KeyError:
+                continue
+
     counter = 0
     for filter_tuple in filters:
         if filter_tuple[1] and filter_tuple[0] != 'Minimum threshold' and filter_tuple[0] != 'Maximum threshold':
@@ -87,6 +136,8 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
 
         counter += 1
 
+    if df.empty:
+        return "Empty Data Selection", None
     pivot_table = pd.pivot_table(df, index=index, columns=columns, values=values, aggfunc=aggfunc)
 
     if minimum_threshold:
@@ -95,7 +146,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
     if maximum_threshold:
         pivot_table_row_sum = pivot_table.sum(axis=1)
         pivot_table = pivot_table.loc[list(pivot_table_row_sum[pivot_table_row_sum < maximum_threshold].index)]
-
 
     del conn
 
@@ -537,6 +587,13 @@ def find_edges(unique_person_id, depth, completed_ids):
 
 
 def create_network_fig(depth, start_person, layout, drawing_options):
+    if not start_person:
+        return "Start person can not be empty"
+    if not depth:
+        return "Depth can not be empty"
+    if not layout:
+        return "Layout can not be empty"
+
     try:
         start_person = int(start_person)
     except ValueError:
