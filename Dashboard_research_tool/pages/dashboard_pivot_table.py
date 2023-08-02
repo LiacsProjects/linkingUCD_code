@@ -101,6 +101,13 @@ layout = dbc.Container(children=[dbc.Row([
                             dbc.ModalBody("A common option is to use 'Type of Person' as values. This effectively means everyone in the database. "
                                           "You can then use filters to choose if you want to view students or professors. "
                                           "This pivot table can be read as follows: 'There were 39 rows with any TypeOfPerson associated with the Archeologie faculty'."),
+                            dbc.ModalBody(html.Ul([
+                                    html.Li("Index: TypeOfFaculty"),
+                                    html.Li("Values: TypeOfPerson"),
+                                    html.Li("Columns: -"),
+                                    html.Li("Aggregate Function: count"),
+                                    html.Li("Chart Type: bar"),
+                            ])),
                             dbc.ModalBody(html.Img(src='assets/example_1_table.png', style={
                                 'height': '70%'
                             }),),
@@ -112,6 +119,13 @@ layout = dbc.Container(children=[dbc.Row([
                                           "You can also add multiple columns and indexes to further divide the data into separate categories. "
                                           "This pivot table can be read as follows: 'There were 48 men with any TypeOfPerson from the country België, and there were 2 women with the same values and country'. "
                                           "Note that this example only includes professors. Because the students data do not include gender, they are left out automatically with this selection. "),
+                            dbc.ModalBody(html.Ul([
+                                html.Li("Index: Nationality"),
+                                html.Li("Values: TypeOfPerson"),
+                                html.Li("Columns: Gender"),
+                                html.Li("Aggregate Function: count"),
+                                html.Li("Chart Type: bar"),
+                            ])),
                             dbc.ModalBody(html.Img(src='assets/example_2_table.png', style={
                                 'height': '70%'
                             }), ),
