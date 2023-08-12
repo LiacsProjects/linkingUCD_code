@@ -1,6 +1,7 @@
 # Creating dataframe
 from dash import dcc, html, dash_table
 import plotly.graph_objects as go
+import plotly.express as px
 import pandas as pd
 from plotly.subplots import make_subplots
 from Adapters import database
@@ -8,14 +9,20 @@ import dash_bootstrap_components as dbc
 import math
 import networkx as nx
 from fuzzywuzzy import fuzz, process
+import numpy as np
 
-
+path = "D:/documents/uni/thesis/code_for_github/linkingUCD_code_latest/Dashboard_research_tool/pages/"
 rl_df = pd.read_csv(
-    'D:/documents/uni/thesis/code_for_github/linkingUCD_code_latest/Dashboard_research_tool/genealogical_visualisation/RL Gelinkte Personen.csv',
+    path + 'genealogical_visualisation/RL Gelinkte Personen.csv',
     sep=';')
 relations_df = pd.read_csv(
-    'D:/documents/uni/thesis/code_for_github/linkingUCD_code_latest/Dashboard_research_tool/genealogical_visualisation/relations_all.csv')
+    path + 'genealogical_visualisation/relations_all.csv')
 all_names = rl_df['name'].unique()
+cities_coords = pd.read_excel(
+    path + "geographic_visualisation/cities_coordinates.xlsx")
+iso_alpha_df = pd.read_csv(
+    path + "geographic_visualisation/iso_alpha.csv"
+)
 
 
 def find_closest_string_match(input_string, string_list):
@@ -50,6 +57,7 @@ def convert_html_to_dash(html_code):
 
 
 def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_inputs, filter_labels, filter_exclude):
+    # return errors
     if not aggfunc:
         return "Aggregate Function can not be empty.", None
     if not graph_type:
@@ -69,10 +77,14 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
         index = []
     attributes = index + columns + values
 
+    # make database connection
     conn = database.Connection()
+
+    # TODO birth city, death city etc.
 
     df, pivot_table = conn.QueryBuilderPivotTable(index, values, columns, aggfunc)
 
+    # change types from numbers to strings
     if 'TypeOfPerson' in attributes:
         type_person_df = conn.select('type_of_person', "*", "")
         for type_value in df['TypeOfPerson'].unique():
@@ -85,7 +97,8 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
         type_profession_df = conn.select('type_of_profession', '*', '')
         for type_value in df['TypeOfProfession'].unique():
             try:
-                df['TypeOfProfession'] = df['TypeOfProfession'].replace(type_value, type_profession_df.loc[type_value][0])
+                df['TypeOfProfession'] = df['TypeOfProfession'].replace(type_value,
+                                                                        type_profession_df.loc[type_value][0])
             except KeyError:
                 continue
 
@@ -113,6 +126,7 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
             except KeyError:
                 continue
 
+    # apply filters
     counter = 0
     for filter_tuple in filters:
         if filter_tuple[1] and filter_tuple[0] != 'Minimum threshold' and filter_tuple[0] != 'Maximum threshold':
@@ -149,6 +163,7 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
 
     del conn
 
+    # make html table
     pivot_table_html = pivot_table.to_html()
     pivot_table_html = pivot_table_html.replace("colspan", "colSpan")
     pivot_table_html = pivot_table_html.replace('halign="left"', '')
@@ -162,8 +177,8 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
 
     charts = []
 
-
     try:
+        # for every value create a new chart
         for value in values:
 
             # columns > 0 and index = 0
@@ -189,7 +204,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
                                                       hovertext=column_value + ' - ' + column,
                                                       name=column_value + ' - ' + column)
                                 elif graph_type == 'barh':
-                                    # TODO barh
                                     subplot = go.Bar(x=[pivot_table[column_value].index[0]],
                                                      y=pivot_table[column_value][column].to_list(),
                                                      hovertext=column_value + ' - ' + column,
@@ -205,7 +219,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
                                                      hovertext=column_value + ' - ' + column,
                                                      name=column_value + ' - ' + column)
                                 elif graph_type == 'area':
-                                    # TODO area
                                     subplot = go.Bar(x=[pivot_table[column_value].index[0]],
                                                      y=pivot_table[column_value][column].to_list(),
                                                      hovertext=column_value + ' - ' + column,
@@ -261,7 +274,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
                                                   hovertext=column_value + ' - ' + column,
                                                   name=column_value + ' - ' + column)
                             elif graph_type == 'barh':
-                                # TODO barh
                                 subplot = go.Bar(x=pivot_table[value][column_value].index,
                                                  y=pivot_table[value][column_value][column].to_list(),
                                                  hovertext=column_value + ' - ' + column,
@@ -277,7 +289,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
                                                  hovertext=column_value + ' - ' + column,
                                                  name=column_value + ' - ' + column)
                             elif graph_type == 'area':
-                                # TODO area
                                 subplot = go.Bar(x=pivot_table[value][column_value].index,
                                                  y=pivot_table[value][column_value][column].to_list(),
                                                  hovertext=column_value + ' - ' + column,
@@ -308,7 +319,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
                         subplot = go.Line(x=x_list, y=pivot_table[value][column].to_list(),
                                           hovertext=column, name=column)
                     elif graph_type == 'barh':
-                        # TODO barh
                         x_list = [str(i) for i in pivot_table[value].index.tolist()]
                         subplot = go.Line(x=x_list, y=pivot_table[value][column].to_list(),
                                           hovertext=column, name=column)
@@ -321,7 +331,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
                         subplot = go.Box(x=x_list, y=pivot_table[value][column].to_list(),
                                          hovertext=column, name=column)
                     elif graph_type == 'area':
-                        # TODO area
                         x_list = [str(i) for i in pivot_table[value].index.tolist()]
                         subplot = go.Bar(x=x_list, y=pivot_table[value][column].to_list(),
                                          hovertext=column, name=column)
@@ -354,7 +363,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
                                                   hovertext=column_value + ' - ' + column,
                                                   name=column_value + ' - ' + column)
                             elif graph_type == 'barh':
-                                # TODO barh
                                 x_list = [str(i) for i in pivot_table[value].index.tolist()]
                                 subplot = go.Bar(x=x_list, y=pivot_table[value][column_value][column].to_list(),
                                                  hovertext=column_value + ' - ' + column,
@@ -370,7 +378,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
                                                  hovertext=column_value + ' - ' + column,
                                                  name=column_value + ' - ' + column)
                             elif graph_type == 'area':
-                                # TODO area
                                 x_list = [str(i) for i in pivot_table[value].index.tolist()]
                                 subplot = go.Bar(x=x_list, y=pivot_table[value][column_value][column].to_list(),
                                                  hovertext=column_value + ' - ' + column,
@@ -385,94 +392,58 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
                         print(e)
 
                 pivot_chart.update_layout(barmode='stack')
-            # TODO customizable barmode
-            # TODO geographic data visualisation
-            # TODO filters
-            # TODO database implementation
-            # TODO make it so you cant select the same thing in index and column
 
             pivot_chart.update_layout(width=1200, height=700, barmode='stack')
             dash_pivot_chart = dcc.Graph(figure=pivot_chart)
             charts.append(dash_pivot_chart)
 
-        if 'Birth place' in index and not columns:
-            cities_coords_df = pd.read_excel(
-                'C:/Users/boert/Documents/uni/thesis/code_for_github/linkingUCD_code/Dashboard/figures/cities_coordinates.xlsx',
-                engine='openpyxl')
-
-            counter = 0
-            cities_list = []
-            lons = []
-            lats = []
-            count = []
-
-            for row_index in pivot_table[value].index:
-                cities_list.append(row_index)
-                count.append(pivot_table[value].iloc[counter])
-                lons.append(cities_coords_df[cities_coords_df['City'] == row_index]['Longitudes'].values[0])
-                lats.append(cities_coords_df[cities_coords_df['City'] == row_index]['Latitudes'].values[0])
-                counter += 1
-
-            geo_df = pd.DataFrame()
-            geo_df['City'] = cities_list
-            geo_df['Count'] = count
-            geo_df['Latitude'] = lats
-            geo_df['Longitude'] = lons
-            geo_fig = go.Figure(data=go.Scattergeo(
-                lon=geo_df['Longitude'],
-                lat=geo_df['Latitude'],
-                text=geo_df['City'],
-                marker=dict(
-                    size=geo_df['Count'] * 2,
-                    line_color='rgb(40,40,40)',
-                    line_width=0.5,
-                    sizemode='area',
-                ),
-            ))
-            geo_fig.update_layout(width=1200, height=700)
-            dash_geo_chart = dcc.Graph(figure=geo_fig)
-            charts.append(dash_geo_chart)
-
     except TypeError as e:
         print(e)
         dash_pivot_chart = None
 
-    # dash_pivot_table = dbc.Table.from_dataframe(df, striped=True, bordered=True, hover=True, index=True)
     return dash_pivot_table, charts
 
 
-def create_map():
-    cities_coords = pd.read_excel("D:/documents/uni/thesis/code_for_github/linkingUCD_code/Dashboard_research_tool/pages/geographic_visualisation/cities_coordinates.xlsx")
+def create_city_map(data_selection, person_selection, year_selection, year_bool):
+    # type of location 1 = geboorteplaats, 2 = sterfteplaats
+    # type of person 1 = professor, 2 = student
+    if data_selection == 'Birth City':
+        type_of_location = 1
+    elif data_selection == 'Death City':
+        type_of_location = 2
+
+    if person_selection == 'Professor':
+        type_of_person = 1
+    elif person_selection == 'Student':
+        type_of_person = 2
+
     conn = database.Connection()
-    df, pivot_table = conn.QueryBuilderPivotTable(['City'], ['TypeOfPerson'], [], 'count')
-    counter = 0
+    df = conn.select('location', ['City', 'TypeOfPerson', 'locationStartDate'],
+                     f"JOIN person ON person.personPersonID = location.locationPersonID WHERE TypeOfLocation = {type_of_location} AND person.TypeOfPerson = {type_of_person}")
     del conn
 
-    filter = [1]
-    if filter == [1]:
-        scale = 10
-    if filter == [1,2]:
-        scale = 50
-    if filter == [2]:
-        scale = 30
+    if year_bool:
+        df = df.dropna()
+        df['locationStartDate'] = df['locationStartDate'].str[:4].astype(int)
+        df = df[df['locationStartDate'] > year_selection[0]]
+        df = df[df['locationStartDate'] < year_selection[1]]
 
-    df = df[df['TypeOfPerson'].isin(filter)]
-    pivot_table = pd.pivot_table(df, index=['City'], columns=[], values=['TypeOfPerson'], aggfunc='count')
+    df_counted = df.index.value_counts()
 
     geo_df = pd.DataFrame()
     city_list = []
     city_count_list = []
     lon_list = []
     lat_list = []
-    for city in pivot_table.index:
+    for city in df_counted.index:
         try:
             lat_list.append(cities_coords[cities_coords['City'] == city]['Latitudes'].to_list()[0])
             lon_list.append(cities_coords[cities_coords['City'] == city]['Longitudes'].to_list()[0])
             city_list.append(city)
-            city_count_list.append(pivot_table.loc[city]['TypeOfPerson'])
+            city_count_list.append(df_counted.loc[city])
         except IndexError:
             city_list.append(city)
-            city_count_list.append(pivot_table.loc[city]['TypeOfPerson'])
+            city_count_list.append(df_counted.loc[city])
             lat_list.append(None)
             lon_list.append(None)
 
@@ -489,7 +460,7 @@ def create_map():
             lat=[row[1]['Latitude']],
             text=str(row[1]['Count']),
             marker=dict(
-                size=math.log(row[1]['Count'], 1.02)/10,
+                size=math.log(row[1]['Count'], 1.02) / 10,
                 color='royalblue',
                 line_color='rgb(40,40,40)',
                 line_width=0.5,
@@ -497,7 +468,79 @@ def create_map():
             ),
             name=row[1]['City']
         ))
-    # return dcc.Graph(figure=fig)
+    fig.update_layout(width=1200, height=700,
+                      legend=dict(font=dict(size=10, color="black")))
+    return fig
+
+
+def create_country_map(data_selection, person_selection, year_selection, year_bool, scale_option):
+    # type of location 1 = geboorteplaats, 2 = sterfteplaats
+    # type of person 1 = professor, 2 = student
+    if data_selection == 'Birth Country':
+        type_of_location = 1
+    elif data_selection == 'Death Country':
+        type_of_location = 2
+
+    if person_selection == 'Professor':
+        type_of_person = 1
+    elif person_selection == 'Student':
+        type_of_person = 2
+
+    conn = database.Connection()
+    df = conn.select('location', ['Country', 'TypeOfPerson', 'locationStartDate'],
+                     f"JOIN person ON person.personPersonID = location.locationPersonID WHERE TypeOfLocation = {type_of_location} AND person.TypeOfPerson = {type_of_person}")
+    del conn
+
+    if year_bool:
+        df = df.dropna()
+        df['locationStartDate'] = df['locationStartDate'].str[:4].astype(int)
+        df = df[df['locationStartDate'] > year_selection[0]]
+        df = df[df['locationStartDate'] < year_selection[1]]
+
+    count_list = df.index.value_counts().to_list()
+    log_count_list = []
+    for count in count_list:
+        log_count = math.log(count, 1.02)
+        log_count_list.append(log_count)
+    country_list = df.index.value_counts().index.to_list()
+
+    # TODO iso alpha in de database ipv csv
+    filtered_df = pd.DataFrame()
+    filtered_df['country'] = country_list
+    filtered_df['count'] = count_list
+    filtered_df['log_count'] = log_count_list
+    iso_alpha_list = []
+    iso_alpha_df['country'] = iso_alpha_df['country'].str.lower()
+    for country in country_list:
+        try:
+            iso_alpha = iso_alpha_df[iso_alpha_df['country'] == country.lower()]['iso_alpha'].to_list()[0]
+            iso_alpha_list.append(iso_alpha)
+        except IndexError:
+            if "NL" in country:
+                iso_alpha_list.append("NLD")
+            iso_alpha_list.append(None)
+
+    filtered_df['iso_alpha'] = iso_alpha_list
+    print(filtered_df)
+
+    fig = go.Figure()
+    if scale_option == 'Log':
+        fig.add_choropleth(locations=filtered_df['iso_alpha'],
+                           z=filtered_df['log_count'],
+                           text=filtered_df['country'],
+                           colorscale='cividis',
+                           autocolorscale=False,
+                           reversescale=False)
+    elif scale_option == 'Absolute':
+        fig.add_choropleth(locations=filtered_df['iso_alpha'],
+                           z=filtered_df['count'],
+                           text=filtered_df['country'],
+                           colorscale='cividis',
+                           autocolorscale=False,
+                           reversescale=False)
+
+    fig.update_layout(height=700,
+                      legend=dict(font=dict(size=10, color="black")))
     return fig
 
 
@@ -508,7 +551,6 @@ def relations_to_person(unique_person_id):
     these certificates are looked up in the relations_df, finding links between people
     the links are registered, and the id's (from the rl_df) are stored
     """
-
 
     person_data = rl_df[rl_df['unique_person_id'] == unique_person_id]
     names = list(person_data['name'].unique())
@@ -538,13 +580,13 @@ def relations_to_person(unique_person_id):
 
                 relations_id.append(unique_person_id_2)
 
-
                 certificate_person_data = person_data[person_data['uuid'] == certificate]
                 certificate_person_data_2 = rl_df[rl_df['unique_person_id'] == unique_person_id_2][
                     rl_df[rl_df['unique_person_id'] == unique_person_id_2]['uuid'] == uuid_2]
 
-
-                edges.append([(unique_person_id, unique_person_id_2), single_relation[1]['relation_type'], (list(certificate_person_data['year']), list(certificate_person_data['name']), list(certificate_person_data_2['year']), list(certificate_person_data_2['name']))])
+                edges.append([(unique_person_id, unique_person_id_2), single_relation[1]['relation_type'], (
+                list(certificate_person_data['year']), list(certificate_person_data['name']),
+                list(certificate_person_data_2['year']), list(certificate_person_data_2['name']))])
 
         # found an edge from someone else to the unique_person_id in this function
         if len(relations_df[relations_df['uuid_2'] == certificate]):
@@ -563,9 +605,12 @@ def relations_to_person(unique_person_id):
                 relations_id.append(unique_person_id_2)
 
                 certificate_person_data = person_data[person_data['uuid'] == certificate]
-                certificate_person_data_2 = rl_df[rl_df['unique_person_id'] == unique_person_id_2][rl_df[rl_df['unique_person_id'] == unique_person_id_2]['uuid'] == uuid_2]
+                certificate_person_data_2 = rl_df[rl_df['unique_person_id'] == unique_person_id_2][
+                    rl_df[rl_df['unique_person_id'] == unique_person_id_2]['uuid'] == uuid_2]
 
-                edges.append([(unique_person_id_2, unique_person_id), single_relation[1]['relation_type'], (list(certificate_person_data_2['year']), list(certificate_person_data_2['name']), list(certificate_person_data['year']), list(certificate_person_data['name']))])
+                edges.append([(unique_person_id_2, unique_person_id), single_relation[1]['relation_type'], (
+                list(certificate_person_data_2['year']), list(certificate_person_data_2['name']),
+                list(certificate_person_data['year']), list(certificate_person_data['name']))])
         counter += 1
 
     # edge[0][0] == child, edge[0][1] == parent
@@ -587,6 +632,7 @@ def find_edges(unique_person_id, depth, completed_ids):
 
 
 def create_network_fig(depth, start_person, layout, drawing_options):
+    # return errors
     if not start_person:
         return "Start person can not be empty"
     if not depth:
@@ -608,15 +654,16 @@ def create_network_fig(depth, start_person, layout, drawing_options):
 
     layer_dict = {}
     layer_dict.update({start_person: 0})
-    # first create the graph with networkx
+
+    # first create the graph with networkx and take note of which edges were added
     G = nx.Graph()
     for edge_relation in edges_relations:
-
         if edge_relation not in processed_edges and edge_relation[0][0] and edge_relation[0][1]:
             G.add_edge(*(edge_relation[0][0], edge_relation[0][1]))
 
             processed_edges.append(edge_relation)
 
+    # update layer_dict which decides on which layer the nodes should be in the generational view
     for processed_edge in processed_edges:
         relation_type = processed_edge[1]
         relation_person_1 = processed_edge[0][0]
@@ -639,10 +686,7 @@ def create_network_fig(depth, start_person, layout, drawing_options):
     for node_id in list(layer_dict.keys()):
         G.add_node(node_id, layer=layer_dict[node_id])
 
-
-
-    # create positions
-    # TODO based on user input
+    # create node positions
     if layout == 'Generational view':
         pos = nx.multipartite_layout(G, subset_key='layer', align='horizontal')
     elif layout == 'Kamada-Kawai layout':
@@ -680,7 +724,6 @@ def create_network_fig(depth, start_person, layout, drawing_options):
 
         edge_x = []
         edge_y = []
-
 
         if edge[0] == processed_edge[0][0]:
             x0, y0 = pos[edge[1]]
@@ -779,12 +822,12 @@ def create_network_fig(depth, start_person, layout, drawing_options):
                 x=edge_x_1, y=edge_y_1,
                 line=dict(width=2, color='#daa520', shape='spline', smoothing=1.3),
                 hoverinfo='text',
-                mode='lines',))
+                mode='lines', ))
             edge_trace.append(go.Scatter(
                 x=edge_x_2, y=edge_y_2,
                 line=dict(width=2, color='#daa520', shape='spline', smoothing=1.3),
                 hoverinfo='text',
-                mode='lines',))
+                mode='lines', ))
 
         elif relation_type == 'Overleden' and 'Overleden' in drawing_options:
             edge_trace.append(go.Scatter(
@@ -794,7 +837,6 @@ def create_network_fig(depth, start_person, layout, drawing_options):
                 mode='lines', ))
 
     # text for hovering
-
     mnode_trace = go.Scatter(x=mnode_x, y=mnode_y, mode="markers", showlegend=False,
                              hovertext=mnode_txt, marker=go.Marker(opacity=0))
 
@@ -809,7 +851,7 @@ def create_network_fig(depth, start_person, layout, drawing_options):
     node_trace = go.Scatter(
         x=node_x, y=node_y,
         mode='markers',
-            hoverinfo='text',
+        hoverinfo='text',
         marker=dict(
             showscale=True,
             # colorscale options
@@ -827,8 +869,9 @@ def create_network_fig(depth, start_person, layout, drawing_options):
                 titleside='right'
             ),
             line_width=2),
-        )
+    )
 
+    # add node hover text
     node_adjacencies = []
     node_text = []
     for node, adjacencies in enumerate(G.adjacency()):
@@ -839,7 +882,8 @@ def create_network_fig(depth, start_person, layout, drawing_options):
             elif list(G.nodes())[node] == processed_edge[0][1]:
                 node_name = processed_edge[2][3][0]
 
-        node_text.append(f'Person ID: {list(G.nodes())[node]}<br>Name: {node_name}<br>Number of connections: ' + str(len(adjacencies[1])))
+        node_text.append(f'Person ID: {list(G.nodes())[node]}<br>Name: {node_name}<br>Number of connections: ' + str(
+            len(adjacencies[1])))
 
     node_trace.marker.color = node_adjacencies
     node_trace.text = node_text

@@ -20,6 +20,10 @@ pivot_table_options = ['TypeOfPerson', 'FirstName', 'LastName', 'FamilyName', 'A
                        'TypeOfProfession', 'TypeOfPosition', 'TypeOfExpertise', 'TypeOfFaculty', 'professionStartDate',
                        'professionEndDate',
                        'TypeOfLocation', 'City', 'Country', 'Region', 'ISO_Alpha_3']
+pivot_table_options = ['FirstName', 'LastName', 'FamilyName', 'Gender', 'Nationality', 'Religion', 'TypeOfPerson',
+                       # TODO add database support for birth city etc
+                       # 'Birth City', 'Death City', 'Birth Country', 'Death Country', 'Birth Region', 'Death Region', 'Birth Year', 'Death Year',
+                       'TypeOfProfession', 'TypeOfPosition', 'TypeOfExpertise', 'TypeOfFaculty', 'professionStartDate', 'professionEndDate']
 graph_options = ['bar', 'line', 'barh', 'hist', 'box', 'area', 'scatter']
 
 layout = dbc.Container(children=[dbc.Row([
@@ -50,7 +54,7 @@ layout = dbc.Container(children=[dbc.Row([
                                      placeholder='Choose values', clearable=False, multi=False, optionHeight=50,
                                      id='pivot_graph_type_dropdown', className='dropdown',
                                      style={"width": "400px"}),
-                        ], width=4),
+                        ], width=5),
                 dbc.Col([html.P("Filters:"),
                         html.Div(id='filters_group', children=[]), ])
             ]),
@@ -61,15 +65,10 @@ layout = dbc.Container(children=[dbc.Row([
                     dbc.ButtonGroup(
                         [dbc.Button('Create pivot table',
                                     id='pivot-table-button'),
-                         dbc.Button('Load example',
-                                    id='example-button'),
-                         # dbc.Button('Random',
-                         #            id='random-button'),
                          dbc.Button('Clear',
                                     id='clear-button'),
                          dbc.Button('Additional Information',
                                     id='info-button')]
-                        # size='me', #className="d-grid gap-2"
                     ),
                     dbc.Modal(
                         [
@@ -244,22 +243,9 @@ def filters(values, columns, index):
     Output("pivot_index_dropdown", 'value'),
     Output("pivot_aggfunc_dropdown", 'value'),
     Output('pivot_graph_type_dropdown', 'value'),
-    Input('example-button', 'n_clicks'),
-    # Input('random-button', 'n_clicks'),
     Input('clear-button', 'n_clicks')
 )
-def extra_buttons(example_button, clear_button):
-    if ctx.triggered_id == 'example-button':
-        return ['LastName'], ['Gender'], ['Country'], ['Count'], 'bar'
-
-    # if ctx.triggered_id == 'random-button':
-    #     return [pivot_table_options[random.randint(0, len(pivot_table_options) - 1)]], \
-    #         [pivot_table_options[random.randint(0, len(pivot_table_options) - 1)]], \
-    #         [pivot_table_options[random.randint(0, len(pivot_table_options) - 1)]], \
-    #         ['Count'], \
-    #         graph_options[random.randint(0, len(graph_options) - 1)]
-
+def extra_buttons(clear_button):
     if ctx.triggered_id == 'clear-button':
         return None, None, None, None, None
 
-# TODO typeof... veranderen van nummers naar categorie

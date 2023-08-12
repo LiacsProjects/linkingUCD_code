@@ -26,13 +26,13 @@ layout = dbc.Container(children=[
             #     visdcc.Network(id='net', data=dict(), options=dict(height='600px', width='80%'))
             # ], id='network-div'),
 
-            html.P('Enter depth'), dcc.Input(id='depth-input', type='number', placeholder='Enter network depth'),
+            html.P('Enter depth: '), dcc.Input(id='depth-input', type='number', placeholder='Enter network depth'),
             html.Br(),
             html.Br(),
-            html.P('Enter person name or ID'), dcc.Input(id='person-input', placeholder='Enter person name or ID'),
+            html.P('Enter person name or ID: '), dcc.Input(id='person-input', placeholder='Enter person name or ID'),
             html.Br(),
             html.Br(),
-            html.P('Choose network layout'), dbc.Select(
+            html.P('Choose network layout: '), dbc.Select(
                 id="network-layout-dropdown",
                 options=[
                     {"label": "Generational view", "value": "Generational view"},
@@ -43,6 +43,7 @@ layout = dbc.Container(children=[
                 ),
             html.Br(),
             html.Br(),
+            html.P("Select relation types to show:"),
             dbc.Checklist(
                 options=[
                     {"label": "Vader", "value": "vader"},
