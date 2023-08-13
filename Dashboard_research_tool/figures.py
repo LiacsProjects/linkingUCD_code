@@ -82,47 +82,19 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
 
     df, pivot_table = conn.QueryBuilderPivotTable(index, values, columns, aggfunc)
 
-    # change types from numbers to strings
-    if 'TypeOfPerson' in attributes:
-        type_person_df = conn.select('type_of_person', "*", "")
-        for type_value in df['TypeOfPerson'].unique():
-            try:
-                df['TypeOfPerson'] = df['TypeOfPerson'].replace(type_value, type_person_df.loc[type_value][0])
-            except KeyError:
-                continue
-
-    if 'TypeOfProfession' in attributes:
-        type_profession_df = conn.select('type_of_profession', '*', '')
-        for type_value in df['TypeOfProfession'].unique():
-            try:
-                df['TypeOfProfession'] = df['TypeOfProfession'].replace(type_value,
-                                                                        type_profession_df.loc[type_value][0])
-            except KeyError:
-                continue
-
-    if 'TypeOfPosition' in attributes:
-        type_position_df = conn.select('type_of_position', '*', '')
-        for type_value in df['TypeOfPosition'].unique():
-            try:
-                df['TypeOfPosition'] = df['TypeOfPosition'].replace(type_value, type_position_df.loc[type_value][0])
-            except KeyError:
-                continue
-
-    if 'TypeOfExpertise' in attributes:
-        type_expertise_df = conn.select('type_of_expertise', '*', '')
-        for type_value in df['TypeOfExpertise'].unique():
-            try:
-                df['TypeOfExpertise'] = df['TypeOfExpertise'].replace(type_value, type_expertise_df.loc[type_value][0])
-            except KeyError:
-                continue
-
-    if 'TypeOfFaculty' in attributes:
-        type_faculty_df = conn.select('type_of_faculty', '*', '')
-        for type_value in df['TypeOfFaculty'].unique():
-            try:
-                df['TypeOfFaculty'] = df['TypeOfFaculty'].replace(type_value, type_faculty_df.loc[type_value][0])
-            except KeyError:
-                continue
+    for attribute in attributes:
+        if 'Date' in attribute:
+            df = df.dropna()
+            df[attribute] = df[attribute].str[:4]
+            df[attribute] = df[attribute].astype('int')
+        if 'Type' in attribute:
+            type_of = attribute[6:].lower()
+            type_faculty_df = conn.select(f'type_of_{type_of}', '*', '')
+            for type_value in df[attribute].unique():
+                try:
+                    df[attribute] = df[attribute].replace(type_value, type_faculty_df.loc[type_value][0])
+                except KeyError:
+                    continue
 
     # apply filters
     counter = 0

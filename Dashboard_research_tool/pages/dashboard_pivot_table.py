@@ -15,13 +15,8 @@ import dash
 
 dash.register_page(__name__)
 
-pivot_table_options = ['TypeOfPerson', 'FirstName', 'LastName', 'FamilyName', 'Affix', 'Nickname', 'Gender',
-                       'Nationality', 'Religion', 'Status', 'Handles', 'AVG',
-                       'TypeOfProfession', 'TypeOfPosition', 'TypeOfExpertise', 'TypeOfFaculty', 'professionStartDate',
-                       'professionEndDate',
-                       'TypeOfLocation', 'City', 'Country', 'Region', 'ISO_Alpha_3']
 pivot_table_options = ['FirstName', 'LastName', 'FamilyName', 'Gender', 'Nationality', 'Religion', 'TypeOfPerson',
-                       'City', 'Country', 'Region', 'Year', 'TypeOfLocation',
+                       'City', 'Country', 'Region', 'Year', 'TypeOfLocation', 'locationStartDate', 'locationEndDate',
                        'TypeOfProfession', 'TypeOfPosition', 'TypeOfExpertise', 'TypeOfFaculty', 'professionStartDate', 'professionEndDate']
 graph_options = ['bar', 'line', 'barh', 'hist', 'box', 'area', 'scatter']
 
