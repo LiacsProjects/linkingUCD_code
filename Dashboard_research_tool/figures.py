@@ -80,8 +80,6 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
     # make database connection
     conn = database.Connection()
 
-    # TODO birth city, death city etc.
-
     df, pivot_table = conn.QueryBuilderPivotTable(index, values, columns, aggfunc)
 
     # change types from numbers to strings

@@ -21,8 +21,7 @@ pivot_table_options = ['TypeOfPerson', 'FirstName', 'LastName', 'FamilyName', 'A
                        'professionEndDate',
                        'TypeOfLocation', 'City', 'Country', 'Region', 'ISO_Alpha_3']
 pivot_table_options = ['FirstName', 'LastName', 'FamilyName', 'Gender', 'Nationality', 'Religion', 'TypeOfPerson',
-                       # TODO add database support for birth city etc
-                       # 'Birth City', 'Death City', 'Birth Country', 'Death Country', 'Birth Region', 'Death Region', 'Birth Year', 'Death Year',
+                       'City', 'Country', 'Region', 'Year', 'TypeOfLocation',
                        'TypeOfProfession', 'TypeOfPosition', 'TypeOfExpertise', 'TypeOfFaculty', 'professionStartDate', 'professionEndDate']
 graph_options = ['bar', 'line', 'barh', 'hist', 'box', 'area', 'scatter']
 
