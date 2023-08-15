@@ -15,9 +15,32 @@ import dash
 
 dash.register_page(__name__)
 
-pivot_table_options = ['FirstName', 'LastName', 'FamilyName', 'Gender', 'Nationality', 'Religion', 'TypeOfPerson',
-                       'City', 'Country', 'Region', 'Year', 'TypeOfLocation', 'locationStartDate', 'locationEndDate',
-                       'TypeOfProfession', 'TypeOfPosition', 'TypeOfExpertise', 'TypeOfFaculty', 'professionStartDate', 'professionEndDate']
+# pivot_table_options = ['FirstName', 'LastName', 'FamilyName', 'Gender', 'Nationality', 'Religion', 'TypeOfPerson',
+#                        'City', 'Country', 'Region', 'Year', 'TypeOfLocation', 'locationStartDate', 'locationEndDate',
+#                        'TypeOfProfession', 'TypeOfPosition', 'TypeOfExpertise', 'TypeOfFaculty', 'professionStartDate', 'professionEndDate']
+pivot_table_options = [
+    {"label": 'First Name', "value": 'FirstName'},
+    {"label": 'Last Name', "value": 'LastName'},
+    {"label": 'Family Name', "value": 'FamilyName'},
+    {"label": 'Gender', "value": 'Gender'},
+    {"label": 'Nationality', "value": 'Nationality'},
+    {"label": 'Religion', "value": 'Religion'},
+    {"label": 'Type of Person', "value": 'TypeOfPerson'},
+    {"label": 'City', "value": 'City'},
+    {"label": 'Country', "value": 'Country'},
+    {"label": 'Region', "value": 'Region'},
+    # {"label": name, "value": 'Year'},
+    {"label": 'Type of Location', "value": 'TypeOfLocation'},
+    {"label": 'Location Start Year', "value": 'locationStartDate'},
+    {"label": 'Location End Year', "value": 'locationEndDate'},
+    {"label": 'Type of Profession', "value": 'TypeOfProfession'},
+    {"label": 'Type of Position', "value": 'TypeOfPosition'},
+    {"label": 'Type of Expertise', "value": 'TypeOfExpertise'},
+    {"label": 'Type of Faculty', "value": 'TypeOfFaculty'},
+    {"label": 'Profession Start Year', "value": 'professionStartDate'},
+    {"label": 'Profession End Year', "value": 'professionEndDate'},
+]
+
 graph_options = ['bar', 'line', 'barh', 'hist', 'box', 'area', 'scatter']
 
 layout = dbc.Container(children=[dbc.Row([
@@ -125,6 +148,32 @@ layout = dbc.Container(children=[dbc.Row([
                             dbc.ModalBody(html.Img(src='assets/example_2_chart.png', style={
                                 'width': '80%'
                             }), ),
+
+                            # data desciption
+                            dbc.ModalHeader(dbc.ModalTitle("Data")),
+                            dbc.ModalBody(html.Ul([
+                                    html.Li("First Name: The first names."),
+                                    html.Li("Last Name: The last names."),
+                                    html.Li("Family Name: The family names."),
+                                    html.Li("Gender: The gender, 'man' or 'vrouw'."),
+                                    html.Li("Nationality: The nationalities."),
+                                    html.Li("Religion: The religion, such as 'Jood' or 'Katholiek'. "),
+                                    html.Li("Type of Person: 'Student' or 'Professor'. "),
+                                    html.Li("City: The city is either the birth city or the death city, you can separate this by adding 'Type of Location' to the pivot table."),
+                                    html.Li("Country: The country is either the birth country or the death country, you can separate this by adding 'Type of Location' to the pivot table."),
+                                    html.Li("Region: The region is either the birth region or the death region, you can separate this by adding 'Type of Location' to the pivot table."),
+                                    html.Li("Year: ????"),
+                                    html.Li("Type of Location: The type of location is either 'Geboorteplaats' or 'Sterfteplaats'."),
+                                    html.Li("Location Start Date: ???"),
+                                    html.Li("Location End Date: ???"),
+                                    html.Li("Type of Profession: The type of profession describes the profession a person had, currently the only value available is 'University Employment'. "),
+                                    html.Li("Type of Position: The type of position describes what position a person had in the university, such as 'Gewoon Hoogleraar' or 'Bijzonder Hoogleraar'."),
+                                    html.Li("Type of Expertise: The type of expertise describes what a persons expertise was, such as 'Wiskunde' or 'Sociologie'."),
+                                    html.Li("Type of Faculty: The type of faculty describes what faculty a person was apart of, such as 'Letteren' or 'Rechtsgeleerdheid'."),
+                                    html.Li("Profession Start Date: The profession start date is the year in which a person started their profession."),
+                                    html.Li("Profession End Date: The profession end date is the year in which a person ended their profession."),
+                            ])),
+                            dbc.ModalBody("To view all available values for options such as nationality, make a table with the option in the index."),
                             dbc.ModalFooter(
                                 dbc.Button(
                                     "Close", id="close", className="ms-auto", n_clicks=0
