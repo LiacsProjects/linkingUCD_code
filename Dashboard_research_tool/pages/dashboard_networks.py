@@ -86,6 +86,19 @@ layout = dbc.Container(children=[
                     dbc.ModalBody(html.Img(src='assets/network-legenda.png', style={
                         'height': '70%'
                     }),),
+                    dbc.ModalHeader(dbc.ModalTitle("Name alterations")),
+                    dbc.ModalBody("To improve matching of names in separate certificates, the names of individuals have been standardized. "
+                                  "This tool uses a the standardized names. The following changes have been made to the names. The first names are also arranged in alphabetical order."
+                                  "Lastly, accents, capital letters, prefixes and other diacritics are cleaned up."),
+                    dbc.ModalBody(html.Ul([
+                        html.Li("ch changed to g"),
+                        html.Li("c changed to k"),
+                        html.Li("z changed to s"),
+                        html.Li("ph changed to f"),
+                        html.Li("ij changed to y"),
+                    ])
+                    ),
+                    dbc.ModalBody("Example: 'Mariä Anna van 't Schip' is changed to 'annamariasgip' "),
                     dbc.ModalFooter(
                         dbc.Button(
                             "Close", id="close", className="ms-auto", n_clicks=0
