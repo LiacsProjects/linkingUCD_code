@@ -100,13 +100,23 @@ def create_pivot_table(values, columns, index, aggfunc, graph_type, filter_input
     counter = 0
     for filter_tuple in filters:
         if filter_tuple[1] and filter_tuple[0] != 'Minimum threshold' and filter_tuple[0] != 'Maximum threshold':
-            filter_exclude_bool = filter_exclude[counter]
-            if not filter_exclude_bool:
-                filter_inputs = filter_tuple[1].split(';')
-                df = df[df[filter_tuple[0]].isin(filter_inputs)]
+            if 'Date' in filter_tuple[0]:
+                lower_year = int(filter_tuple[1][0])
+                upper_year = int(filter_tuple[1][1])
+
+                df[filter_tuple[0]] = df[filter_tuple[0]]
+                df[filter_tuple[0]] = pd.to_numeric(df[filter_tuple[0]])
+
+                df = df[df[filter_tuple[0]] > lower_year]
+                df = df[df[filter_tuple[0]] < upper_year]
             else:
-                filter_inputs = filter_tuple[1].split(';')
-                df = df[~df[filter_tuple[0]].isin(filter_inputs)]
+                filter_exclude_bool = filter_exclude[counter]
+                if not filter_exclude_bool:
+                    filter_inputs = filter_tuple[1].split(';')
+                    df = df[df[filter_tuple[0]].isin(filter_inputs)]
+                else:
+                    filter_inputs = filter_tuple[1].split(';')
+                    df = df[~df[filter_tuple[0]].isin(filter_inputs)]
         if filter_tuple[0] == 'Minimum threshold':
             if filter_tuple[1]:
                 minimum_threshold = int(filter_tuple[1])

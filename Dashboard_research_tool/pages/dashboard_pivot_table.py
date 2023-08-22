@@ -258,9 +258,25 @@ def filters(values, columns, index):
     div_children_list = []
     counter = 1
     for attribute in attributes:
-        inputgroup = dbc.InputGroup([dbc.InputGroupText(attribute, id={"type": "filter-label", "index": counter}),
+        if 'Date' in attribute:
+            # inputgroup = dbc.InputGroup([dbc.InputGroupText(attribute, id={"type": "filter-label", "index": counter}),
+            #                              dbc.InputGroupText(children=['Exclude ', daq.BooleanSwitch(
+            #                                  id={"type": "filter-exclude", "index": counter}, on=False)]),
+            #                              dbc.Input(type='number', id={"type": "filter-input", "index": counter})], style={})
+            inputgroup = html.Div(
+                children=[dbc.InputGroup(dbc.InputGroupText(attribute, id={"type": "filter-label", "index": counter})),
+                          html.Br(),
+                          dcc.RangeSlider(1575, 2025, 25, value=[1575, 2019],
+                                          id={"type": "filter-input", "index": counter},
+                                          marks={i: '{}'.format(i) for i in range(1575, 2019, 25)}),
+                          daq.BooleanSwitch(id={"type": "filter-exclude", "index": counter}, on=False,
+                                            style={'visibility': 'hidden'})
+                          ])
+        else:
+            inputgroup = dbc.InputGroup([dbc.InputGroupText(attribute, id={"type": "filter-label", "index": counter}),
                                      dbc.InputGroupText(children=['Exclude ', daq.BooleanSwitch(id={"type": "filter-exclude", "index": counter}, on=False)]),
                                      dbc.Input(id={"type": "filter-input", "index": counter})], style={})
+
         div_children_list.append(inputgroup)
         div_children_list.append(html.Br())
         counter += 1
