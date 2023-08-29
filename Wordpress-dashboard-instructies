@@ -1,0 +1,18 @@
+Heb je al een .zip van de template website en wil je deze in Wordpress gaan bewerken? Lees dan deze instructies
+
+Het template aan Wordpress toevoegen (online gehost op een domein, dus niet lokaal)
+Stap 1: Ga naar weergave/appearance
+Stap 2: Ga naar thema's/themes
+Stap 3: Klik bovenin op nieuw thema toevoegen
+Stap 4: Klik bovenin op thema uploaden en upload de LUCD_template.zip file
+
+Pagina's bewerken:
+Voor het LUCD template gebruiken we een plugin genaamd elementor. Via het "pages" menu kun je verschillende pagina's bewerken door onder een pagnia titel op "bewerk met elementor" te klikken
+De pagina's zijn opgebouwd met een combinatie van Elementor widgets (text, image, etc.) en html code blokken voor knoppen of iframes.
+
+Andere relevante plugins en thema's:
+Flexy breadcrumbs: gebruikt voor breadcrumbs. Je kunt ook breadcrumbs maken via Elementor als je voor Elementor Pro betaalt.
+Elementor header & footer builder: kun je headers en footers mee maken voor elementor
+Neve thema: op dit moment is de header en footer gemaakt met Neve i.p.v. elementor, zodat het kon worden gecombineerd met de flexy breadcrumb plugin
+
+Informatie over kleuren en stijlen die zijn gebruikt voor deze website kun je vinden in de opmaak_dingen_wordpress.docx file.
