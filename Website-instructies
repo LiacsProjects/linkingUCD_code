@@ -1,15 +1,25 @@
 LOKAAL SITE BEWERKEN
 Stap 1: Download en installeer Local: https://localwp.com/
 Stap 2: Download LUCD_template.zip
-Stap 3: Ga in je verkenner naar Appdata > Roaming > Local > blueprints (via C:, Users, mezelf in mijn geval)
-Stap 4: Plaats de LUCD_template.zip in de blueprints map
-Stap 5: Open Local: als het goed is staat de template nu op de 'blueprints' pagina
-Stap 6: Klink linksboven --> add new site (of ctrl+n op windows) en klik vervolgens op "create from blueprint" en dan kies je dus de template als blueprint
-Stap 7: Nu kun je lokaal de website bewerken.
 
+Vervolgens zijn er 2 manieren om de blueprint in Local te krijgen:
+Manier 1:
+Stap 1: Ga in je verkenner naar Appdata > Roaming > Local > blueprints (via C:, Users, mezelf in mijn geval)
+Stap 2: Plaats de LUCD_template.zip in de blueprints map
+Stap 3: Open Local: als het goed is staat de template nu op de 'blueprints' pagina
+Stap 4: Klink linksboven --> add new site (of ctrl+n op windows) en klik vervolgens op "create from blueprint" en dan kies je dus de template als blueprint
+Stap 5: Nu kun je lokaal de website bewerken.
+
+Manier 2:
+Stap 1: Open Local
+Stap 2: Klik op het "+" icoon links ondern
+Stap 3: Klik op het boxje met "select an existing .zip file" en open de LUCD_template.zip in local
+Stap 4: Nu kun je lokaal de website bewerken
+
+n.b. Om in het Wordpress dashboard van de website te komen, heb je inloggegevens nodig. Deze zijn bekend binnen het team.
 
 DE SITE EXPORTEREN
-Stap 1: start de site in Local
+Stap 1: start eerst de site in Local
 Stap 2: klikt op de 3 puntjes naast de site titel
 Stap 3: klik op export site
 
