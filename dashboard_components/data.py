@@ -5,7 +5,7 @@ import time
 from Adapters import database
 
 # 'C:/Users/micha/Documents/Leiden/Univercity/Database_Connected_Dashboard/Dashboard/'
-bp = 'C:/Users/micha/Documents/Leiden/Univercity/Database_Connected_Dashboard/Liam/excelfilesL/'
+bp = 'C:/Users/micha/Documents/Leiden/Univercity/Database_Connected_Dashboard/Liam/excelfiles/'
 base_path = Path(os.environ['DASHBOARD_BASEPATH'])
 
 conn = database.Connection()

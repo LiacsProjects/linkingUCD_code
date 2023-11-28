@@ -12,7 +12,7 @@ config.read(os.environ['DASHBOARD_BASEPATH'] + 'assets/config.ini')
 mapbox_token = config['mapbox']['token']
 
 
-# Create figures
+# Create figures_components
 def get_variables(subject):
     if subject == 'Rectors':
         selected_df = data.rector_per_year
