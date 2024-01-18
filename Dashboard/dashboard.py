@@ -1,6 +1,6 @@
 # ****************************************************************************************** START
 # Parameter for program on server or local
-ON_SERVER = True
+ON_SERVER = False
 if not ON_SERVER:
     # added for local server
     # extra regel om environmental variable te bepalen
