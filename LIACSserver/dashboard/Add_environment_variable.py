@@ -4,10 +4,14 @@
   
 # importing os module 
 import os
-  
-# Add a new environment variable 
-os.environ['DASHBOARD_BASEPATH'] = 'c:/users/Benva/Jupyter/Dash applications/Linking UCD - dashboard/'
 
-# Get the value of
-# Added environment variable 
-print("DASHBOARD_BASEPATH", os.environ['DASHBOARD_BASEPATH'])
+# Ben van Yperen
+# os.environ['DASHBOARD_BASEPATH'] = 'c:/users/Benva/Jupyter/Dash applications/Linking UCD - dashboard/'
+
+# Micheal de Koning
+# os.environ['DASHBOARD_BASEPATH'] = 'C:/Users/micha/Documents/Leiden/Univercity/linkingUCD_code/Dashboard/'
+
+# Richard van Dijk
+os.environ['DASHBOARD_BASEPATH'] = 'C:/LiacsProjects/LUCD/linkingUCD_code/Dashboard/'
+
+print("DASHBOARD_BASEPATH = ", os.environ['DASHBOARD_BASEPATH'])

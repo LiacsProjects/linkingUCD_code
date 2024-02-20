@@ -8,7 +8,9 @@ from Adapters import database
 bp = 'C:/Users/micha/Documents/Leiden/Univercity/Database_Connected_Dashboard/Liam/excelfiles/'
 base_path = Path(os.environ['DASHBOARD_BASEPATH'])
 
+
 conn = database.Connection()
+
 # Professor data handling
 start = time.time()
 print("Start professor")

@@ -33,13 +33,13 @@ app = Dash(__name__, suppress_callback_exceptions=False,
 # server = app.server
 
 # ******************************************************************************************  TODO
-
-# TODO: implement store functions to allow users to save their changes made to the dashboard TODO:
-#  connect database to dashboard
-# TODO: create joined page for all persons TODO: link city/country coordinates to city/country dataframes, preferably
+# TODO: implement store functions to allow users to save their changes made to the dashboard
+# TODO: connect database to dashboard
+# TODO: create joined page for all persons
+# TODO: link city/country coordinates to city/country dataframes, preferably
 #  through function that reads coordinates from a file: countries.geojson and cities1-2-3.csv
-
 # ******************************************************************************************  START
+
 app.layout = dbc.Container(children=[
     html.Div(id='page_top', children=[
         # html.A(id="logoA", children=[html.Img(id="logo", src="assets/Leiden_zegel.png")]),

@@ -1,7 +1,7 @@
 ############################################################################################## LOCAL
 # added for local server
 # extra regel om environmental variable te bepalen
-#import Add_environment_variable
+import Add_environment_variable
 
 ########################################################################################### end local
 # import modules
@@ -26,7 +26,7 @@ app = Dash(__name__, suppress_callback_exceptions=True,
            
 ################################################################################################ SERVER
 # Configurate dash application voor server
-server = app.server
+#server = app.server
 
 ########################################################################################################### TODO
 
