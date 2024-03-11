@@ -44,7 +44,7 @@ else:
         external_stylesheets=[dbc.themes.BOOTSTRAP],
     )
 
-dash.register_page("home", layout="We're home!", path="/")
+dash.register_page("home", layout="This is a test bench for plugins for the LUCD project.", path="/")
 
 navbar = dbc.NavbarSimple(
     dbc.DropdownMenu(
@@ -56,7 +56,7 @@ navbar = dbc.NavbarSimple(
         nav=True,
         label="More Pages",
     ),
-    brand="Multi Page App Plugin Demo",
+    brand="LUCD plugin test bench",
     color="primary",
     dark=True,
     className="mb-2",
@@ -74,5 +74,5 @@ app.layout = dbc.Container(
 if __name__ == "__main__":
     app.run_server(debug=True)
 
-# Configurate dash application for server
+# Configure dash application for server
 #server = app.server

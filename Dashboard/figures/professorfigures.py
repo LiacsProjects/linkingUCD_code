@@ -196,7 +196,7 @@ def create_cent_figure(subject, century):
     else:
         title_cent += (str(century[0]) + 'th' + '-' + str(century[1]) + 'th century')
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      title=title_cent,modebar_orientation='v',)
+                      title=title_cent, modebar_orientation='v',)
     fig.update_xaxes(type='category')
     return fig
 

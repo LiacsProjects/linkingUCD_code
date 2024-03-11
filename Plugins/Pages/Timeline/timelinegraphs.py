@@ -9,6 +9,7 @@ import configparser
 import os
 
 from Plugins.Data import exceldata as data
+from Plugins.helpers import get_variables, merge_years
 
 #
 # Configure
@@ -17,92 +18,6 @@ from Plugins.Data import exceldata as data
 #config.read(os.environ['DASHBOARD_BASEPATH'] + 'assets/config.ini')
 #mapbox_token = config['mapbox']['token']
 
-#
-# Create graphs
-#
-def get_variables(subject):
-    if subject == 'Gender':
-        selected_df = data.gender_df
-        subjectx = 'gender'
-        name = 'Gender'
-    elif subject == 'Title':
-        selected_df = data.title_df
-        subjectx = 'title'
-        name = 'Title'
-    elif subject == 'Birth':
-        selected_df = data.birth_df
-        subjectx = 'birth'
-        name = 'Birth'
-    elif subject == 'Birth place':
-        selected_df = data.birthplace_df
-        subjectx = 'birth place'
-        name = 'Birth place'
-    elif subject == 'Birth country':
-        selected_df = data.birthcountry_df
-        subjectx = 'country'
-        name = 'Birth country'
-    elif subject == 'Death':
-        selected_df = data.death_df
-        subjectx = 'death'
-        name = 'Death'
-    elif subject == 'Death place':
-        selected_df = data.deathplace_df
-        subjectx = 'death place'
-        name = 'Death place'
-    elif subject == 'Death country':
-        selected_df = data.deathcountry_df
-        subjectx = 'country'
-        name = 'Death country'
-    elif subject == 'Promotion':
-        selected_df = data.promotion_df
-        subjectx = 'promotion'
-        name = 'Promotion'
-    elif subject == 'Promotion type':
-        selected_df = data.promotiontype_df
-        subjectx = 'promotion type'
-        name = 'Promotion type'
-    elif subject == 'Promotion place':
-        selected_df = data.promotion_place_df
-        subjectx = 'promotion place'
-        name = 'Promotion place'
-    elif subject == 'Appointment':
-        selected_df = data.appointment_df
-        subjectx = 'appointment'
-        name = 'Appointment year'
-    elif subject == 'Job':
-        selected_df = data.professor_job_df
-        subjectx = 'job'
-        name = 'Job'
-    elif subject == 'Subject area':
-        selected_df = data.subject_df
-        subjectx = 'subject area'
-        name = 'Subject area'
-    elif subject == 'Faculty':
-        selected_df = data.faculty_df
-        subjectx = 'faculty'
-        name = 'Faculty'
-    elif subject == 'End of employment':
-        selected_df = data.end_df
-        subjectx = 'end of employment'
-        name = 'End of employment'
-    else:
-        # default setting
-        selected_df = data.appointment_df
-        subjectx = 'appointment'
-        name = 'Appointment year'
-    return selected_df, subjectx, name
-
-
-def merge_years(df, subject):
-    all_centuries = pd.DataFrame()
-    for cent in df.century.unique():
-        current_century = df[df.century == cent]
-        trimmed_century = current_century[[subject, 'count', 'century']]
-        new_century = trimmed_century.groupby(trimmed_century[subject]).aggregate(
-            {subject: 'first', 'count': 'sum', 'century': 'first'})
-        all_centuries = pd.concat([all_centuries, new_century], axis=0)
-    all_centuries.reset_index(inplace=True, drop=True)
-    return all_centuries
 
 #
 # Yearly graph
@@ -206,6 +121,6 @@ def create_cent_figure(subject, century):
     else:
         title_cent += (str(century[0]) + 'th' + '-' + str(century[1]) + 'th century')
     fig.update_layout(paper_bgcolor='rgba(223,223,218,0.7)', font_color='black', plot_bgcolor='rgba(223,223,218,0.7)',
-                      title=title_cent,modebar_orientation='v',)
+                      title=title_cent, modebar_orientation='v',)
     fig.update_xaxes(type='category')
     return fig

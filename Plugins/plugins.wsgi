@@ -1,5 +1,5 @@
 import sys, os
-sys.path.insert(0, '/home/csunivercity/dashboard')
+sys.path.insert(0, '/home/csunivercity/plugins')
 os.environ['PLUGINS_BASEPATH'] = "/home/csunivercity/plugins/"
 
 # need 'server', not 'app', see

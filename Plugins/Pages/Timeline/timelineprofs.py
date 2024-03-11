@@ -15,7 +15,9 @@ import dash
 from dash import dcc, html, Input, Output, callback
 import dash_bootstrap_components as dbc
 
-from Plugins.Data import exceldata as data
+from Plugins.globals import data, current_century
+from Plugins.globals import SUBJECT_DROPDOWN, DEFAULT_SUBJECT, CENTURY_STEP, YEAR_STEP, GRAPH_DROPDOWN, DEFAULT_GRAPH, GRAPH_CONFIG, MARK_SPACING
+#from Plugins.Data import exceldata as data
 from Plugins.Pages.Timeline import timelinegraphs as professorfigures
 
 #
@@ -30,31 +32,8 @@ dash.register_page(
 )
 
 #
-# Global constants
-#
-CENTURY_STEP = 1
-YEAR_STEP = 5
-MARK_SPACING = 10
-START_CENTURY = 16
-
-DEFAULT_SUBJECT = 'Appointment'
-SUBJECT_DROPDOWN = ['Gender', 'Birth', 'Birth place', 'Birth country', 'Death', 'Death place',
-                    'Death country', 'Promotion', 'Promotion type', 'Promotion place', 'Appointment',
-                    'Job', 'Subject area', 'Faculty', 'End of employment']
-
-DEFAULT_GRAPH_SUBJECT = 'Appointment'
-GRAPH_SUBJECT_DROPDOWN = ['Gender', 'Birth', 'Death', 'Promotion', 'Promotion type', 'Appointment',
-                          'Job', 'Subject area', 'Faculty', 'End of employment']
-
-DEFAULT_GRAPH = 'Bar graph'
-GRAPH_DROPDOWN = ['Bar graph', 'Line graph', 'Scatter graph']
-GRAPH_CONFIG = {'modeBarButtonsToRemove': ['toImage'], 'displayModeBar': True,}
-
-#
 # Global vars
 #
-current_century = data.all_dates_df[(data.all_dates_df['century'] <= START_CENTURY)]
-
 years = []
 for y in current_century['year'][0::YEAR_STEP]:
     years.append(y)
@@ -219,7 +198,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
         y = hover_data['points'][0]['x']
         year = int(y)
     else:
-        text = None
+        text = '' #None
         if not 'customdata' in figure['data'][0].keys():
             return
         year = figure['data'][0]['x'][0]
