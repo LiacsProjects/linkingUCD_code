@@ -17,7 +17,9 @@ import dash_bootstrap_components as dbc
 
 from Plugins.globals import data, SUBJECT_AREA_COLUMN_NAME, THESIS_COLUMN_NAME
 from Plugins.helpers import select_range, select_non_range
-from Plugins.Pages.Individual import individualgraphs as professorfigures
+
+from Plugins.Pages.Individual import individualgraphs
+from Plugins.Pages.Geographic import geographygraphs
 
 #
 # Configure dash page
@@ -27,7 +29,7 @@ dash.register_page(
     title="Individual Professors",
     description="Visuals for aggregated individual data about professors",
     path="/pages/individual",
-    order=2
+    order=3
 )
 
 #
@@ -119,20 +121,20 @@ layout = html.Div(
             html.Table([
                 html.Tr([
                     html.Td(html.P('Select Gender:', className='inline'), ),
-                    html.Td(dcc.Dropdown(professorfigures.get_unique_values('Gender'), placeholder='Choose a gender',
+                    html.Td(dcc.Dropdown(individualgraphs.get_unique_values('Gender'), placeholder='Choose a gender',
                                          clearable=False, multi=True, id='p-individual-gender-dropdown',
                                          className='dropdown', style={"width": "400px"}), ),
                 ]),
                 html.Tr([
                     html.Td(html.P('Select birth place:', className='inline'), ),
-                    html.Td(dcc.Dropdown(professorfigures.get_unique_values('Birth place'),
+                    html.Td(dcc.Dropdown(individualgraphs.get_unique_values('Birth place'),
                                          placeholder='Choose a birth place', clearable=False, multi=True,
                                          id='p-individual-birthplace-dropdown', className='dropdown',
                                          style={"width": "400px"}), ),
                 ]),
                 html.Tr([
                     html.Td(html.P('Select birth country:', className='inline'), ),
-                    html.Td(dcc.Dropdown(professorfigures.get_unique_values('Birth country'),
+                    html.Td(dcc.Dropdown(individualgraphs.get_unique_values('Birth country'),
                                          placeholder='Choose a birth country', clearable=False, multi=True,
                                          id='p-individual-birthcountry-dropdown', className='dropdown',
                                          style={"width": "400px"}), ),
@@ -140,53 +142,53 @@ layout = html.Div(
                 html.Tr([
                     html.Td(html.P('Select death place:', className='inline'), ),
                     html.Td(
-                        dcc.Dropdown(professorfigures.get_unique_values('Death place'), placeholder='Choose a death place',
+                        dcc.Dropdown(individualgraphs.get_unique_values('Death place'), placeholder='Choose a death place',
                                      clearable=False, multi=True, id='p-individual-deathplace-dropdown',
                                      className='dropdown', style={"width": "400px"}), ),
                 ]),
                 html.Tr([
                     html.Td(html.P('Select death country:', className='inline'), ),
-                    html.Td(dcc.Dropdown(professorfigures.get_unique_values('Death country'),
+                    html.Td(dcc.Dropdown(individualgraphs.get_unique_values('Death country'),
                                          placeholder='Choose a death country', clearable=False, multi=True,
                                          id='p-individual-deathcountry-dropdown', className='dropdown',
                                          style={"width": "400px"}), ),
                 ]),
                 html.Tr([
                     html.Td(html.P('Select promotion:', className='inline'), ),
-                    html.Td(dcc.Dropdown(professorfigures.get_unique_values('Promotion'),
+                    html.Td(dcc.Dropdown(individualgraphs.get_unique_values('Promotion'),
                                          placeholder='Choose a promotion', clearable=False, multi=True,
                                          id='p-individual-promotion-dropdown', className='dropdown',
                                          style={"width": "400px"}), ),
                 ]),
                 html.Tr([
                     html.Td(html.P('Select promotion place:', className='inline'), ),
-                    html.Td(dcc.Dropdown(professorfigures.get_unique_values('Promotion place'),
+                    html.Td(dcc.Dropdown(individualgraphs.get_unique_values('Promotion place'),
                                          placeholder='Choose a promotion place', clearable=False, multi=True,
                                          id='p-individual-promotionplace-dropdown', className='dropdown',
                                          style={"width": "400px"}), ),
                 ]),
                 html.Tr([
                     html.Td(html.P('Select thesis:', className='inline'), ),
-                    html.Td(dcc.Dropdown(professorfigures.get_unique_values('Thesis'), placeholder='Choose a thesis',
+                    html.Td(dcc.Dropdown(individualgraphs.get_unique_values('Thesis'), placeholder='Choose a thesis',
                                          clearable=False, multi=True, optionHeight=120, id='p-individual-thesis-dropdown',
                                          className='dropdown', style={"width": "400px"}), ),
                 ]),
                 html.Tr([
                     html.Td(html.P('Select job:', className='inline'), ),
-                    html.Td(dcc.Dropdown(professorfigures.get_unique_values('Job'), placeholder='Choose a job',
+                    html.Td(dcc.Dropdown(individualgraphs.get_unique_values('Job'), placeholder='Choose a job',
                                          clearable=False, multi=True, id='p-individual-job-dropdown', className='dropdown',
                                          style={"width": "400px"}), ),
                 ]),
                 html.Tr([
                     html.Td(html.P('Select subject area:', className='inline'), ),
-                    html.Td(dcc.Dropdown(professorfigures.get_unique_values('Subject area'),
+                    html.Td(dcc.Dropdown(individualgraphs.get_unique_values('Subject area'),
                                          placeholder='Choose a subject area', clearable=False, multi=True, optionHeight=50,
                                          id='p-individual-subjectarea-dropdown', className='dropdown',
                                          style={"width": "400px"}), ),
                 ]),
                 html.Tr([
                     html.Td(html.P('Select faculty:', className='inline'), ),
-                    html.Td(dcc.Dropdown(professorfigures.get_unique_values('Faculty'), placeholder='Choose a faculty',
+                    html.Td(dcc.Dropdown(individualgraphs.get_unique_values('Faculty'), placeholder='Choose a faculty',
                                          clearable=False, multi=True, id='p-individual-faculty-dropdown',
                                          className='dropdown', style={"width": "400px"}), ),
                 ]),
@@ -235,7 +237,7 @@ layout = html.Div(
     Input('p-individual-job-dropdown', 'value'),
     Input('p-individual-subjectarea-dropdown', 'value'),
     Input('p-individual-faculty-dropdown', 'value'),
-    prevent_initial_call=True,
+    prevent_initial_call=False,
 )
 def update_professor_table(search_button, selected_name, search_option, min_enrol, max_enrol, min_birth, max_birth,
                            include_missing, selected_gender, selected_birthplace, selected_birthcountry,
@@ -388,8 +390,8 @@ def update_professor_table(search_button, selected_name, search_option, min_enro
 #
 @callback(
     Output('p-chosen-individual-information', 'children'),
-    Input('p-individual-table', "derived_virtual_data"),
-    Input('p-individual-table', "derived_virtual_selected_rows"),
+    #Input('p-individual-table', "derived_virtual_data"),
+    #Input('p-individual-table', "derived_virtual_selected_rows"),
     Input({'type': 'p-person-table', 'index': ALL}, 'id'),
     State('p-chosen-individual-information', 'children'),
 )
@@ -415,7 +417,7 @@ def create_individual_information(rows, selected_rows, value, children):
     for number in selected_rows:
         if number not in in_list:
             person = persons.iloc[number].to_frame().T
-            figure = professorfigures.create_map(person['Birth place'][number], person['Birth country'][number],
+            figure = geographygraphs.create_map(person['Birth place'][number], person['Birth country'][number],
                                                  person['Birth year'][number])
             new_person = html.Div(id={'type': 'p-person-table', 'index': number}, className='bigblock',
                                   children=[

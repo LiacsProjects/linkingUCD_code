@@ -19,7 +19,7 @@ def set_basepath():
         # os.environ['DASHBOARD_BASEPATH'] = 'C:/Users/micha/Documents/Leiden/Univercity/linkingUCD_code/Dashboard/'
 
         # Richard van Dijk
-        os.environ['PLUGINS_BASEPATH'] = 'C:/LiacsProjects/LUCD/linkingUCD_code/Plugins/Excels'
+        os.environ['PLUGINS_BASEPATH'] = 'C:/LiacsProjects/LUCD/linkingUCD_code/Plugins/'
 
     # Get the value of
     # Added environment variable

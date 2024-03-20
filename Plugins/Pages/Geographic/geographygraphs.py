@@ -8,7 +8,7 @@ import numpy as np
 import configparser
 import os
 
-#from Plugins.globals import mapbox_token
+from Plugins.globals import mapbox_token
 from Plugins.Data import exceldata as data
 from Plugins.helpers import get_variables, merge_years
 
@@ -218,11 +218,11 @@ def create_map(city, country, birthyear):
                                  ['country', 'iso_alpha', 'lat', 'lon']].iloc[0]
     origin = pd.DataFrame(origin_country)
     countries = origin.T
-    countries = countries.append({'country': 'Nederland', 'iso_alpha': 'NLD', 'lat': '52.21158', 'lon': '5.600489'},
+    countries = countries.concat({'country': 'Nederland', 'iso_alpha': 'NLD', 'lat': '52.21158', 'lon': '5.600489'},
                                  ignore_index=True)
     places = origin.T
     places = places.rename(columns={'country': 'city'})
-    places = places.append({'city': 'Leiden', 'iso_alpha': 'NLD', 'lat': '52.15833', 'lon': '4.49306'},
+    places = places.concat({'city': 'Leiden', 'iso_alpha': 'NLD', 'lat': '52.15833', 'lon': '4.49306'},
                            ignore_index=True)
     fig = px.choropleth(countries, locations='iso_alpha', hover_name='country', color='iso_alpha',
                         color_continuous_scale='plasma', labels={'iso_alpha': 'Places'})

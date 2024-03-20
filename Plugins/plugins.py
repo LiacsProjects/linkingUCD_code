@@ -44,7 +44,12 @@ else:
         external_stylesheets=[dbc.themes.BOOTSTRAP],
     )
 
-dash.register_page("home", layout="This is a test bench for plugins for the LUCD project.", path="/")
+dash.register_page(
+    "home",
+    layout="This is a test bench for plugins for the LUCD project.",
+    path="/",
+    order=0
+)
 
 navbar = dbc.NavbarSimple(
     dbc.DropdownMenu(

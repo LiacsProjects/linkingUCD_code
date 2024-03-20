@@ -8,7 +8,7 @@ import dash_bootstrap_components as dbc
 from Plugins.globals import data
 from Plugins.globals import SUBJECT_DROPDOWN, DEFAULT_SUBJECT, GRAPH_CONFIG
 from Plugins.Data import exceldata as data
-from Plugins.Pages.Statistics import statisticsgraphs as professorfigures
+from Plugins.Pages.Statistics import statisticsgraphs
 
 #
 # Configure dash page
@@ -18,7 +18,7 @@ dash.register_page(
     title="Statistics Professors",
     description="Visuals for statistical data about professors",
     path="/pages/statistics",
-    order=1
+    order=2
 )
 
 #
@@ -39,7 +39,7 @@ layout = html.Div(
                     dcc.Dropdown(
                         SUBJECT_DROPDOWN,
                         DEFAULT_SUBJECT,
-                        placeholder='Choose a subject',
+                        placeholder='Choose a field',
                         clearable=False,
                         style={'background-color':
                                'rgba(223,223,218,0.7)',
@@ -49,7 +49,7 @@ layout = html.Div(
                         className='dropdown'
                     ),
                     html.Div(id='p_subject_header2',
-                             children=[html.H3('Subject information:'),
+                             children=[html.H3('Statistics:'),
                                        html.Div(id='p-subject-information'),
                                        ]
                              ),
@@ -61,7 +61,7 @@ layout = html.Div(
                     dcc.Graph(id='p-subject-graph',
                               config=GRAPH_CONFIG,
                              ),
-                    html.H3('Subject data:'),
+                    html.H3('Statistical data:'),
                     html.Div(id='p-subject-table-container'),
                 ]),
 
@@ -78,17 +78,17 @@ layout = html.Div(
     ],
 )
 def update_subject_output(selected_subject):
-    figure = professorfigures.create_subject_info_graph(selected_subject)
+    figure = statisticsgraphs.create_subject_info_graph(selected_subject)
     return figure
 
 
-# Subject table
+# Statistictable
 @callback(
     Output('p-subject-table-container', 'children'),
     Input('p-subject-dropdown', 'value'),
 )
 def update_timeline_table(selected_subject):
-    df, subject, name = professorfigures.get_variables(selected_subject)
+    df, subject, name = statisticsgraphs.get_variables(selected_subject)
     df = df.rename(columns={subject: name, 'year': 'Year', 'count': 'Appointments', 'century': 'Century'})
     return dash_table.DataTable(
         data=df.to_dict('records'),
@@ -126,7 +126,7 @@ def update_timeline_information(selected_subject, hover_data):
         text = hover_data['points'][0]['hovertext']
     else:
         text = None
-    df, subject, name = professorfigures.get_variables(selected_subject)
+    df, subject, name = statisticsgraphs.get_variables(selected_subject)
     total = df['count'].sum()
     fraction = df.loc[df[subject] == text, 'count'].sum()
     percentage = round(fraction / total * 100, 2)
@@ -134,7 +134,7 @@ def update_timeline_information(selected_subject, hover_data):
         return html.Div(id='p-subject-hover-info', children=[
             html.Table(id='p-subject-table', children=[
                 html.Tr(children=[
-                    html.Td('Subject'),
+                    html.Td('Field'),
                     html.Td(selected_subject),
                 ]),
                 html.Tr(children=[
@@ -142,7 +142,7 @@ def update_timeline_information(selected_subject, hover_data):
                     html.Td(df[subject].nunique()),
                 ]),
                 html.Tr(children=[
-                    html.Td('Total appointments'),
+                    html.Td(f'Total {subject}s'),
                     html.Td(total),
                 ]),
                 html.Tr(children=[
@@ -165,11 +165,11 @@ def update_timeline_information(selected_subject, hover_data):
                     html.Td(text),
                 ]),
                 html.Tr(children=[
-                    html.Td('Appointments'),
+                    html.Td('Nr professors  '),
                     html.Td(fraction),
                 ]),
                 html.Tr(children=[
-                    html.Td('Percentage of total appointments'),
+                    html.Td('Percentage'),
                     html.Td(percentage),
                 ]),
             ]),
@@ -180,7 +180,7 @@ def update_timeline_information(selected_subject, hover_data):
         return html.Div(id='p-subject-hover-info', children=[
             html.Table(id='p-subject-table', children=[
                 html.Tr(children=[
-                    html.Td('Subject'),
+                    html.Td('Field'),
                     html.Td(selected_subject),
                 ]),
                 html.Tr(children=[
@@ -188,7 +188,7 @@ def update_timeline_information(selected_subject, hover_data):
                     html.Td(df[subject].nunique()),
                 ]),
                 html.Tr(children=[
-                    html.Td('Total appointments'),
+                    html.Td(f'Total {subject}s'),
                     html.Td(total),
                 ]),
                 html.Tr(children=[
@@ -211,11 +211,11 @@ def update_timeline_information(selected_subject, hover_data):
                     html.Th(text),
                 ]),
                 html.Tr(children=[
-                    html.Td('Appointments'),
+                    html.Td('Nr professors  '),
                     html.Td(fraction),
                 ]),
                 html.Tr(children=[
-                    html.Td('Percentage of total appointments'),
+                    html.Td('Percentage'),
                     html.Td(percentage),
                 ]),
             ]),
@@ -228,12 +228,12 @@ def update_timeline_information(selected_subject, hover_data):
 # Statistical information table
 #
 @callback(
-    Output('p-century-table', 'children'),
+    Output('p-subject-table', 'children'),
     Input('p-subject-dropdown', 'value'),
 )
 def update_timeline_table(selected_subject):
-    df, subject, name = professorfigures.get_variables(selected_subject)
-    table_df = professorfigures.create_century_table(df, name)
+    df, subject, name = statisticsgraphs.get_variables(selected_subject)
+    table_df = statisticsgraphs.create_century_table(df, name)
     return dash_table.DataTable(
         data=table_df.to_dict('records'),
         columns=[{'id': i, 'name': i} for i in table_df.columns],

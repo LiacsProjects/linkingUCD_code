@@ -17,8 +17,7 @@ import dash_bootstrap_components as dbc
 
 from Plugins.globals import data, current_century
 from Plugins.globals import SUBJECT_DROPDOWN, DEFAULT_SUBJECT, CENTURY_STEP, YEAR_STEP, GRAPH_DROPDOWN, DEFAULT_GRAPH, GRAPH_CONFIG, MARK_SPACING
-#from Plugins.Data import exceldata as data
-from Plugins.Pages.Timeline import timelinegraphs as professorfigures
+from Plugins.Pages.Timeline import timelinegraphs
 
 #
 # Configure dash page
@@ -28,7 +27,7 @@ dash.register_page(
     title="Timeline Professors",
     description="Visuals for aggregated temporal data about professors",
     path="/pages/timeline",
-    order=0
+    order=1
 )
 
 #
@@ -57,14 +56,14 @@ layout = html.Div(
             className='left_container',
             children=[
 
-                html.H3('Graph settings:'),
-                html.P('Select Subject:'),
+                html.H3('  '),
+                html.P('Field:'),
                 dcc.Dropdown(SUBJECT_DROPDOWN, DEFAULT_SUBJECT,
-                             placeholder='Choose a subject:',
+                             placeholder='Choose a field:',
                              clearable=False,
                              id='p-year-century-subject-dropdown', className='dropdown'),
 
-                html.P('Select century range:'),
+                html.P('Century range:'),
                 dcc.RangeSlider(
                          data.all_dates_df['century'].min(),
                          data.all_dates_df['century'].max(),
@@ -75,7 +74,7 @@ layout = html.Div(
                          id='p-year-century-slider',
                 ),
 
-                html.P('Select year range:'),
+                html.P('Year range:'),
                 dcc.RangeSlider(
                      current_century['year'].min(),
                      current_century['year'].max(),
@@ -85,7 +84,7 @@ layout = html.Div(
 
                 html.Div(
                     id='p-year-slider-container'),
-                    html.P('Select graph type:'),
+                    html.P('Graph type:'),
                     dcc.Dropdown(
                         GRAPH_DROPDOWN,
                         DEFAULT_GRAPH,
@@ -101,7 +100,7 @@ layout = html.Div(
             id='p-year-century-dropdown-container',
             className='right_container',
             children=[
-                html.H4('Graph:'),
+                #html.H4('Graph:'),
                 dcc.Graph(id='p-year-century-graph',
                           config=GRAPH_CONFIG, )
                 ],
@@ -111,7 +110,7 @@ layout = html.Div(
             id='p-timeline-information-container',
             className='left_container ',
             children=[
-                  html.H3('Information:'),
+                  #html.H3('Information:'),
                   html.Div(id='p-timeline-information'),]
             ),
 
@@ -119,7 +118,7 @@ layout = html.Div(
             id='p-century-dropdown-container',
             className='right_container',
             children=[
-                  html.H4('Sorted bar graph:'),
+                  html.H4('  '),
                   dcc.Graph(id='p-century-graph',
                             config=GRAPH_CONFIG,),
                   ]
@@ -164,7 +163,7 @@ def update_year_slider(century):
     ],
 )
 def update_year_century_output(selected_subject, selected_century, selected_year, selected_dropdown):
-    figure = professorfigures.create_year_cent_figure(
+    figure = timelinegraphs.create_year_cent_figure(
         selected_subject,
         selected_century,
         selected_year,
@@ -180,7 +179,7 @@ def update_year_century_output(selected_subject, selected_century, selected_year
     Input('p-year-century-slider', 'value'),
 )
 def update_century_output(selected_subject, selected_century):
-    figure = professorfigures.create_cent_figure(selected_subject, selected_century)
+    figure = timelinegraphs.create_cent_figure(selected_subject, selected_century)
     return figure
 
 #
@@ -203,7 +202,8 @@ def update_timeline_information(selected_subject, hover_data, figure):
             return
         year = figure['data'][0]['x'][0]
 
-    df, subject, name = professorfigures.get_variables(selected_subject)
+    df, subject, name = timelinegraphs.get_variables(selected_subject)
+
     century = df.loc[df['year'] == year, 'century'].values[0]
     enrollments = df.loc[df['year'] == year, 'count'].values[0]
     last_year = year - 1
@@ -217,7 +217,7 @@ def update_timeline_information(selected_subject, hover_data, figure):
     if subject == 'year':
         return html.Table(id='p-timeline-table', children=[
             html.Tr(children=[
-                html.Th('Subject'),
+                html.Th('Field'),
                 html.Th(selected_subject),
             ]),
             html.Tr(children=[
@@ -238,37 +238,37 @@ def update_timeline_information(selected_subject, hover_data, figure):
             ]),
             html.Br(),
             html.Tr(children=[
-                html.Th('General information'),
+                html.Th('Statistics selected field'),
             ]),
             html.Tr(children=[
-                html.Td('Total appointments'),
+                html.Td('Sum appointments'),
                 html.Td(df['count'].sum()),
             ]),
             html.Tr(children=[
-                html.Td('Most appointments'),
+                html.Td('Max appointments'),
                 html.Td(df['count'].max()),
             ]),
             html.Tr(children=[
-                html.Td('Year with highest value'),
+                html.Td('... in year(s) '),
                 html.Td(df.loc[df['count'] == df['count'].max(), 'year']),
             ]),
             html.Tr(children=[
-                html.Td('Least appointments'),
+                html.Td('Min appointments'),
                 html.Td(df['count'].min()),
             ]),
             html.Tr(children=[
-                html.Td('Year with lowest value'),
+                html.Td('... in year(s) '),
                 html.Td(df.loc[df['count'].min(), 'year']),
             ]),
             html.Tr(children=[
-                html.Td('Average appointments'),
+                html.Td('Mean appointments'),
                 html.Td(round(df['count'].mean(), 0)),
             ]),
         ]),
     else:
         return html.Table(id='p-timeline-table', children=[
             html.Tr(children=[
-                html.Td('Subject:'),
+                html.Td('Field'),
                 html.Td(selected_subject),
             ]),
             html.Tr(children=[
@@ -293,30 +293,30 @@ def update_timeline_information(selected_subject, hover_data, figure):
             ]),
             html.Br(),
             html.Tr(children=[
-                html.Th('General information'),
+                html.Th('Statistics selected field:'),
             ]),
             html.Tr(children=[
-                html.Td('Total appointments'),
+                html.Td('Sum appointments'),
                 html.Td(df['count'].sum()),
             ]),
             html.Tr(children=[
-                html.Td('Most appointments'),
+                html.Td('Max appointments'),
                 html.Td(df['count'].max()),
             ]),
             html.Tr(children=[
-                html.Td('Year with highest value'),
+                html.Td('... in year(s)  '),
                 html.Td(df.loc[df['count'] == df['count'].max(), 'year']),
             ]),
             html.Tr(children=[
-                html.Td('Least appointments'),
+                html.Td('Min appointments'),
                 html.Td(df['count'].min()),
             ]),
             html.Tr(children=[
-                html.Td('Year with lowest value'),
+                html.Td('... in year(s)  '),
                 html.Td(df.loc[df['count'].min(), 'year']),
             ]),
             html.Tr(children=[
-                html.Td('Average appointments'),
+                html.Td('Mean appointments'),
                 html.Td(round(df['count'].mean(), 0)),
             ]),
         ]),

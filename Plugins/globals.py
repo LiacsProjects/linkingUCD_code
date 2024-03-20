@@ -41,6 +41,6 @@ for y in current_century['year'][0::YEAR_STEP]:
     years.append(y)
 years.append(current_century['year'].max())
 
-#config = configparser.ConfigParser()
-#config.read(os.environ['PLUGINS_BASEPATH'] + 'assets/config.ini')
-#mapbox_token = config['mapbox']['token']
+config = configparser.ConfigParser()
+config.read(os.environ['PLUGINS_BASEPATH'] + 'assets/config.ini')
+mapbox_token = config['mapbox']['token']

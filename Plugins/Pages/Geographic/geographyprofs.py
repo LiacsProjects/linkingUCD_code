@@ -9,7 +9,7 @@ from Plugins.globals import data
 from Plugins.globals import GRAPH_SUBJECT_DROPDOWN, DEFAULT_GRAPH_SUBJECT
 
 #from Plugins.Data import exceldata as data
-from Plugins.Pages.Geographic import geographygraphs as professorfigures
+from Plugins.Pages.Geographic import geographygraphs
 
 #
 # Configure dash page
@@ -19,7 +19,7 @@ dash.register_page(
     title="Geography Professors",
     description="Visuals for aggregated geographical data about professors",
     path="/pages/geographic",
-    order=3
+    order=4
 )
 
 #
@@ -131,22 +131,22 @@ def synchronise_dates(min_year, max_year):
 )
 def create_map(min_year, max_year, map_choice):
     if map_choice == 'Heat map':
-        figure, geo_data = professorfigures.create_country_map(min_year, max_year)
+        figure, geo_data = geographygraphs.create_country_map(min_year, max_year)
         geo_data = geo_data[['country', 'count']]
     elif map_choice == 'Line map':
-        figure, geo_data = professorfigures.create_country_line_map(min_year, max_year)
+        figure, geo_data = geographygraphs.create_country_line_map(min_year, max_year)
         geo_data = geo_data[['country', 'count']]
     elif map_choice == 'MP Heat map':
-        figure, geo_data = professorfigures.create_mapbox_heat_map(min_year, max_year)
+        figure, geo_data = geographygraphs.create_mapbox_heat_map(min_year, max_year)
         geo_data = geo_data[['country', 'count']]
     elif map_choice == 'MP Scatter map':
-        figure, geo_data = professorfigures.create_mapbox_scatter_map(min_year, max_year)
+        figure, geo_data = geographygraphs.create_mapbox_scatter_map(min_year, max_year)
         geo_data = geo_data[['country', 'year', 'count']]
     elif map_choice == 'Animated map':
-        figure, geo_data = professorfigures.create_animated_country_map(min_year, max_year)
+        figure, geo_data = geographygraphs.create_animated_country_map(min_year, max_year)
         geo_data = geo_data[['country', 'year', 'count']]
     else:
-        figure, geo_data = professorfigures.create_country_map(min_year, max_year)
+        figure, geo_data = geographygraphs.create_country_map(min_year, max_year)
         geo_data = geo_data[['country', 'count']]
         
     geo_table = dash_table.DataTable(

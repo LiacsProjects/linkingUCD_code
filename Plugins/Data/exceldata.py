@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 import os
 
-base_path = Path(os.environ['PLUGINS_BASEPATH'])
+base_path = Path(os.environ['PLUGINS_BASEPATH']+'Excels')
 
 # Professor data handling
 #######################################################################################################################
