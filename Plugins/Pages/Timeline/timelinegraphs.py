@@ -9,7 +9,9 @@ from Plugins.helpers import get_variables, merge_years
 # Yearly graph
 #
 def create_year_cent_figure(subject, century, year, mode):
+
     selected_df, subjectx, name = get_variables(subject)
+
     filtered_df = selected_df[selected_df['century'] <= century[1]]
     filtered_df = filtered_df[filtered_df['century'] >= century[0]]
     filtered_df = filtered_df[filtered_df['year'] <= year[1]]

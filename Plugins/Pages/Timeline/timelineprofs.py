@@ -192,6 +192,7 @@ def update_century_output(selected_subject, selected_century):
     Input('p-year-century-graph', 'figure'),
 )
 def update_timeline_information(selected_subject, hover_data, figure):
+
     if hover_data is not None:
         text = hover_data['points'][0]['hovertext']
         y = hover_data['points'][0]['x']
